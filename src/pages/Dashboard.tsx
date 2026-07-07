@@ -264,6 +264,12 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
           account={editingAccount}
           onClose={() => { setAccountFormType(null); setEditingAccount(null) }}
           onSubmit={handleAccountSubmit}
+          onDelete={async (id) => {
+            await deleteAccount(id)
+            refetchNetWorth()
+            setEditingAccount(null)
+            setAccountFormType(null)
+          }}
         />
       )}
     </div>
