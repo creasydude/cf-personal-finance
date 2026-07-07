@@ -1,0 +1,189 @@
+import { useState } from 'react'
+import { Modal } from './ui/Modal'
+import type { AccountType } from '../types'
+
+interface AccountFormProps {
+  open: boolean
+  type: AccountType
+  onClose: () => void
+  onSubmit: (data: any) => Promise<void>
+}
+
+const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
+  cash: 'Cash Account',
+  investment: 'Investment Account',
+  crypto: 'Crypto Wallet',
+  property: 'Property',
+  vehicle: 'Vehicle',
+  credit_card: 'Credit Card',
+  loan: 'Loan',
+  other_asset: 'Other Asset',
+  other_liability: 'Other Liability',
+}
+
+const CASH_SUBTYPES = ['Checking', 'Savings', 'Cash', 'Other']
+const CURRENCIES = ['USD', 'EUR', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY', 'BTC', 'ETH']
+
+export function AccountForm({ open, type, onClose, onSubmit }: AccountFormProps) {
+  const [loading, setLoading] = useState(false)
+  const [name, setName] = useState('')
+  const [balance, setBalance] = useState('')
+  const [currency, setCurrency] = useState('USD')
+  const [subtype, setSubtype] = useState('')
+  const [details, setDetails] = useState<Record<string, string>>({})
+
+  const isLiability = ['credit_card', 'loan', 'other_liability'].includes(type)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      await onSubmit({
+        name,
+        type,
+        subtype: subtype || undefined,
+        currency,
+        balance: parseFloat(balance) || 0,
+        details,
+      })
+      resetForm()
+      onClose()
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const resetForm = () => {
+    setName('')
+    setBalance('')
+    setCurrency('USD')
+    setSubtype('')
+    setDetails({})
+  }
+
+  return (
+    <Modal open={open} onClose={onClose} className="max-w-md">
+      <div className="rounded-2xl bg-white p-6 shadow-2xl">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-bold text-gray-900">Add {ACCOUNT_TYPE_LABELS[type]}</h2>
+          <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Name */}
+          <div>
+            <label className="label mb-1.5 block">Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder={ACCOUNT_TYPE_LABELS[type]}
+              className="input"
+              required
+            />
+          </div>
+
+          {/* Subtype for cash */}
+          {type === 'cash' && (
+            <div>
+              <label className="label mb-1.5 block">Account Type</label>
+              <select value={subtype} onChange={(e) => setSubtype(e.target.value)} className="input">
+                <option value="">Select type...</option>
+                {CASH_SUBTYPES.map(s => <option key={s} value={s.toLowerCase()}>{s}</option>)}
+              </select>
+            </div>
+          )}
+
+          {/* Balance */}
+          <div>
+            <label className="label mb-1.5 block">{isLiability ? 'Current Balance (owed)' : 'Current Balance'}</label>
+            <input
+              type="number"
+              value={balance}
+              onChange={(e) => setBalance(e.target.value)}
+              placeholder="0.00"
+              step="0.01"
+              className="input"
+              required
+            />
+          </div>
+
+          {/* Currency */}
+          <div>
+            <label className="label mb-1.5 block">Currency</label>
+            <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="input">
+              {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+
+          {/* Type-specific fields */}
+          {type === 'property' && (
+            <>
+              <div>
+                <label className="label mb-1.5 block">Address</label>
+                <input type="text" value={details.address || ''} onChange={e => setDetails(d => ({ ...d, address: e.target.value }))} className="input" placeholder="123 Main St, City" />
+              </div>
+              <div>
+                <label className="label mb-1.5 block">Purchase Price</label>
+                <input type="number" value={details.purchase_price || ''} onChange={e => setDetails(d => ({ ...d, purchase_price: e.target.value }))} className="input" placeholder="0.00" step="0.01" />
+              </div>
+            </>
+          )}
+
+          {type === 'vehicle' && (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="label mb-1.5 block">Make</label>
+                  <input type="text" value={details.make || ''} onChange={e => setDetails(d => ({ ...d, make: e.target.value }))} className="input" placeholder="Toyota" />
+                </div>
+                <div>
+                  <label className="label mb-1.5 block">Model</label>
+                  <input type="text" value={details.model || ''} onChange={e => setDetails(d => ({ ...d, model: e.target.value }))} className="input" placeholder="Camry" />
+                </div>
+              </div>
+              <div>
+                <label className="label mb-1.5 block">Year</label>
+                <input type="number" value={details.year || ''} onChange={e => setDetails(d => ({ ...d, year: e.target.value }))} className="input" placeholder="2024" />
+              </div>
+            </>
+          )}
+
+          {type === 'loan' && (
+            <>
+              <div>
+                <label className="label mb-1.5 block">Interest Rate (%)</label>
+                <input type="number" value={details.interest_rate || ''} onChange={e => setDetails(d => ({ ...d, interest_rate: e.target.value }))} className="input" placeholder="5.5" step="0.1" />
+              </div>
+              <div>
+                <label className="label mb-1.5 block">Term (months)</label>
+                <input type="number" value={details.term || ''} onChange={e => setDetails(d => ({ ...d, term: e.target.value }))} className="input" placeholder="60" />
+              </div>
+            </>
+          )}
+
+          {type === 'credit_card' && (
+            <div>
+              <label className="label mb-1.5 block">Credit Limit</label>
+              <input type="number" value={details.credit_limit || ''} onChange={e => setDetails(d => ({ ...d, credit_limit: e.target.value }))} className="input" placeholder="10000" step="0.01" />
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose} className="btn-secondary flex-1">Cancel</button>
+            <button type="submit" disabled={loading || !name} className="btn-primary flex-1">
+              {loading ? 'Adding...' : 'Add Account'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </Modal>
+  )
+}
