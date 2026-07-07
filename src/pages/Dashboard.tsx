@@ -34,11 +34,12 @@ const TYPE_COLORS: Record<string, string> = {
 type Tab = 'all' | 'assets' | 'debts'
 
 export function Dashboard({ userCode, settings }: { userCode: string | null; settings: Record<string, any> }) {
-  const { accounts, assetsTotal, liabilitiesTotal, loading: accountsLoading, createAccount, deleteAccount } = useAccounts()
+  const { accounts, assetsTotal, liabilitiesTotal, loading: accountsLoading, createAccount, updateAccount, deleteAccount } = useAccounts()
   const { data: netWorth, range, setRange, loading: nwLoading } = useNetWorth()
   const [activeTab, setActiveTab] = useState<Tab>('all')
   const [typeModalOpen, setTypeModalOpen] = useState(false)
   const [accountFormType, setAccountFormType] = useState<AccountType | null>(null)
+  const [editingAccount, setEditingAccount] = useState<any>(null)
 
   const baseCurrency = netWorth?.base_currency || settings?.baseCurrency || 'IRR'
   const netWorthValue = netWorth?.current ?? (assetsTotal - liabilitiesTotal)
@@ -64,6 +65,22 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
   const handleAccountTypeSelect = (type: AccountType) => {
     setTypeModalOpen(false)
     setAccountFormType(type)
+    setEditingAccount(null)
+  }
+
+  const handleEditAccount = (account: any) => {
+    setEditingAccount(account)
+    setAccountFormType(account.type)
+  }
+
+  const handleAccountSubmit = async (data: any) => {
+    if (editingAccount) {
+      await updateAccount(editingAccount.id, data)
+    } else {
+      await createAccount(data)
+    }
+    setEditingAccount(null)
+    setAccountFormType(null)
   }
 
   if (accountsLoading) {
@@ -119,6 +136,7 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
             displayAccounts.map(account => (
               <div
                 key={account.id}
+                onClick={() => handleEditAccount(account)}
                 className="card-hover flex items-center gap-3 p-3 cursor-pointer group"
               >
                 <div className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl ${TYPE_COLORS[account.type] || 'bg-gray-400'}`}>
@@ -242,8 +260,9 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
         <AccountForm
           open={!!accountFormType}
           type={accountFormType}
-          onClose={() => setAccountFormType(null)}
-          onSubmit={createAccount}
+          account={editingAccount}
+          onClose={() => { setAccountFormType(null); setEditingAccount(null) }}
+          onSubmit={handleAccountSubmit}
         />
       )}
     </div>

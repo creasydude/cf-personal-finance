@@ -23,12 +23,15 @@ export function useAccounts() {
   const createAccount = async (data: any) => {
     const account = await api.accounts.create(data)
     await fetch()
+    await new Promise(r => setTimeout(r, 50))
     return account
   }
 
   const updateAccount = async (id: string, data: any) => {
     const account = await api.accounts.update(id, data)
     await fetch()
+    // Wait a tick for React state to propagate
+    await new Promise(r => setTimeout(r, 50))
     return account
   }
 

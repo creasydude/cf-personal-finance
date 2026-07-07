@@ -8,6 +8,7 @@ interface AccountFormProps {
   type: AccountType
   onClose: () => void
   onSubmit: (data: any) => Promise<void>
+  account?: any // for edit mode
 }
 
 const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
@@ -25,7 +26,8 @@ const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
 
 const CASH_SUBTYPES = ['Checking', 'Savings', 'Cash', 'Other']
 
-export function AccountForm({ open, type, onClose, onSubmit }: AccountFormProps) {
+export function AccountForm({ open, type, onClose, onSubmit, account }: AccountFormProps) {
+  const isEditing = !!account
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState('')
   const [balance, setBalance] = useState('')
@@ -33,18 +35,22 @@ export function AccountForm({ open, type, onClose, onSubmit }: AccountFormProps)
   const [subtype, setSubtype] = useState('')
   const [details, setDetails] = useState<Record<string, string>>({})
 
+  // Reset form when account/open changes
+  useEffect(() => {
+    if (open) {
+      setName(account?.name || '')
+      setBalance(account?.balance?.toString() || '')
+      setCurrency(account?.currency || (type === 'gold' ? 'GOLD_GRAM18' : type === 'crypto' ? 'BTC' : 'USD'))
+      setSubtype(account?.subtype || '')
+      setDetails(account?.details || {})
+    }
+  }, [open, account, type])
+
   const isLiability = ['credit_card', 'loan', 'other_liability'].includes(type)
   const isGold = type === 'gold'
   const isCrypto = type === 'crypto'
   const isCashOrInvestment = type === 'cash' || type === 'investment'
   const currencyFilter = isGold ? 'gold' : isCrypto ? 'crypto' : isCashOrInvestment ? 'fiat' : undefined
-
-  // Auto-set currency when type changes to gold
-  useEffect(() => {
-    if (isGold) {
-      setCurrency('GOLD_GRAM18')
-    }
-  }, [isGold])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -55,7 +61,8 @@ export function AccountForm({ open, type, onClose, onSubmit }: AccountFormProps)
         type,
         subtype: subtype || undefined,
         currency,
-        balance: parseFloat(balance) || 0,
+        // For gold: backend calculates balance from grams, don't send stale balance
+        ...(isGold ? {} : { balance: parseFloat(balance) || 0 }),
         details,
       })
       resetForm()
@@ -70,7 +77,7 @@ export function AccountForm({ open, type, onClose, onSubmit }: AccountFormProps)
   const resetForm = () => {
     setName('')
     setBalance('')
-    setCurrency('USD')
+    setCurrency(type === 'gold' ? 'GOLD_GRAM18' : type === 'crypto' ? 'BTC' : 'USD')
     setSubtype('')
     setDetails({})
   }
@@ -79,7 +86,7 @@ export function AccountForm({ open, type, onClose, onSubmit }: AccountFormProps)
     <Modal open={open} onClose={onClose} className="max-w-md">
       <div className="rounded-2xl bg-white p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-gray-900">Add {ACCOUNT_TYPE_LABELS[type]}</h2>
+          <h2 className="text-lg font-bold text-gray-900">{isEditing ? 'Edit' : 'Add'} {ACCOUNT_TYPE_LABELS[type]}</h2>
           <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -233,7 +240,7 @@ export function AccountForm({ open, type, onClose, onSubmit }: AccountFormProps)
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose} className="btn-secondary flex-1">Cancel</button>
             <button type="submit" disabled={loading || !name} className="btn-primary flex-1">
-              {loading ? 'Adding...' : 'Add Account'}
+              {loading ? (isEditing ? 'Saving...' : 'Adding...') : (isEditing ? 'Save Changes' : 'Add Account')}
             </button>
           </div>
         </form>
