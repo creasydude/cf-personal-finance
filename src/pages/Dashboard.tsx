@@ -35,7 +35,7 @@ type Tab = 'all' | 'assets' | 'debts'
 
 export function Dashboard({ userCode, settings }: { userCode: string | null; settings: Record<string, any> }) {
   const { accounts, assetsTotal, liabilitiesTotal, loading: accountsLoading, createAccount, updateAccount, deleteAccount } = useAccounts()
-  const { data: netWorth, range, setRange, loading: nwLoading } = useNetWorth()
+  const { data: netWorth, range, setRange, loading: nwLoading, refetch: refetchNetWorth } = useNetWorth()
   const [activeTab, setActiveTab] = useState<Tab>('all')
   const [typeModalOpen, setTypeModalOpen] = useState(false)
   const [accountFormType, setAccountFormType] = useState<AccountType | null>(null)
@@ -79,6 +79,7 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
     } else {
       await createAccount(data)
     }
+    refetchNetWorth()
     setEditingAccount(null)
     setAccountFormType(null)
   }
