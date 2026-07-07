@@ -1,19 +1,11 @@
 name = "personal-finance"
 compatibility_date = "2024-08-01"
 
-[vars]
-SESSION_SIGNING_KEY = "" # Set via: wrangler secret put SESSION_SIGNING_KEY
-
 [[d1_databases]]
 binding = "DB"
 database_name = "personal-finance-db"
-database_id = "" # Set after: wrangler d1 create personal-finance-db
+database_id = "YOUR_D1_DATABASE_ID" # Replace after: wrangler d1 create personal-finance-db
 
 [[kv_namespaces]]
 binding = "RATE_CACHE"
-id = "" # Set after: wrangler kv:namespace create RATE_CACHE
-
-# Pages Functions specific config
-[pages]
-build_command = "npm run build"
-build_output_dir = "dist"
+id = "YOUR_KV_NAMESPACE_ID" # Replace after: wrangler kv:namespace create RATE_CACHE

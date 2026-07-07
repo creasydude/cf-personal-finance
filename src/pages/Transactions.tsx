@@ -277,18 +277,39 @@ function AddTransactionModal({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Type tabs */}
-          <div className="flex gap-1 rounded-xl bg-gray-100 p-1">
-            {(['expense', 'income', 'transfer'] as const).map(t => (
+          {/* Type tabs — dark pill style */}
+          <div className="flex gap-2 rounded-2xl bg-[#1a1a1a] p-1.5">
+            {([
+              { key: 'expense' as const, label: 'Expense', icon: (
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <circle cx="12" cy="12" r="10" />
+                  <path strokeLinecap="round" d="M8 12h8" />
+                </svg>
+              )},
+              { key: 'income' as const, label: 'Income', icon: (
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <circle cx="12" cy="12" r="10" />
+                  <path strokeLinecap="round" d="M12 8v8m-4-4h8" />
+                </svg>
+              )},
+              { key: 'transfer' as const, label: 'Transfer', icon: (
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                </svg>
+              )},
+            ]).map(t => (
               <button
-                key={t}
+                key={t.key}
                 type="button"
-                onClick={() => { setType(t); setCategory('') }}
-                className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
-                  type === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                onClick={() => { setType(t.key); setCategory('') }}
+                className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all ${
+                  type === t.key
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-400 hover:text-gray-200'
                 }`}
               >
-                {t.charAt(0).toUpperCase() + t.slice(1)}
+                {t.icon}
+                {t.label}
               </button>
             ))}
           </div>

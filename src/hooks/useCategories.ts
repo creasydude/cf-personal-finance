@@ -22,5 +22,10 @@ export function useCategories() {
     return cat
   }
 
-  return { categories, loading, createCategory, refetch: fetch }
+  const deleteCategory = async (id: string) => {
+    await api.categories.delete(id)
+    await fetch()
+  }
+
+  return { categories, loading, createCategory, deleteCategory, refetch: fetch }
 }

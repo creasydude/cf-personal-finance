@@ -15,18 +15,18 @@ INSERT INTO accounts (id, user_id, name, type, subtype, currency, balance, detai
   ('acc_006', 'u_demo2024', 'Chase Sapphire', 'credit_card', null, 'USD', -2340.75, '{"credit_limit":15000}'),
   ('acc_007', 'u_demo2024', 'Student Loan', 'loan', null, 'USD', -18500.00, '{"interest_rate":4.5,"term":120}');
 
--- Demo categories (already seeded by registration, but adding some extras)
+-- Demo categories (user-created for demo account)
 INSERT OR IGNORE INTO categories (id, user_id, name, type, icon, is_default) VALUES
-  ('cat_demo_001', 'u_demo2024', 'Salary', 'income', '💼', 1),
-  ('cat_demo_002', 'u_demo2024', 'Freelance', 'income', '💻', 1),
-  ('cat_demo_003', 'u_demo2024', 'Rent', 'expense', '🏠', 1),
-  ('cat_demo_004', 'u_demo2024', 'Groceries', 'expense', '🛒', 1),
-  ('cat_demo_005', 'u_demo2024', 'Dining Out', 'expense', '🍽️', 1),
-  ('cat_demo_006', 'u_demo2024', 'Utilities', 'expense', '💡', 1),
-  ('cat_demo_007', 'u_demo2024', 'Subscriptions', 'expense', '📱', 1),
-  ('cat_demo_008', 'u_demo2024', 'Gas', 'expense', '⛽', 1),
-  ('cat_demo_009', 'u_demo2024', 'Entertainment', 'expense', '🎬', 1),
-  ('cat_demo_010', 'u_demo2024', 'Gym', 'expense', '🏋️', 1);
+  ('cat_demo_001', 'u_demo2024', 'Salary', 'income', '💼', 0),
+  ('cat_demo_002', 'u_demo2024', 'Freelance', 'income', '💻', 0),
+  ('cat_demo_003', 'u_demo2024', 'Rent', 'expense', '🏠', 0),
+  ('cat_demo_004', 'u_demo2024', 'Groceries', 'expense', '🛒', 0),
+  ('cat_demo_005', 'u_demo2024', 'Dining Out', 'expense', '🍽️', 0),
+  ('cat_demo_006', 'u_demo2024', 'Utilities', 'expense', '💡', 0),
+  ('cat_demo_007', 'u_demo2024', 'Subscriptions', 'expense', '📱', 0),
+  ('cat_demo_008', 'u_demo2024', 'Gas', 'expense', '⛽', 0),
+  ('cat_demo_009', 'u_demo2024', 'Entertainment', 'expense', '🎬', 0),
+  ('cat_demo_010', 'u_demo2024', 'Gym', 'expense', '🏋️', 0);
 
 -- Demo transactions
 INSERT INTO transactions (id, user_id, account_id, type, description, amount, currency, category, date, tags, notes) VALUES

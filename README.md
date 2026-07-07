@@ -11,83 +11,88 @@ A premium personal finance dashboard built with React, TypeScript, Tailwind CSS,
 - **Net Worth Dashboard** — Area chart with date range filters (30D/90D/1Y/ALL)
 - **Multi-Currency** — Support for 50+ fiat currencies and 15+ cryptocurrencies
 - **Responsive Design** — Works on desktop, tablet, and mobile
-- **Dark Account Type Picker** — Keyboard-navigable modal for adding accounts
 
 ## Tech Stack
 
 - **Frontend:** React 18, Vite 5, TypeScript, Tailwind CSS 3, Recharts
 - **Backend:** Cloudflare Pages Functions (Workers)
 - **Database:** Cloudflare D1 (SQLite)
-- **Cache:** Cloudflare KV (sessions, FX rates)
+- **Cache:** Cloudflare KV (rate limiting)
 
-## Setup
+---
 
-### Prerequisites
+## Local Development (Temporary Database)
 
-- Node.js 18+
-- A Cloudflare account
-- Wrangler CLI (`npm install -g wrangler`)
+This uses **Miniflare** under the hood — it creates a **temporary local D1 database** in `.wrangler/` that lives for the duration of the dev server. Every time you restart, you start fresh (unless you seed data).
 
-### 1. Install Dependencies
+### Steps
 
 ```bash
+# 1. Install dependencies
 npm install
+
+# 2. Initialize the local database (creates tables)
+npm run db:init
+
+# 3. (Optional) Seed demo data — creates a demo account with code DEMO-2024
+npm run db:seed
+
+# 4. Start the dev server
+npm run dev
 ```
 
-### 2. Create Cloudflare Resources
+This builds the frontend, then starts `wrangler pages dev` on **http://localhost:8789** with:
+- D1 database (simulated locally)
+- KV namespace (simulated locally)
+- Session signing key from `.dev.vars`
+
+The server serves both the React frontend AND the API — no CORS issues, no separate ports.
+
+### Useful commands while running
+
+```bash
+# Reset the local DB (delete .wrangler/ directory)
+rm -rf .wrangler
+
+# Re-init after reset
+npm run db:init && npm run db:seed
+```
+
+---
+
+## Production Deployment (Cloudflare)
+
+### 1. Create Cloudflare Resources
 
 ```bash
 # Create D1 database
 wrangler d1 create personal-finance-db
-# Copy the database_id into wrangler.toml
+# → Copy the database_id into wrangler.toml (replace YOUR_D1_DATABASE_ID)
 
-# Create KV namespace for rate limiting and FX cache
+# Create KV namespace
 wrangler kv:namespace create RATE_CACHE
-# Copy the id into wrangler.toml
+# → Copy the id into wrangler.toml (replace YOUR_KV_NAMESPACE_ID)
 
 # Set session signing secret
 wrangler secret put SESSION_SIGNING_KEY
-# Enter a long random string when prompted
+# → Enter a long random string (e.g. openssl rand -hex 32)
 ```
 
-### 3. Initialize Database
+### 2. Initialize Remote Database
 
 ```bash
-# Local development
-npm run db:init
-
-# Remote (production)
 npm run db:init:remote
+npm run db:seed:remote   # optional demo data
 ```
 
-### 4. Seed Demo Data (Optional)
+### 3. Deploy
 
 ```bash
-npm run seed
-```
-
-This creates a demo account with code `DEMO-2024` containing sample accounts, transactions, and budgets.
-
-### 5. Local Development
-
-```bash
-# Frontend only (API proxy to localhost:8788)
-npm run dev
-
-# Full stack (Vite + Wrangler)
-npm run dev:full
-```
-
-### 6. Deploy
-
-```bash
-# Build frontend
-npm run build
-
-# Deploy to Cloudflare Pages
 npm run deploy
-# Or: wrangler pages deploy dist
+# → Builds frontend and deploys to Cloudflare Pages
 ```
+
+---
 
 ## Project Structure
 
@@ -96,7 +101,7 @@ cf-personal-finance/
 ├── functions/              # Cloudflare Pages Functions (API)
 │   ├── api/
 │   │   ├── _lib/           # Shared auth, defaults
-│   │   ├── auth/           # Login, register, logout, me
+│   │   ├── auth/           # Register, login, logout, me
 │   │   ├── accounts/       # Account CRUD
 │   │   ├── transactions/   # Transaction CRUD
 │   │   ├── budgets/        # Budget CRUD
@@ -105,27 +110,30 @@ cf-personal-finance/
 │   │   ├── currencies.ts   # Currency list
 │   │   └── settings.ts     # User settings
 ├── migrations/             # D1 SQL migrations
+│   ├── 0001_init.sql       # Schema
+│   └── 0002_seed.sql       # Demo data
 ├── src/
 │   ├── components/         # React components
-│   │   ├── ui/             # Reusable UI primitives
+│   │   ├── ui/             # Reusable UI (Modal, Badge, Dropdown, AnimatedNumber)
 │   │   ├── AuthModal.tsx   # Login/register modal
-│   │   ├── Layout.tsx      # App layout with sidebar
-│   │   ├── Sidebar.tsx     # Navigation sidebar
+│   │   ├── Layout.tsx      # App shell with sidebar
+│   │   ├── Sidebar.tsx     # Navigation
 │   │   ├── NetWorthChart.tsx
 │   │   ├── SegmentedBar.tsx
 │   │   ├── AccountTypeModal.tsx
 │   │   └── AccountForm.tsx
-│   ├── pages/              # Page components
+│   ├── pages/
 │   │   ├── Dashboard.tsx
 │   │   ├── Transactions.tsx
 │   │   └── Budgets.tsx
-│   ├── hooks/              # React hooks
-│   ├── lib/                # Utilities, currencies, categories
+│   ├── hooks/              # useAuth, useAccounts, useTransactions, useBudgets, useNetWorth
+│   ├── lib/                # currencies, categories, utils
 │   ├── types/              # TypeScript types
-│   └── api/                # API client
+│   └── api/client.ts       # API client
+├── .dev.vars               # Local dev secrets (session key)
 ├── wrangler.toml           # Cloudflare config
-├── tailwind.config.ts
-└── vite.config.ts
+├── vite.config.ts
+└── tailwind.config.ts
 ```
 
 ## API Routes
@@ -140,7 +148,7 @@ cf-personal-finance/
 | POST | `/api/accounts` | Create account |
 | PUT | `/api/accounts/:id` | Update account |
 | DELETE | `/api/accounts/:id` | Delete account |
-| GET | `/api/transactions` | List transactions (filterable) |
+| GET | `/api/transactions` | List transactions (filterable, sortable, paginated) |
 | POST | `/api/transactions` | Create transaction |
 | PUT | `/api/transactions/:id` | Update transaction |
 | DELETE | `/api/transactions/:id` | Delete transaction |
@@ -148,7 +156,7 @@ cf-personal-finance/
 | POST | `/api/budgets` | Create budget |
 | PUT | `/api/budgets/:id` | Update budget |
 | DELETE | `/api/budgets/:id` | Delete budget |
-| GET | `/api/net-worth` | Net worth data (range filter) |
+| GET | `/api/net-worth` | Net worth with history (`?range=30d\|90d\|1y\|all`) |
 | GET | `/api/categories` | List categories |
 | POST | `/api/categories` | Create category |
 | GET | `/api/currencies` | Supported currencies |

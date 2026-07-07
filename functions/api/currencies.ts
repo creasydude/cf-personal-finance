@@ -43,6 +43,7 @@ export const onRequestGet: PagesFunction = async () => {
     { code: 'CLP', name: 'Chilean Peso', symbol: 'CL$', type: 'fiat' },
     { code: 'COP', name: 'Colombian Peso', symbol: 'CO$', type: 'fiat' },
     { code: 'PEN', name: 'Peruvian Sol', symbol: 'S/', type: 'fiat' },
+    { code: 'IRR', name: 'Iranian Rial', symbol: '﷼', type: 'fiat' },
     // Cryptocurrencies
     { code: 'BTC', name: 'Bitcoin', symbol: '₿', type: 'crypto' },
     { code: 'ETH', name: 'Ethereum', symbol: 'Ξ', type: 'crypto' },
@@ -50,6 +51,7 @@ export const onRequestGet: PagesFunction = async () => {
     { code: 'USDC', name: 'USD Coin', symbol: '$', type: 'crypto' },
     { code: 'SOL', name: 'Solana', symbol: 'SOL', type: 'crypto' },
     { code: 'BNB', name: 'Binance Coin', symbol: 'BNB', type: 'crypto' },
+    { code: 'DAI', name: 'Dai', symbol: 'DAI', type: 'crypto' },
     { code: 'XRP', name: 'XRP', symbol: 'XRP', type: 'crypto' },
     { code: 'ADA', name: 'Cardano', symbol: 'ADA', type: 'crypto' },
     { code: 'DOGE', name: 'Dogecoin', symbol: 'Ð', type: 'crypto' },

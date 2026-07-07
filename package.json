@@ -4,14 +4,14 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "dev:full": "wrangler pages dev --kv=RATE_CACHE",
+    "dev": "npm run build && wrangler pages dev dist --kv=RATE_CACHE",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "deploy": "wrangler pages deploy dist",
+    "deploy": "npm run build && wrangler pages deploy dist",
     "db:init": "wrangler d1 execute personal-finance-db --local --file=migrations/0001_init.sql",
+    "db:seed": "wrangler d1 execute personal-finance-db --local --file=migrations/0002_seed.sql",
     "db:init:remote": "wrangler d1 execute personal-finance-db --remote --file=migrations/0001_init.sql",
-    "seed": "wrangler d1 execute personal-finance-db --local --file=migrations/0002_seed.sql"
+    "db:seed:remote": "wrangler d1 execute personal-finance-db --remote --file=migrations/0002_seed.sql"
   },
   "dependencies": {
     "@tanstack/react-table": "^8.20.0",

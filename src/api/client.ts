@@ -67,6 +67,7 @@ export const api = {
   categories: {
     list: () => request<{ categories: any[] }>('/categories'),
     create: (data: any) => request<any>('/categories', { method: 'POST', body: JSON.stringify(data) }),
+    delete: (id: string) => request<{ ok: boolean }>(`/categories?id=${id}`, { method: 'DELETE' }),
   },
 
   // Currencies

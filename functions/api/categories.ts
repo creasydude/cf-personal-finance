@@ -37,3 +37,26 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   return Response.json(category, { status: 201 })
 }
+
+// DELETE /api/categories?id=xxx
+export const onRequestDelete: PagesFunction<Env> = async (context) => {
+  const user = await getAuthenticatedUser(context.env.DB, context.request)
+  if (!user) return jsonError('Unauthorized', 401)
+
+  const url = new URL(context.request.url)
+  const id = url.searchParams.get('id')
+  if (!id) return jsonError('Category id is required', 400)
+
+  const existing = await context.env.DB
+    .prepare('SELECT id FROM categories WHERE id = ? AND user_id = ?')
+    .bind(id, user.user_id)
+    .first()
+  if (!existing) return jsonError('Category not found', 404)
+
+  await context.env.DB
+    .prepare('DELETE FROM categories WHERE id = ? AND user_id = ?')
+    .bind(id, user.user_id)
+    .run()
+
+  return Response.json({ ok: true })
+}

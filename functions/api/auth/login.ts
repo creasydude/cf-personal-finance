@@ -1,63 +1,35 @@
-import { generateCode, hashToken, createSession, setSessionCookie, jsonError, checkRateLimit } from '../_lib/auth'
-import { DEFAULT_CATEGORIES } from '../_lib/defaults'
-
-// Generate a unique access code (XXXX-XXXX format)
-function generateAccessCode(): string {
-  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789' // no 0/O, 1/I/L
-  const getRandomChar = () => {
-    const arr = new Uint8Array(1)
-    crypto.getRandomValues(arr)
-    return chars[arr[0] % chars.length]
-  }
-
-  let code: string
-  do {
-    const a = Array.from({ length: 4 }, getRandomChar).join('')
-    const b = Array.from({ length: 4 }, getRandomChar).join('')
-    code = `${a}-${b}`
-  } while (false) // collision check not needed for first generation
-
-  return code
-}
-
-// Generate a stable user ID from code
-function userIdFromCode(code: string): string {
-  // Simple deterministic ID based on the code
-  return `u_${code.replace('-', '').toLowerCase()}`
-}
+import { createSession, setSessionCookie, jsonError, checkRateLimit } from '../_lib/auth'
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
-  // Rate limit: 10 requests per minute per IP
+  // Rate limit: 20 requests per minute per IP
   const ip = context.request.headers.get('CF-Connecting-IP') || 'unknown'
-  const allowed = await checkRateLimit(context.env.RATE_CACHE, `register:${ip}`, 10, 60)
+  const allowed = await checkRateLimit(context.env.RATE_CACHE, `login:${ip}`, 20, 60)
   if (!allowed) return jsonError('Too many requests. Please try again later.', 429)
 
-  const db = context.env.DB
-  const code = generateAccessCode()
-  const userId = userIdFromCode(code)
+  const body = await context.request.json() as { code?: string }
+  const code = body?.code
 
-  // Check for collision (extremely unlikely but safe)
-  const existing = await db.prepare('SELECT user_id FROM users WHERE user_id = ?').bind(userId).first()
-  if (existing) {
-    return jsonError('Code collision, please try again', 500)
+  if (!code || typeof code !== 'string') {
+    return jsonError('Access code is required', 400)
   }
 
-  // Create user
-  await db.prepare('INSERT INTO users (code, user_id, settings) VALUES (?, ?, ?)').bind(
-    code,
-    userId,
-    JSON.stringify({ baseCurrency: 'USD' })
-  ).run()
+  // Normalize the code
+  const normalizedCode = code.toUpperCase().trim()
 
-  // Seed default categories
-  const stmt = db.prepare('INSERT INTO categories (id, user_id, name, type, icon, is_default) VALUES (?, ?, ?, ?, ?, 1)')
-  const batch = DEFAULT_CATEGORIES.map((cat, i) =>
-    stmt.bind(`cat_${userId}_${i}`, userId, cat.name, cat.type, cat.icon)
-  )
-  await db.batch(batch)
+  const db = context.env.DB
+
+  // Look up user by code
+  const user = await db
+    .prepare('SELECT user_id FROM users WHERE code = ?')
+    .bind(normalizedCode)
+    .first<{ user_id: string }>()
+
+  if (!user) {
+    return jsonError('Invalid access code', 401)
+  }
 
   // Create session and set cookie
-  const sessionToken = await createSession(db, userId)
-  const response = Response.json({ code, userId })
+  const sessionToken = await createSession(db, user.user_id)
+  const response = Response.json({ userId: user.user_id })
   return setSessionCookie(response, sessionToken)
 }
