@@ -2,11 +2,13 @@ import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 import { AuthModal } from './components/AuthModal'
+import { RegisterSuccessModal } from './components/RegisterSuccessModal'
 import { Layout } from './components/Layout'
 import { Dashboard } from './pages/Dashboard'
 import { Transactions } from './pages/Transactions'
 import { Budgets } from './pages/Budgets'
 import { Categories } from './pages/Categories'
+import { Settings } from './pages/Settings'
 
 export default function App() {
   const auth = useAuth()
@@ -33,13 +35,20 @@ export default function App() {
   }
 
   return (
-    <Layout userCode={auth.code} onLogout={auth.logout}>
+    <Layout userCode={auth.code} settings={auth.settings} onLogout={auth.logout}>
       <Routes>
-        <Route path="/" element={<Dashboard userCode={auth.code} />} />
+        <Route path="/" element={<Dashboard userCode={auth.code} settings={auth.settings} />} />
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/budgets" element={<Budgets />} />
         <Route path="/categories" element={<Categories />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
+
+      <RegisterSuccessModal
+        open={auth.justRegistered}
+        code={auth.code}
+        onClose={auth.dismissRegisterModal}
+      />
     </Layout>
   )
 }

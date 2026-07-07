@@ -78,4 +78,14 @@ export const api = {
     get: () => request<{ settings: any }>('/settings'),
     update: (data: any) => request<any>('/settings', { method: 'PUT', body: JSON.stringify(data) }),
   },
+
+  // Export / Import / Account management
+  exportData: () => request<any>('/export'),
+  importData: (data: any) => request<any>('/import', { method: 'POST', body: JSON.stringify(data) }),
+  deleteAccount: () => request<{ ok: boolean }>('/account', { method: 'DELETE' }),
+  resetAccount: () => request<{ ok: boolean }>('/account/reset', { method: 'POST' }),
+
+  // Currency conversion
+  convertCurrency: (from: string, to: string, amount: number) =>
+    request<any>(`/convert?from=${from}&to=${to}&amount=${amount}`),
 }

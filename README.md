@@ -106,9 +106,14 @@ cf-personal-finance/
 │   │   ├── transactions/   # Transaction CRUD
 │   │   ├── budgets/        # Budget CRUD
 │   │   ├── net-worth.ts    # Net worth aggregation
-│   │   ├── categories.ts   # Category management
+│   │   ├── categories.ts   # Category CRUD
 │   │   ├── currencies.ts   # Currency list
-│   │   └── settings.ts     # User settings
+│   │   ├── settings.ts     # User settings
+│   │   ├── export.ts       # Data export
+│   │   ├── import.ts       # Data import
+│   │   ├── account.ts      # Delete account
+│   │   ├── convert.ts      # Currency conversion (IRR API)
+│   │   └── account/reset.ts # Reset account data
 ├── migrations/             # D1 SQL migrations
 │   ├── 0001_init.sql       # Schema
 │   └── 0002_seed.sql       # Demo data
@@ -116,7 +121,7 @@ cf-personal-finance/
 │   ├── components/         # React components
 │   │   ├── ui/             # Reusable UI (Modal, Badge, Dropdown, AnimatedNumber)
 │   │   ├── AuthModal.tsx   # Login/register modal
-│   │   ├── Layout.tsx      # App shell with sidebar
+│   │   ├── Layout.tsx      # App shell with sidebar + avatar dropdown
 │   │   ├── Sidebar.tsx     # Navigation
 │   │   ├── NetWorthChart.tsx
 │   │   ├── SegmentedBar.tsx
@@ -125,7 +130,9 @@ cf-personal-finance/
 │   ├── pages/
 │   │   ├── Dashboard.tsx
 │   │   ├── Transactions.tsx
-│   │   └── Budgets.tsx
+│   │   ├── Budgets.tsx
+│   │   ├── Categories.tsx  # Category management
+│   │   └── Settings.tsx    # Full settings page
 │   ├── hooks/              # useAuth, useAccounts, useTransactions, useBudgets, useNetWorth
 │   ├── lib/                # currencies, categories, utils
 │   ├── types/              # TypeScript types
@@ -159,9 +166,15 @@ cf-personal-finance/
 | GET | `/api/net-worth` | Net worth with history (`?range=30d\|90d\|1y\|all`) |
 | GET | `/api/categories` | List categories |
 | POST | `/api/categories` | Create category |
+| DELETE | `/api/categories?id=xxx` | Delete category |
 | GET | `/api/currencies` | Supported currencies |
 | GET | `/api/settings` | Get user settings |
 | PUT | `/api/settings` | Update settings |
+| GET | `/api/export` | Export all user data as JSON |
+| POST | `/api/import` | Import data from exported JSON |
+| DELETE | `/api/account` | Delete entire account and all data |
+| POST | `/api/account/reset` | Reset account (keep categories + settings) |
+| GET | `/api/convert?from=USD&to=IRR&amount=100` | Currency conversion via live API |
 
 ## License
 

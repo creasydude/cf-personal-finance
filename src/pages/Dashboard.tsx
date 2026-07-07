@@ -32,7 +32,7 @@ const TYPE_COLORS: Record<string, string> = {
 
 type Tab = 'all' | 'assets' | 'debts'
 
-export function Dashboard({ userCode }: { userCode: string | null }) {
+export function Dashboard({ userCode, settings }: { userCode: string | null; settings: Record<string, any> }) {
   const { accounts, assetsTotal, liabilitiesTotal, loading: accountsLoading, createAccount, deleteAccount } = useAccounts()
   const { data: netWorth, range, setRange, loading: nwLoading } = useNetWorth()
   const [activeTab, setActiveTab] = useState<Tab>('all')
@@ -78,7 +78,7 @@ export function Dashboard({ userCode }: { userCode: string | null }) {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            Welcome back{userCode ? `, ${userCode}` : ''}
+            Welcome back{settings?.nickname ? `, ${settings.nickname}` : userCode ? `, ${userCode}` : ''}
           </h1>
           <p className="text-sm text-gray-500 mt-0.5">Here's your financial overview</p>
         </div>
