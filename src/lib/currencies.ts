@@ -156,6 +156,11 @@ export const CURRENCIES: Currency[] = [
   { code: 'LTC', name: 'Litecoin', symbol: 'Ł', type: 'crypto' },
   { code: 'BCH', name: 'Bitcoin Cash', symbol: 'BCH', type: 'crypto' },
   { code: 'XLM', name: 'Stellar', symbol: 'XLM', type: 'crypto' },
+  // Gold
+  { code: 'XAU', name: 'Gold (per oz)', symbol: 'Au', type: 'gold' },
+  { code: 'GOLD_GRAM24', name: 'Gold 24K (per gram)', symbol: 'Au24', type: 'gold' },
+  { code: 'GOLD_GRAM18', name: 'Gold 18K (per gram)', symbol: 'Au18', type: 'gold' },
+  { code: 'GOLD_GRAM22', name: 'Gold 22K (per gram)', symbol: 'Au22', type: 'gold' },
 ]
 
 export function searchCurrencies(query: string): Currency[] {

@@ -6,12 +6,34 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatCurrency(amount: number, currency: string = 'USD'): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(amount)
+  // Custom display for non-standard currencies
+  const customCurrencies: Record<string, string> = {
+    IRR: 'IRR',
+    GOLD_GRAM24: 'g Au24',
+    GOLD_GRAM18: 'g Au18',
+    GOLD_GRAM22: 'g Au22',
+    XAU: 'oz Au',
+  }
+
+  if (customCurrencies[currency]) {
+    const formatted = new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(amount)
+    return `${formatted} ${customCurrencies[currency]}`
+  }
+
+  try {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(amount)
+  } catch {
+    // Fallback for unknown currency codes
+    return `${amount.toLocaleString()} ${currency}`
+  }
 }
 
 export function formatNumber(n: number): string {

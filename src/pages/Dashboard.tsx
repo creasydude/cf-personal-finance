@@ -22,6 +22,7 @@ const TYPE_COLORS: Record<string, string> = {
   cash: 'bg-emerald-500',
   investment: 'bg-blue-500',
   crypto: 'bg-amber-500',
+  gold: 'bg-yellow-500',
   property: 'bg-teal-500',
   vehicle: 'bg-gray-400',
   other_asset: 'bg-indigo-400',
@@ -39,12 +40,13 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
   const [typeModalOpen, setTypeModalOpen] = useState(false)
   const [accountFormType, setAccountFormType] = useState<AccountType | null>(null)
 
-  const netWorthValue = assetsTotal - liabilitiesTotal
+  const baseCurrency = netWorth?.base_currency || settings?.baseCurrency || 'IRR'
+  const netWorthValue = netWorth?.current ?? (assetsTotal - liabilitiesTotal)
   const changePct = netWorth?.change_pct || 0
   const changeValue = netWorth?.change || 0
 
   const displayAccounts = useMemo(() => {
-    const assetTypes = ['cash', 'investment', 'crypto', 'property', 'vehicle', 'other_asset']
+    const assetTypes = ['cash', 'investment', 'crypto', 'gold', 'property', 'vehicle', 'other_asset']
     const liabilityTypes = ['credit_card', 'loan', 'other_liability']
     if (activeTab === 'assets') return accounts.filter(a => assetTypes.includes(a.type))
     if (activeTab === 'debts') return accounts.filter(a => liabilityTypes.includes(a.type))
@@ -146,7 +148,7 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
                 <div className="mt-1 flex items-baseline gap-3">
                   <AnimatedNumber
                     value={netWorthValue}
-                    format={(v) => formatCurrency(v)}
+                    format={(v) => formatCurrency(v, baseCurrency)}
                     className="stat-value"
                   />
                   <Badge variant={changePct >= 0 ? 'success' : 'danger'}>
@@ -174,14 +176,14 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
               </Dropdown>
             </div>
 
-            <NetWorthChart data={netWorth?.history || []} />
+            <NetWorthChart data={netWorth?.history || []} baseCurrency={baseCurrency} />
           </div>
 
           {/* Assets Breakdown */}
           {segments.length > 0 && (
             <div className="card p-6">
               <h3 className="text-sm font-semibold text-gray-900 mb-4">Assets Breakdown</h3>
-              <SegmentedBar segments={segments} total={assetsTotal || 1} />
+              <SegmentedBar segments={segments} total={segments.reduce((s: number, seg: any) => s + seg.value, 0) || 1} />
 
               {/* Data table */}
               <div className="mt-6">
@@ -216,7 +218,7 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
                             </div>
                           </td>
                           <td className="py-3 text-right">
-                            <span className="text-sm font-semibold text-gray-900">{formatCurrency(Math.abs(t.value))}</span>
+                            <span className="text-sm font-semibold text-gray-900">{formatCurrency(Math.abs(t.value), baseCurrency)}</span>
                           </td>
                         </tr>
                       )

@@ -45,7 +45,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (!user) return jsonError('Unauthorized', 401)
 
   const body = await context.request.json() as any
-  const { name, type, subtype, currency, balance, details } = body
+  const { name, type, subtype, currency, details } = body
+  let balance = body.balance || 0
 
   if (!name || !type) return jsonError('Name and type are required', 400)
 
@@ -66,6 +67,16 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       JSON.stringify(details || {})
     )
     .run()
+
+  // For gold accounts: store balance in GRAMS (converter handles price multiplication)
+  if (type === 'gold' && details?.grams) {
+    const grams = parseFloat(details.grams) || 0
+    balance = grams
+    await context.env.DB
+      .prepare('UPDATE accounts SET balance = ? WHERE id = ? AND user_id = ?')
+      .bind(grams, id, user.user_id)
+      .run()
+  }
 
   const account = await context.env.DB
     .prepare('SELECT * FROM accounts WHERE id = ?')

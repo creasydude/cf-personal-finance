@@ -3,6 +3,7 @@ export type AccountType =
   | 'cash'
   | 'investment'
   | 'crypto'
+  | 'gold'
   | 'property'
   | 'vehicle'
   | 'credit_card'
@@ -87,7 +88,7 @@ export interface Currency {
   code: string
   name: string
   symbol: string
-  type: 'fiat' | 'crypto'
+  type: 'fiat' | 'crypto' | 'gold'
 }
 
 // ─── Net Worth ───────────────────────────────────────────────
@@ -123,4 +124,6 @@ export interface Env {
   DB: D1Database
   RATE_CACHE: KVNamespace
   SESSION_SIGNING_KEY: string
+  CURRENCY_API_BASE: string
+  CURRENCY_API_KEY: string
 }

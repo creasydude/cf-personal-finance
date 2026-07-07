@@ -88,4 +88,7 @@ export const api = {
   // Currency conversion
   convertCurrency: (from: string, to: string, amount: number) =>
     request<any>(`/convert?from=${from}&to=${to}&amount=${amount}`),
+
+  // Exchange rates (cached, auto-refreshes)
+  rates: () => request<any>('/rates'),
 }

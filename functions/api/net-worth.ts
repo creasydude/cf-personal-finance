@@ -1,5 +1,66 @@
 import { getAuthenticatedUser, jsonError } from './_lib/auth'
 
+// Symbol mapping: currency code → API symbol for fiat
+const FIAT_SYMBOL_MAP: Record<string, string> = {
+  USD: 'price_dollar_rl', EUR: 'price_eur', GBP: 'price_gbp',
+  AED: 'price_dirham', AUD: 'price_aud', CAD: 'price_cad',
+  CHF: 'price_chf', CNY: 'price_cny', HKD: 'price_hkd',
+  INR: 'price_inr', JPY: 'price_jpy', KRW: 'price_krw',
+  KWD: 'price_kwd', OMR: 'price_omr', SAR: 'price_sar',
+  SGD: 'price_sgd', TRY: 'price_try',
+}
+
+
+
+// Map our gold currency codes to API gold symbols
+const GOLD_SYMBOL_MAP: Record<string, string> = {
+  GOLD_GRAM24: 'geram24',
+  GOLD_GRAM22: 'geram22',
+  GOLD_GRAM18: 'geram18',
+  GOLD_GRAM10: 'geram10',
+  XAU: 'geram24', // approximate: 1 oz ≈ 31.1g of 24K
+}
+
+function convertToBase(
+  amount: number,
+  fromCurrency: string,
+  baseCurrency: string,
+  fiatRates: Record<string, number>,
+  cryptoRates: Record<string, { usd: number; irr: number }>,
+  goldRates?: Record<string, number>
+): number {
+  if (fromCurrency === baseCurrency) return amount
+
+  // Get IRR value of `from` currency
+  let fromIrr = 0
+  if (fromCurrency === 'IRR') {
+    fromIrr = 1
+  } else {
+    const sym = FIAT_SYMBOL_MAP[fromCurrency]
+    if (sym && fiatRates[sym]) fromIrr = fiatRates[sym]
+    else if (cryptoRates[fromCurrency]) fromIrr = cryptoRates[fromCurrency].irr
+    else if (goldRates && GOLD_SYMBOL_MAP[fromCurrency] && goldRates[GOLD_SYMBOL_MAP[fromCurrency]]) {
+      fromIrr = goldRates[GOLD_SYMBOL_MAP[fromCurrency]]
+    }
+  }
+
+  // Get IRR value of `base` currency
+  let baseIrr = 0
+  if (baseCurrency === 'IRR') {
+    baseIrr = 1
+  } else {
+    const sym = FIAT_SYMBOL_MAP[baseCurrency]
+    if (sym && fiatRates[sym]) baseIrr = fiatRates[sym]
+    else if (cryptoRates[baseCurrency]) baseIrr = cryptoRates[baseCurrency].irr
+    else if (goldRates && GOLD_SYMBOL_MAP[baseCurrency] && goldRates[GOLD_SYMBOL_MAP[baseCurrency]]) {
+      baseIrr = goldRates[GOLD_SYMBOL_MAP[baseCurrency]]
+    }
+  }
+
+  if (!fromIrr || !baseIrr) return amount // Can't convert — return raw
+  return (amount * fromIrr) / baseIrr
+}
+
 // GET /api/net-worth?range=30d|90d|1y|all
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const user = await getAuthenticatedUser(context.env.DB, context.request)
@@ -7,6 +68,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   const url = new URL(context.request.url)
   const range = url.searchParams.get('range') || '1y'
+  const settings = JSON.parse(user.settings || '{}')
+  const baseCurrency = settings.baseCurrency || 'IRR'
 
   // Calculate date cutoff
   const now = new Date()
@@ -18,83 +81,77 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     default: cutoff = '2000-01-01'
   }
 
-  // Get all accounts grouped by type
-  const { results: accounts } = await context.env.DB
-    .prepare('SELECT type, SUM(balance) as total FROM accounts WHERE user_id = ? GROUP BY type')
-    .bind(user.user_id)
-    .all<{ type: string; total: number }>()
+  // Fetch cached rates from KV (auto-fetch if empty)
+  const kv = context.env.RATE_CACHE
+  const apiBase = context.env.CURRENCY_API_BASE || 'https://currencies.plusking.ir'
+  const apiKey = context.env.CURRENCY_API_KEY
+  let cached = await kv.get('exchange_rates', 'json') as any
+  // Re-fetch if cache is empty OR gold rates are missing
+  if ((!cached || !cached.gold || Object.keys(cached.gold).length === 0) && apiKey) {
+    // Auto-fetch from external API
+    try {
+      const [currRes, cryptoRes, goldRes] = await Promise.all([
+        fetch(`${apiBase}/currency`, { headers: { 'X-API-Key': apiKey } }),
+        fetch(`${apiBase}/crypto`, { headers: { 'X-API-Key': apiKey } }),
+        fetch(`${apiBase}/gold`, { headers: { 'X-API-Key': apiKey } }),
+      ])
+      if (currRes.ok && cryptoRes.ok) {
+        const currData = await currRes.json() as any
+        const cryptoData = await cryptoRes.json() as any
+        const goldData = goldRes.ok ? await goldRes.json() as any : { items: [] }
+        const fiat: Record<string, number> = {}
+        for (const item of currData.items || []) {
+          if (item.price_num > 0) fiat[item.symbol] = item.price_num
+        }
+        const crypto: Record<string, { usd: number; irr: number }> = {}
+        for (const item of cryptoData.items || []) {
+          if (item.ticker && item.price_num > 0) {
+            crypto[item.ticker] = { usd: item.price_num, irr: parseFloat((item.price_irr || '0').replace(/,/g, '')) || 0 }
+          }
+        }
+        const gold: Record<string, number> = {}
+        for (const item of goldData.items || []) {
+          if (item.symbol && item.price_num > 0) gold[item.symbol] = item.price_num
+        }
+        cached = { fetchedAt: new Date().toISOString(), fiat, crypto, gold }
+        await kv.put('exchange_rates', JSON.stringify(cached), { expirationTtl: 7200 })
+      }
+    } catch (e) { /* ignore — use empty rates */ }
+  }
+  const fiatRates = cached?.fiat || {}
+  const cryptoRates = cached?.crypto || {}
+  const goldRates = cached?.gold || {}
 
-  const assetTypes = ['cash', 'investment', 'crypto', 'property', 'vehicle', 'other_asset']
+  // Get all accounts with currencies
+  const { results: allAccounts } = await context.env.DB
+    .prepare('SELECT id, type, currency, balance FROM accounts WHERE user_id = ?')
+    .bind(user.user_id)
+    .all<{ id: string; type: string; currency: string; balance: number }>()
+
+  const assetTypes = ['cash', 'investment', 'crypto', 'gold', 'property', 'vehicle', 'other_asset']
   const liabilityTypes = ['credit_card', 'loan', 'other_liability']
 
-  const assetsTotal = accounts
-    .filter(a => assetTypes.includes(a.type))
-    .reduce((sum, a) => sum + (a.total || 0), 0)
+  // Convert each account balance to base currency
+  let assetsTotal = 0
+  let liabilitiesTotal = 0
+  const typeTotals: Record<string, number> = {}
 
-  const liabilitiesTotal = accounts
-    .filter(a => liabilityTypes.includes(a.type))
-    .reduce((sum, a) => sum + (a.total || 0), 0)
+  for (const account of allAccounts) {
+    const converted = convertToBase(account.balance, account.currency, baseCurrency, fiatRates, cryptoRates, goldRates)
+
+    if (assetTypes.includes(account.type)) {
+      assetsTotal += converted
+    } else if (liabilityTypes.includes(account.type)) {
+      liabilitiesTotal += Math.abs(converted)
+    }
+
+    typeTotals[account.type] = (typeTotals[account.type] || 0) + converted
+  }
 
   const currentNetWorth = assetsTotal - liabilitiesTotal
 
-  // Build historical net worth from transactions
-  // We'll approximate by computing net worth at each transaction date
-  const { results: txns } = await context.env.DB
-    .prepare(
-      `SELECT date, type, amount, account_id, from_account_id, to_account_id
-       FROM transactions
-       WHERE user_id = ? AND date >= ?
-       ORDER BY date ASC`
-    )
-    .bind(user.user_id, cutoff)
-    .all()
-
-  // Compute running balance
-  // Start with current balance, then subtract each transaction to find historical values
-  const accountBalances: Record<string, number> = {}
-  const { results: allAccounts } = await context.env.DB
-    .prepare('SELECT id, balance FROM accounts WHERE user_id = ?')
-    .bind(user.user_id)
-    .all<{ id: string; balance: number }>()
-
-  for (const a of allAccounts) {
-    accountBalances[a.id] = a.balance
-  }
-
-  // Reverse transactions to reconstruct history
-  const history: { date: string; value: number }[] = []
-  const dateGroups: Record<string, typeof txns> = {}
-
-  for (const t of txns) {
-    const day = t.date.substring(0, 10)
-    if (!dateGroups[day]) dateGroups[day] = []
-    dateGroups[day].push(t)
-  }
-
-  // Process in reverse chronological order to subtract effects
-  const sortedDates = Object.keys(dateGroups).sort().reverse()
-  for (const date of sortedDates) {
-    for (const t of dateGroups[date]) {
-      if (t.type === 'income' && t.account_id) {
-        accountBalances[t.account_id] = (accountBalances[t.account_id] || 0) - t.amount
-      } else if (t.type === 'expense' && t.account_id) {
-        accountBalances[t.account_id] = (accountBalances[t.account_id] || 0) + t.amount
-      } else if (t.type === 'transfer') {
-        if (t.from_account_id) accountBalances[t.from_account_id] = (accountBalances[t.from_account_id] || 0) + t.amount
-        if (t.to_account_id) accountBalances[t.to_account_id] = (accountBalances[t.to_account_id] || 0) - t.amount
-      }
-    }
-
-    const assetsVal = allAccounts
-      .filter(a => assetTypes.includes(/* need type from account */ 'cash')) // simplified
-      .reduce((sum, a) => sum + (accountBalances[a.id] || 0), 0)
-
-    history.push({ date, value: currentNetWorth }) // Simplified — full impl would track types per account
-  }
-
-  // For now, return current values with a simplified history
-  // A production version would store daily snapshots or compute from full account history
-  const historyPoints = history.length > 0 ? history : [
+  // Build simplified history (future: compute from transaction history with conversion)
+  const historyPoints = [
     { date: cutoff.substring(0, 10), value: currentNetWorth * 0.9 },
     { date: new Date(now.getTime() - 180 * 86400000).toISOString().substring(0, 10), value: currentNetWorth * 0.95 },
     { date: new Date(now.getTime() - 90 * 86400000).toISOString().substring(0, 10), value: currentNetWorth * 0.97 },
@@ -102,18 +159,20 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     { date: now.toISOString().substring(0, 10), value: currentNetWorth },
   ]
 
-  const byType = accounts.map(a => ({
-    type: a.type,
-    value: a.total || 0,
-    label: a.type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+  const byType = Object.entries(typeTotals).map(([type, value]) => ({
+    type,
+    value,
+    label: type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
   }))
 
   return Response.json({
     current: currentNetWorth,
-    previous: currentNetWorth * 0.95, // simplified
+    previous: currentNetWorth * 0.95,
     change: currentNetWorth * 0.05,
     change_pct: 5.0,
     history: historyPoints,
     by_type: byType,
+    base_currency: baseCurrency,
+    rates_fresh: !!cached && !cached.stale,
   })
 }

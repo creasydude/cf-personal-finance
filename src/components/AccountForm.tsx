@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Modal } from './ui/Modal'
+import { CurrencyPicker } from './ui/CurrencyPicker'
 import type { AccountType } from '../types'
 
 interface AccountFormProps {
@@ -13,6 +14,7 @@ const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
   cash: 'Cash Account',
   investment: 'Investment Account',
   crypto: 'Crypto Wallet',
+  gold: 'Gold',
   property: 'Property',
   vehicle: 'Vehicle',
   credit_card: 'Credit Card',
@@ -22,7 +24,6 @@ const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
 }
 
 const CASH_SUBTYPES = ['Checking', 'Savings', 'Cash', 'Other']
-const CURRENCIES = ['USD', 'EUR', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY', 'BTC', 'ETH']
 
 export function AccountForm({ open, type, onClose, onSubmit }: AccountFormProps) {
   const [loading, setLoading] = useState(false)
@@ -33,6 +34,17 @@ export function AccountForm({ open, type, onClose, onSubmit }: AccountFormProps)
   const [details, setDetails] = useState<Record<string, string>>({})
 
   const isLiability = ['credit_card', 'loan', 'other_liability'].includes(type)
+  const isGold = type === 'gold'
+  const isCrypto = type === 'crypto'
+  const isCashOrInvestment = type === 'cash' || type === 'investment'
+  const currencyFilter = isGold ? 'gold' : isCrypto ? 'crypto' : isCashOrInvestment ? 'fiat' : undefined
+
+  // Auto-set currency when type changes to gold
+  useEffect(() => {
+    if (isGold) {
+      setCurrency('GOLD_GRAM18')
+    }
+  }, [isGold])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -100,26 +112,35 @@ export function AccountForm({ open, type, onClose, onSubmit }: AccountFormProps)
             </div>
           )}
 
-          {/* Balance */}
-          <div>
-            <label className="label mb-1.5 block">{isLiability ? 'Current Balance (owed)' : 'Current Balance'}</label>
-            <input
-              type="number"
-              value={balance}
-              onChange={(e) => setBalance(e.target.value)}
-              placeholder="0.00"
-              step="0.01"
-              className="input"
-              required
-            />
-          </div>
+          {/* Balance — hidden for gold (auto-calculated) */}
+          {!isGold && (
+            <div>
+              <label className="label mb-1.5 block">{isLiability ? 'Current Balance (owed)' : 'Current Balance'}</label>
+              <input
+                type="number"
+                value={balance}
+                onChange={(e) => setBalance(e.target.value)}
+                placeholder="0.00"
+                step="0.01"
+                className="input"
+                required
+              />
+            </div>
+          )}
+
+          {/* Gold info */}
+          {isGold && (
+            <div className="rounded-xl bg-yellow-50 border border-yellow-200 p-3">
+              <p className="text-xs text-yellow-800">
+                Gold value is automatically calculated using live gold prices from the API based on weight and karat.
+              </p>
+            </div>
+          )}
 
           {/* Currency */}
           <div>
             <label className="label mb-1.5 block">Currency</label>
-            <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="input">
-              {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
+            <CurrencyPicker value={currency} onChange={setCurrency} showType filter={currencyFilter} />
           </div>
 
           {/* Type-specific fields */}
@@ -132,6 +153,39 @@ export function AccountForm({ open, type, onClose, onSubmit }: AccountFormProps)
               <div>
                 <label className="label mb-1.5 block">Purchase Price</label>
                 <input type="number" value={details.purchase_price || ''} onChange={e => setDetails(d => ({ ...d, purchase_price: e.target.value }))} className="input" placeholder="0.00" step="0.01" />
+              </div>
+            </>
+          )}
+
+          {type === 'gold' && (
+            <>
+              <div>
+                <label className="label mb-1.5 block">Weight (grams)</label>
+                <input type="number" value={details.grams || ''} onChange={e => setDetails(d => ({ ...d, grams: e.target.value }))} className="input" placeholder="0.00" step="0.01" required />
+              </div>
+              <div>
+                <label className="label mb-1.5 block">Karat</label>
+                <select
+                  value={details.karat || '18'}
+                  onChange={e => {
+                    const karat = e.target.value
+                    const currencyMap: Record<string, string> = { '24': 'GOLD_GRAM24', '22': 'GOLD_GRAM22', '18': 'GOLD_GRAM18', '14': 'GOLD_GRAM18', '10': 'GOLD_GRAM18' }
+                    setDetails(d => ({ ...d, karat }))
+                    setCurrency(currencyMap[karat] || 'GOLD_GRAM18')
+                  }}
+                  className="input"
+                >
+                  <option value="24">24K (999 Fine)</option>
+                  <option value="22">22K (916)</option>
+                  <option value="18">18K (750)</option>
+                  <option value="14">14K (585)</option>
+                  <option value="10">10K (417)</option>
+                </select>
+              </div>
+              <div>
+                <label className="label mb-1.5 block">Purchase Price per Gram (optional)</label>
+                <input type="number" value={details.purchase_price_per_gram || ''} onChange={e => setDetails(d => ({ ...d, purchase_price_per_gram: e.target.value }))} className="input" placeholder="0.00" step="0.01" />
+                <p className="text-xs text-gray-400 mt-1">Used to calculate profit/loss</p>
               </div>
             </>
           )}

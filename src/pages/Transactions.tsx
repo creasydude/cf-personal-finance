@@ -5,6 +5,7 @@ import { useCategories } from '../hooks/useCategories'
 import { formatCurrency, formatDate } from '../lib/utils'
 import { Badge } from '../components/ui/Badge'
 import { Modal } from '../components/ui/Modal'
+import { CurrencyPicker } from '../components/ui/CurrencyPicker'
 
 const TYPE_CONFIG = {
   income: { label: 'Income', variant: 'success' as const, color: 'text-emerald-600', icon: '↓' },
@@ -335,13 +336,7 @@ function AddTransactionModal({
               className="input flex-1"
               required
             />
-            <select value={currency} onChange={e => setCurrency(e.target.value)} className="input w-24">
-              <option>USD</option>
-              <option>EUR</option>
-              <option>GBP</option>
-              <option>BTC</option>
-              <option>ETH</option>
-            </select>
+            <CurrencyPicker value={currency} onChange={setCurrency} className="w-48" />
           </div>
 
           {/* Account */}

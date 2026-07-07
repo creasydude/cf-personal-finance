@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { api } from '../api/client'
 import { Modal } from '../components/ui/Modal'
+import { CurrencyPicker } from '../components/ui/CurrencyPicker'
 import { cn } from '../lib/utils'
 
 type SettingsTab = 'account' | 'import-export' | 'preferences' | 'security'
@@ -21,15 +22,7 @@ const DATE_FORMATS = [
   { label: 'MMM DD, YYYY', value: 'MMM DD, YYYY' },
 ]
 
-const CURRENCIES_FOR_DEFAULT = [
-  { code: 'IRR', name: 'Iranian Rial', symbol: '﷼' },
-  { code: 'USD', name: 'US Dollar', symbol: '$' },
-  { code: 'EUR', name: 'Euro', symbol: '€' },
-  { code: 'GBP', name: 'British Pound', symbol: '£' },
-  { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
-  { code: 'BTC', name: 'Bitcoin', symbol: '₿' },
-  { code: 'ETH', name: 'Ethereum', symbol: 'Ξ' },
-]
+// Removed hardcoded CURRENCIES_FOR_DEFAULT — now using CurrencyPicker
 
 export function Settings() {
   const auth = useAuth()
@@ -482,6 +475,17 @@ function PreferencesSection({
   const [dateFormat, setDateFormat] = useState(settings.dateFormat || 'YYYY-MM-DD')
   const [defaultCurrency, setDefaultCurrency] = useState(settings.baseCurrency || 'IRR')
   const [theme, setTheme] = useState(settings.theme || 'system')
+  const [saved, setSaved] = useState(false)
+
+  const handleSave = async () => {
+    await onSave('language', language)
+    await onSave('timezone', timezone)
+    await onSave('dateFormat', dateFormat)
+    await onSave('baseCurrency', defaultCurrency)
+    await onSave('theme', theme)
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2000)
+  }
 
   return (
     <div className="space-y-6">
@@ -493,7 +497,7 @@ function PreferencesSection({
             <label className="label mb-1.5 block">Language</label>
             <select
               value={language}
-              onChange={(e) => { setLanguage(e.target.value); onSave('language', e.target.value) }}
+              onChange={(e) => setLanguage(e.target.value)}
               className="input"
             >
               <option value="en">English</option>
@@ -506,7 +510,7 @@ function PreferencesSection({
             <label className="label mb-1.5 block">Timezone</label>
             <select
               value={timezone}
-              onChange={(e) => { setTimezone(e.target.value); onSave('timezone', e.target.value) }}
+              onChange={(e) => setTimezone(e.target.value)}
               className="input"
             >
               {TIMEZONES.map(tz => (
@@ -520,7 +524,7 @@ function PreferencesSection({
             <label className="label mb-1.5 block">Date Format</label>
             <select
               value={dateFormat}
-              onChange={(e) => { setDateFormat(e.target.value); onSave('dateFormat', e.target.value) }}
+              onChange={(e) => setDateFormat(e.target.value)}
               className="input"
             >
               {DATE_FORMATS.map(f => (
@@ -532,15 +536,7 @@ function PreferencesSection({
           {/* Default Currency */}
           <div>
             <label className="label mb-1.5 block">Default Display Currency</label>
-            <select
-              value={defaultCurrency}
-              onChange={(e) => { setDefaultCurrency(e.target.value); onSave('baseCurrency', e.target.value) }}
-              className="input"
-            >
-              {CURRENCIES_FOR_DEFAULT.map(c => (
-                <option key={c.code} value={c.code}>{c.symbol} {c.code} — {c.name}</option>
-              ))}
-            </select>
+            <CurrencyPicker value={defaultCurrency} onChange={setDefaultCurrency} showType />
             <p className="text-xs text-gray-400 mt-1">Net worth and totals will be converted to this currency</p>
           </div>
         </div>
@@ -569,7 +565,8 @@ function PreferencesSection({
           ]).map(t => (
             <button
               key={t.key}
-              onClick={() => onSave('theme', t.key)}
+              type="button"
+              onClick={() => setTheme(t.key)}
               className={cn(
                 'flex flex-col items-center gap-2 rounded-xl border-2 px-6 py-4 transition-all',
                 theme === t.key
@@ -582,6 +579,13 @@ function PreferencesSection({
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Save button */}
+      <div className="flex items-center gap-3">
+        <button onClick={handleSave} disabled={saving} className="btn-primary">
+          {saving ? 'Saving...' : saved ? '✓ Saved!' : 'Save Preferences'}
+        </button>
       </div>
     </div>
   )

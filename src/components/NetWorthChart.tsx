@@ -6,12 +6,12 @@ interface NetWorthChartProps {
   baseCurrency?: string
 }
 
-function CustomTooltip({ active, payload, label }: any) {
+function CustomTooltip({ active, payload, label, baseCurrency }: any) {
   if (!active || !payload?.length) return null
   return (
     <div className="rounded-xl border border-gray-100 bg-white px-4 py-3 shadow-lg">
       <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-sm font-bold text-gray-900">{formatCurrency(payload[0].value)}</p>
+      <p className="text-sm font-bold text-gray-900">{formatCurrency(payload[0].value, baseCurrency || 'USD')}</p>
     </div>
   )
 }
@@ -52,13 +52,15 @@ export function NetWorthChart({ data, baseCurrency = 'USD' }: NetWorthChartProps
             tickLine={false}
             tick={{ fontSize: 12, fill: '#9ca3af' }}
             tickFormatter={(v) => {
-              if (Math.abs(v) >= 1000000) return `$${(v / 1000000).toFixed(1)}M`
-              if (Math.abs(v) >= 1000) return `$${(v / 1000).toFixed(0)}K`
-              return `$${v}`
+              const sym = baseCurrency === 'IRR' ? 'IRR' : baseCurrency === 'EUR' ? '€' : baseCurrency === 'GBP' ? '£' : baseCurrency === 'JPY' ? '¥' : '$'
+              if (Math.abs(v) >= 1000000000) return `${(v / 1000000000).toFixed(1)}B ${sym}`
+              if (Math.abs(v) >= 1000000) return `${(v / 1000000).toFixed(1)}M ${sym}`
+              if (Math.abs(v) >= 1000) return `${(v / 1000).toFixed(0)}K ${sym}`
+              return `${v} ${sym}`
             }}
             width={70}
           />
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip content={(props) => <CustomTooltip {...props} baseCurrency={baseCurrency} />} />
           <Area
             type="monotone"
             dataKey="value"
