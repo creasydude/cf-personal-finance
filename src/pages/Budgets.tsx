@@ -41,8 +41,8 @@ export function Budgets() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Budgets</h1>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Budgets</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
             {totalBudgeted > 0
               ? `${formatCurrency(totalSpent)} of ${formatCurrency(totalBudgeted)} spent (${totalPct.toFixed(0)}%)`
               : 'No budgets set for this month'}
@@ -209,7 +209,7 @@ function AddBudgetModal({
 
   return (
     <Modal open={open} onClose={onClose} className="max-w-sm">
-      <div className="rounded-2xl bg-white p-6 shadow-2xl">
+      <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-gray-900">Add Budget</h2>
           <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100">

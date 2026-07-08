@@ -48,9 +48,9 @@ export function CurrencyPicker({ value, onChange, className, showType = false, f
         className="input flex items-center justify-between gap-2 text-left"
       >
         <span className="flex items-center gap-2">
-          <span className="text-gray-500">{selected?.symbol}</span>
-          <span className="font-medium">{selected?.code}</span>
-          <span className="text-gray-400 text-xs truncate">{selected?.name}</span>
+          <span className="text-gray-500 dark:text-gray-400">{selected?.symbol}</span>
+          <span className="font-medium dark:text-white">{selected?.code}</span>
+          <span className="text-gray-400 dark:text-gray-500 text-xs truncate">{selected?.name}</span>
         </span>
         <svg className={cn('h-4 w-4 text-gray-400 transition-transform', open && 'rotate-180')} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -59,9 +59,9 @@ export function CurrencyPicker({ value, onChange, className, showType = false, f
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute z-50 mt-1 w-full rounded-xl border border-gray-200 bg-white shadow-lg max-h-[300px] overflow-hidden animate-slide-down">
+        <div className="absolute z-50 mt-1 w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-lg max-h-[300px] overflow-hidden animate-slide-down">
           {/* Search */}
-          <div className="p-2 border-b border-gray-100">
+          <div className="p-2 border-b border-gray-100 dark:border-gray-700">
             <input
               ref={inputRef}
               type="text"
@@ -83,13 +83,13 @@ export function CurrencyPicker({ value, onChange, className, showType = false, f
                   type="button"
                   onClick={() => { onChange(c.code); setOpen(false); setSearch('') }}
                   className={cn(
-                    'flex w-full items-center gap-3 px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors',
-                    c.code === value && 'bg-brand-50 text-brand-700'
+                    'flex w-full items-center gap-3 px-3 py-2 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors',
+                    c.code === value && 'bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400'
                   )}
                 >
-                  <span className="w-6 text-center text-gray-500">{c.symbol}</span>
-                  <span className="font-medium min-w-[40px]">{c.code}</span>
-                  <span className="text-gray-500 truncate flex-1">{c.name}</span>
+                  <span className="w-6 text-center text-gray-500 dark:text-gray-400">{c.symbol}</span>
+                  <span className="font-medium min-w-[40px] dark:text-white">{c.code}</span>
+                  <span className="text-gray-500 dark:text-gray-400 truncate flex-1">{c.name}</span>
                   {showType && (
                     <span className={cn(
                       'text-[10px] font-medium px-1.5 py-0.5 rounded',

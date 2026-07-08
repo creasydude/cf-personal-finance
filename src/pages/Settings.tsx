@@ -280,8 +280,8 @@ function AccountSection({
   return (
     <div className="space-y-6">
       {/* Access Code */}
-      <div className="card p-6">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4">Your Access Code</h3>
+      <div className="card p-6 dark:bg-gray-800">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Your Access Code</h3>
         <div className="rounded-xl border-2 border-dashed border-amber-300 bg-amber-50 p-4">
           <div className="flex items-center justify-between mb-2">
             <p className="font-mono text-2xl font-bold tracking-[0.15em] text-amber-800">
@@ -320,8 +320,8 @@ function AccountSection({
       </div>
 
       {/* Profile */}
-      <div className="card p-6">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4">Profile</h3>
+      <div className="card p-6 dark:bg-gray-800">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Profile</h3>
 
         {/* Photo */}
         <div className="flex items-center gap-4 mb-6">
@@ -377,8 +377,8 @@ function AccountSection({
       </div>
 
       {/* Danger zone */}
-      <div className="card border-red-200 p-6">
-        <h3 className="text-sm font-semibold text-red-900 mb-4">Danger Zone</h3>
+      <div className="card border-red-200 dark:border-red-800 p-6 dark:bg-gray-800">
+        <h3 className="text-sm font-semibold text-red-900 dark:text-red-400 mb-4">Danger Zone</h3>
         <div className="flex flex-col gap-3 sm:flex-row">
           <button onClick={onReset} className="btn-secondary border-amber-300 text-amber-700 hover:bg-amber-50">
             Reset Account
@@ -407,7 +407,7 @@ function ImportExportSection({
   return (
     <div className="space-y-6">
       {/* Export */}
-      <div className="card p-6">
+      <div className="card p-6 dark:bg-gray-800">
         <h3 className="text-sm font-semibold text-gray-900 mb-2">Export Data</h3>
         <p className="text-sm text-gray-500 mb-4">
           Download all your accounts, transactions, budgets, and categories as a JSON file.
@@ -422,7 +422,7 @@ function ImportExportSection({
 
       {/* Export History */}
       {exportHistory.length > 0 && (
-        <div className="card p-6">
+        <div className="card p-6 dark:bg-gray-800">
           <h3 className="text-sm font-semibold text-gray-900 mb-3">Recent Exports</h3>
           <div className="space-y-2">
             {exportHistory.map((exp, i) => (
@@ -438,7 +438,7 @@ function ImportExportSection({
       )}
 
       {/* Import */}
-      <div className="card p-6">
+      <div className="card p-6 dark:bg-gray-800">
         <h3 className="text-sm font-semibold text-gray-900 mb-2">Import Data</h3>
         <p className="text-sm text-gray-500 mb-4">
           Restore from a previously exported JSON file. This will merge with your existing data.
@@ -492,12 +492,12 @@ function PreferencesSection({
 
   return (
     <div className="space-y-6">
-      <div className="card p-6">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4">General</h3>
+      <div className="card p-6 dark:bg-gray-800">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">General</h3>
         <div className="space-y-4 max-w-lg">
           {/* Language */}
           <div>
-            <label className="label mb-1.5 block">Language</label>
+            <label className="label mb-1.5 block dark:text-gray-400">Language</label>
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
@@ -510,7 +510,7 @@ function PreferencesSection({
 
           {/* Timezone */}
           <div>
-            <label className="label mb-1.5 block">Timezone</label>
+            <label className="label mb-1.5 block dark:text-gray-400">Timezone</label>
             <select
               value={timezone}
               onChange={(e) => setTimezone(e.target.value)}
@@ -524,7 +524,7 @@ function PreferencesSection({
 
           {/* Date Format */}
           <div>
-            <label className="label mb-1.5 block">Date Format</label>
+            <label className="label mb-1.5 block dark:text-gray-400">Date Format</label>
             <select
               value={dateFormat}
               onChange={(e) => setDateFormat(e.target.value)}
@@ -538,7 +538,7 @@ function PreferencesSection({
 
           {/* Default Currency */}
           <div>
-            <label className="label mb-1.5 block">Default Display Currency</label>
+            <label className="label mb-1.5 block dark:text-gray-400">Default Display Currency</label>
             <CurrencyPicker value={defaultCurrency} onChange={setDefaultCurrency} showType />
             <p className="text-xs text-gray-400 mt-1">Net worth and totals will be converted to this currency</p>
           </div>
@@ -546,8 +546,8 @@ function PreferencesSection({
       </div>
 
       {/* Theme */}
-      <div className="card p-6">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4">Appearance</h3>
+      <div className="card p-6 dark:bg-gray-800">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Appearance</h3>
         <div className="flex gap-3">
           {([
             { key: 'light', label: 'Light', icon: (
@@ -608,8 +608,8 @@ function SecuritySection({
 
   return (
     <div className="space-y-6">
-      <div className="card p-6">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4">Two-Factor Authentication</h3>
+      <div className="card p-6 dark:bg-gray-800">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Two-Factor Authentication</h3>
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-700">

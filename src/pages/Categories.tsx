@@ -24,8 +24,8 @@ export function Categories() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{categories.length} categories</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Categories</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{categories.length} categories</p>
         </div>
         <button onClick={() => setShowAdd(true)} className="btn-primary">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -153,7 +153,7 @@ function AddCategoryModal({
 
   return (
     <Modal open={open} onClose={onClose} className="max-w-sm">
-      <div className="rounded-2xl bg-white p-6 shadow-2xl">
+      <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-gray-900">Add Category</h2>
           <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100">

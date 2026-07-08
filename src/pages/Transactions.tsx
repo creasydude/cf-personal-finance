@@ -42,8 +42,8 @@ export function Transactions() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Transactions</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{total} transactions</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Transactions</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{total} transactions</p>
         </div>
         <button onClick={() => setShowAdd(true)} className="btn-primary">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -94,8 +94,8 @@ export function Transactions() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5-6L16.5 18m0 0L12 13.5m4.5 4.5V6" />
             </svg>
           </div>
-          <p className="text-sm font-medium text-gray-900">No transactions yet</p>
-          <p className="text-sm text-gray-500 mt-1">Add your first transaction to get started</p>
+          <p className="text-sm font-medium text-gray-900 dark:text-white">No transactions yet</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Add your first transaction to get started</p>
         </div>
       ) : (
         <div className="card overflow-hidden">
@@ -103,24 +103,24 @@ export function Transactions() {
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50/50">
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Description</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Category</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Type</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">Amount</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500"></th>
+                <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Description</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Category</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Type</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Amount</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"></th>
                 </tr>
               </thead>
               <tbody>
                 {transactions.map(txn => {
                   const config = TYPE_CONFIG[txn.type as keyof typeof TYPE_CONFIG]
                   return (
-                    <tr key={txn.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
-                      <td className="px-4 py-3 text-sm text-gray-600">{formatDate(txn.date)}</td>
+                    <tr key={txn.id} className="border-b border-gray-50 dark:border-gray-700 last:border-0 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
+                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{formatDate(txn.date)}</td>
                       <td className="px-4 py-3">
-                        <p className="text-sm font-medium text-gray-900">{txn.description}</p>
-                        {txn.notes && <p className="text-xs text-gray-500 mt-0.5 truncate max-w-[300px]">{txn.notes}</p>}
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">{txn.description}</p>
+                        {txn.notes && <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate max-w-[300px]">{txn.notes}</p>}
                       </td>
                       <td className="px-4 py-3">
                         {txn.category && (
@@ -267,9 +267,9 @@ function AddTransactionModal({
 
   return (
     <Modal open={open} onClose={onClose} className="max-w-md">
-      <div className="rounded-2xl bg-white p-6 shadow-2xl">
+      <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-gray-900">Add Transaction</h2>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Add Transaction</h2>
           <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -279,7 +279,7 @@ function AddTransactionModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Type tabs — dark pill style */}
-          <div className="flex gap-2 rounded-2xl bg-[#1a1a1a] p-1.5">
+          <div className="flex gap-2 rounded-2xl bg-[#1a1a1a] dark:bg-gray-700 p-1.5">
             {([
               { key: 'expense' as const, label: 'Expense', icon: (
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>

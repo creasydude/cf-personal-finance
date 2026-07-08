@@ -3,6 +3,7 @@ import { AnimatedNumber } from '../components/ui/AnimatedNumber'
 import { Badge } from '../components/ui/Badge'
 import { NetWorthChart } from '../components/NetWorthChart'
 import { SegmentedBar } from '../components/SegmentedBar'
+import { useTranslation } from '../hooks/useTranslation'
 import { AccountTypeModal } from '../components/AccountTypeModal'
 import { AccountForm } from '../components/AccountForm'
 import { Dropdown, DropdownItem } from '../components/ui/Dropdown'
@@ -34,6 +35,7 @@ const TYPE_COLORS: Record<string, string> = {
 type Tab = 'all' | 'assets' | 'debts'
 
 export function Dashboard({ userCode, settings }: { userCode: string | null; settings: Record<string, any> }) {
+  const { t } = useTranslation(settings)
   const { accounts, assetsTotal, liabilitiesTotal, loading: accountsLoading, createAccount, updateAccount, deleteAccount } = useAccounts()
   const { data: netWorth, range, setRange, loading: nwLoading, refetch: refetchNetWorth } = useNetWorth()
   const [activeTab, setActiveTab] = useState<Tab>('all')
@@ -97,16 +99,16 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Welcome back{settings?.nickname ? `, ${settings.nickname}` : userCode ? `, ${userCode}` : ''}
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            {t('dashboard.welcome')}{settings?.nickname ? `, ${settings.nickname}` : userCode ? `, ${userCode}` : ''}
           </h1>
-          <p className="text-sm text-gray-500 mt-0.5">Here's your financial overview</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{t('dashboard.overview')}</p>
         </div>
         <button onClick={() => setTypeModalOpen(true)} className="btn-primary">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
-          New
+          {t('dashboard.new')}
         </button>
       </div>
 
@@ -118,8 +120,8 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
             onClick={() => setActiveTab(tab)}
             className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${
               activeTab === tab
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
             }`}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -130,9 +132,9 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[300px_1fr]">
         {/* Left: Account list */}
         <div className="space-y-2">
-          <h3 className="label px-1">Accounts</h3>
+          <h3 className="label px-1">{t('dashboard.accounts')}</h3>
           {displayAccounts.length === 0 ? (
-            <p className="text-sm text-gray-400 py-8 text-center">No accounts yet. Click "+ New" to add one.</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500 py-8 text-center">{t('dashboard.noAccounts')}</p>
           ) : (
             displayAccounts.map(account => (
               <div
@@ -146,11 +148,11 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{account.name}</p>
-                  <p className="text-xs text-gray-500">{account.currency}</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{account.name}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{account.currency}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-gray-900">{formatCurrency(account.balance, account.currency)}</p>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">{formatCurrency(account.balance, account.currency)}</p>
                 </div>
               </div>
             ))
@@ -160,10 +162,10 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
         {/* Right: Main content */}
         <div className="space-y-6">
           {/* Net Worth Card */}
-          <div className="card p-6">
+          <div className="card p-6 dark:bg-gray-800">
             <div className="flex items-start justify-between mb-6">
               <div>
-                <p className="stat-label">Net Worth</p>
+                <p className="stat-label">{t('dashboard.netWorth')}</p>
                 <div className="mt-1 flex items-baseline gap-3">
                   <AnimatedNumber
                     value={netWorthValue}
@@ -200,15 +202,15 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
 
           {/* Assets Breakdown */}
           {segments.length > 0 && (
-            <div className="card p-6">
-              <h3 className="text-sm font-semibold text-gray-900 mb-4">Assets Breakdown</h3>
+            <div className="card p-6 dark:bg-gray-800">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{t('dashboard.assetsBreakdown')}</h3>
               <SegmentedBar segments={segments} total={segments.reduce((s: number, seg: any) => s + seg.value, 0) || 1} />
 
               {/* Data table */}
               <div className="mt-6">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-gray-100">
+                    <tr className="border-b border-gray-100 dark:border-gray-700">
                       <th className="pb-3 text-left label">Name</th>
                       <th className="pb-3 text-right label">Weight</th>
                       <th className="pb-3 text-right label">Value</th>
@@ -218,11 +220,11 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
                     {netWorth?.by_type?.filter((t: any) => t.value > 0).map((t: any) => {
                       const pct = assetsTotal > 0 ? (Math.abs(t.value) / assetsTotal) * 100 : 0
                       return (
-                        <tr key={t.type} className="border-b border-gray-50 last:border-0">
+                        <tr key={t.type} className="border-b border-gray-50 dark:border-gray-700 last:border-0">
                           <td className="py-3">
                             <div className="flex items-center gap-2">
                               <div className={`h-2.5 w-2.5 rounded-full ${TYPE_COLORS[t.type] || 'bg-gray-400'}`} />
-                              <span className="text-sm text-gray-700">{t.label}</span>
+                              <span className="text-sm text-gray-700 dark:text-gray-300">{t.label}</span>
                             </div>
                           </td>
                           <td className="py-3 text-right">
