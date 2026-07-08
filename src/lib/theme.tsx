@@ -17,6 +17,7 @@ const ThemeContext = createContext<ThemeContextType>({
 export function ThemeProvider({ children, initialTheme = 'system', locale = 'en' }: { children: ReactNode; initialTheme?: Theme; locale?: string }) {
   const [theme, setThemeState] = useState<Theme>(initialTheme)
   const [resolved, setResolved] = useState<'light' | 'dark'>('light')
+  const [currentLocale, setCurrentLocale] = useState(locale)
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
@@ -40,10 +41,12 @@ export function ThemeProvider({ children, initialTheme = 'system', locale = 'en'
     if (saved) setThemeState(saved)
   }, [])
 
-  // RTL support
+  // RTL support — sync from prop OR localStorage
   useEffect(() => {
-    document.documentElement.dir = locale === 'fa' ? 'rtl' : 'ltr'
-    document.documentElement.lang = locale === 'fa' ? 'fa' : 'en'
+    const lang = locale || localStorage.getItem('language') || 'en'
+    setCurrentLocale(lang)
+    document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr'
+    document.documentElement.lang = lang === 'fa' ? 'fa' : 'en'
   }, [locale])
 
   return (

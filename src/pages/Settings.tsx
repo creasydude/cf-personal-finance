@@ -134,9 +134,9 @@ export function Settings() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('settings.title')}</h1>
 
-      <div className="flex gap-6">
+      <div className="flex gap-6 flex-col md:flex-row">
         {/* Sidebar tabs */}
-        <nav className="w-56 flex-shrink-0">
+        <nav className="w-full md:w-56 flex-shrink-0">
           <div className="space-y-1">
             {tabs.map(tab => (
               <button
@@ -199,12 +199,12 @@ export function Settings() {
       {/* Delete Account Confirm */}
       <Modal open={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} className="max-w-sm">
         <div className="rounded-2xl bg-white p-6 shadow-2xl">
-          <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Account</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-2">{t('settings.deleteAccount')}</h3>
           <p className="text-sm text-gray-500 mb-6">
             This will permanently delete your account and all data. This action cannot be undone.
           </p>
           <div className="flex gap-3">
-            <button onClick={() => setShowDeleteConfirm(false)} className="btn-secondary flex-1">Cancel</button>
+            <button onClick={() => setShowDeleteConfirm(false)} className="btn-secondary flex-1">{t('account.cancel')}</button>
             <button onClick={handleDeleteAccount} className="flex-1 rounded-xl px-4 py-2.5 bg-red-600 text-white font-medium text-sm hover:bg-red-700 transition-colors">
               Delete Forever
             </button>
@@ -215,12 +215,12 @@ export function Settings() {
       {/* Reset Account Confirm */}
       <Modal open={showResetConfirm} onClose={() => setShowResetConfirm(false)} className="max-w-sm">
         <div className="rounded-2xl bg-white p-6 shadow-2xl">
-          <h3 className="text-lg font-bold text-gray-900 mb-2">Reset Account</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-2">{t('settings.resetAccount')}</h3>
           <p className="text-sm text-gray-500 mb-6">
-            This will delete all your accounts, transactions, and budgets. Your categories and settings will be kept.
+            {t('settings.resetAccount')} — {t('settings.deleteAccount')}
           </p>
           <div className="flex gap-3">
-            <button onClick={() => setShowResetConfirm(false)} className="btn-secondary flex-1">Cancel</button>
+            <button onClick={() => setShowResetConfirm(false)} className="btn-secondary flex-1">{t('account.cancel')}</button>
             <button onClick={handleResetAccount} className="flex-1 rounded-xl px-4 py-2.5 bg-amber-600 text-white font-medium text-sm hover:bg-amber-700 transition-colors">
               Reset Everything
             </button>
@@ -301,14 +301,14 @@ function AccountSection({
                   <svg className="h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
-                  Copied!
+                  {t('settings.copied')}
                 </>
               ) : (
                 <>
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                   </svg>
-                  Copy
+                  {t('settings.copy')}
                 </>
               )}
             </button>
@@ -318,7 +318,7 @@ function AccountSection({
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
             </svg>
             <p className="text-sm text-amber-800">
-              Save this code in a safe place. <strong>It cannot be recovered</strong> if lost — you will lose access to your account.
+              {t('settings.accessCodeWarning')}
             </p>
           </div>
         </div>
@@ -356,19 +356,19 @@ function AccountSection({
             />
           </div>
           <div>
-            <p className="text-sm text-gray-500">Upload Photo</p>
-            <p className="text-xs text-gray-400">Optional — JPG, PNG. Max 2MB.</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{t('settings.uploadPhoto')}</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500">{t('settings.photoHint')}</p>
           </div>
         </div>
 
         {/* Nickname */}
         <div className="mb-4">
-          <label className="label mb-1.5 block">Nickname</label>
+          <label className="label mb-1.5 block dark:text-gray-400">{t('settings.nickname')}</label>
           <input
             type="text"
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
-            placeholder="Optional nickname"
+            placeholder={t('settings.nicknamePlaceholder')}
             className="input max-w-sm"
           />
         </div>
@@ -416,7 +416,7 @@ function ImportExportSection({
       <div className="card p-6 dark:bg-gray-800">
         <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">{t('settings.exportData')}</h3>
         <p className="text-sm text-gray-500 mb-4">
-          Download all your accounts, transactions, budgets, and categories as a JSON file.
+          {t('settings.exportHint')}
         </p>
         <button onClick={onExport} className="btn-primary">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -429,7 +429,7 @@ function ImportExportSection({
       {/* Export History */}
       {exportHistory.length > 0 && (
         <div className="card p-6 dark:bg-gray-800">
-          <h3 className="text-sm font-semibold text-gray-900 mb-3">Recent Exports</h3>
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">{t('settings.recentExports')}</h3>
           <div className="space-y-2">
             {exportHistory.map((exp, i) => (
               <div key={i} className="flex items-center gap-3 text-sm text-gray-600">
@@ -447,7 +447,7 @@ function ImportExportSection({
       <div className="card p-6 dark:bg-gray-800">
         <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">{t('settings.importData')}</h3>
         <p className="text-sm text-gray-500 mb-4">
-          Restore from a previously exported JSON file. This will merge with your existing data.
+          {t('settings.importHint')}
         </p>
         <input
           ref={fileInputRef}
@@ -505,7 +505,7 @@ function PreferencesSection({
         <div className="space-y-4 max-w-lg">
           {/* Language */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">Language</label>
+            <label className="label mb-1.5 block dark:text-gray-400">{t('settings.language')}</label>
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
@@ -518,7 +518,7 @@ function PreferencesSection({
 
           {/* Timezone */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">Timezone</label>
+            <label className="label mb-1.5 block dark:text-gray-400">{t('settings.timezone')}</label>
             <select
               value={timezone}
               onChange={(e) => setTimezone(e.target.value)}
@@ -532,7 +532,7 @@ function PreferencesSection({
 
           {/* Date Format */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">Date Format</label>
+            <label className="label mb-1.5 block dark:text-gray-400">{t('settings.dateFormat')}</label>
             <select
               value={dateFormat}
               onChange={(e) => setDateFormat(e.target.value)}
@@ -546,9 +546,9 @@ function PreferencesSection({
 
           {/* Default Currency */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">Default Display Currency</label>
+            <label className="label mb-1.5 block dark:text-gray-400">{t('settings.defaultCurrency')}</label>
             <CurrencyPicker value={defaultCurrency} onChange={setDefaultCurrency} showType />
-            <p className="text-xs text-gray-400 mt-1">Net worth and totals will be converted to this currency</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{t('settings.defaultCurrencyHint')}</p>
           </div>
         </div>
       </div>
@@ -623,10 +623,10 @@ function SecuritySection({
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-700">
-              {twoFactor ? 'Two-factor authentication is enabled' : 'Two-factor authentication is disabled'}
+              {twoFactor ? t('settings.twoFactorEnabled') : t('settings.twoFactorDisabled')}
             </p>
             <p className="text-xs text-gray-500 mt-0.5">
-              Add an extra layer of security to your account
+              {t('settings.twoFactorHint')}
             </p>
           </div>
           <button
@@ -651,7 +651,7 @@ function SecuritySection({
         {twoFactor && (
           <div className="mt-4 rounded-xl bg-brand-50 border border-brand-200 p-4">
             <p className="text-sm text-brand-800">
-              Two-factor authentication is active. You'll need to verify your identity on each login.
+              {t('settings.twoFactorActive')}
             </p>
           </div>
         )}

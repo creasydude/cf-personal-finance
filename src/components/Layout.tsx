@@ -20,6 +20,7 @@ export function Layout({ children, userCode, settings, onLogout }: LayoutProps) 
   const navigate = useNavigate()
   const nickname = settings?.nickname || ''
   const initials = nickname ? nickname.charAt(0).toUpperCase() : userCode ? userCode.substring(0, 2) : '??'
+  const isRTL = settings?.language === 'fa'
 
   const handleCopyCode = async () => {
     if (!userCode) return
@@ -45,7 +46,9 @@ export function Layout({ children, userCode, settings, onLogout }: LayoutProps) 
       <main
         className={cn(
           'transition-all duration-300 min-h-screen',
-          collapsed ? 'ms-[68px]' : 'ms-[220px]'
+          isRTL
+            ? (collapsed ? 'mr-[68px]' : 'mr-[220px]')
+            : (collapsed ? 'ml-[68px]' : 'ml-[220px]')
         )}
       >
         {/* Top bar */}
@@ -73,7 +76,7 @@ export function Layout({ children, userCode, settings, onLogout }: LayoutProps) 
               </button>
 
               {menuOpen && (
-                <div className="absolute right-0 top-full mt-2 w-48 rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 py-1 shadow-lg animate-slide-down">
+                <div className="absolute end-0 top-full mt-2 w-48 rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 py-1 shadow-lg animate-slide-down">
                   <div className="px-3 py-2 border-b border-gray-100 dark:border-gray-700">
                     <p className="text-xs text-gray-500 dark:text-gray-400">Signed in as</p>
                     <div className="flex items-center gap-2">

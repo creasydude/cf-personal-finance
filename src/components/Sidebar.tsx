@@ -31,10 +31,12 @@ function useNavItems(t: (k: string) => string) {
 export function Sidebar({ collapsed, onToggle, settings }: { collapsed: boolean; onToggle: () => void; settings?: Record<string, any> }) {
   const { t } = useTranslation(settings || {})
   const navItems = useNavItems(t)
+  const isRTL = settings?.language === 'fa'
   return (
     <aside
       className={cn(
-        'fixed start-0 top-0 z-40 flex h-screen flex-col border-e border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 transition-all duration-300',
+        'fixed top-0 z-40 flex h-screen flex-col border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 transition-all duration-300',
+        isRTL ? 'right-0 border-l' : 'left-0 border-r',
         collapsed ? 'w-[68px]' : 'w-[220px]'
       )}
     >
