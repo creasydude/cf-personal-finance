@@ -44,7 +44,7 @@ export function Transactions() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Transactions</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('transactions.title')}</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{total} {t('transactions.count')}</p>
         </div>
         <button onClick={() => setShowAdd(true)} className="btn-primary">
@@ -346,30 +346,30 @@ function AddTransactionModal({
           {type === 'transfer' ? (
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="label mb-1 block">From</label>
+                <label className="label mb-1 block dark:text-gray-400">{t('transactions.from')}</label>
                 <select value={fromAccountId} onChange={e => setFromAccountId(e.target.value)} className="input" required>
-                  <option value="">Select...</option>
+                  <option value="">{t('account.selectAccount')}</option>
                   {accounts.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="label mb-1 block">To</label>
+                <label className="label mb-1 block dark:text-gray-400">{t('transactions.to')}</label>
                 <select value={toAccountId} onChange={e => setToAccountId(e.target.value)} className="input" required>
-                  <option value="">Select...</option>
+                  <option value="">{t('account.selectAccount')}</option>
                   {accounts.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
                 </select>
               </div>
             </div>
           ) : (
             <select value={accountId} onChange={e => setAccountId(e.target.value)} className="input" required>
-              <option value="">Select account...</option>
+              <option value="">{t('account.selectAccount')}</option>
               {accounts.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
             </select>
           )}
 
           {/* Category */}
           <select value={category} onChange={e => setCategory(e.target.value)} className="input">
-            <option value="">No category</option>
+            <option value="">{t('account.noCategory')}</option>
             {categories.map(c => <option key={c.id} value={c.name}>{c.icon} {c.name}</option>)}
           </select>
 
@@ -380,15 +380,15 @@ function AddTransactionModal({
           <textarea
             value={notes}
             onChange={e => setNotes(e.target.value)}
-            placeholder="Notes (optional)"
+            placeholder={t('settings.nickname') + ' (' + t('account.balance') + ')'}
             className="input min-h-[80px] resize-none"
           />
 
           {/* Actions */}
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="btn-secondary flex-1">Cancel</button>
+            <button type="button" onClick={onClose} className="btn-secondary flex-1">{t('account.cancel')}</button>
             <button type="submit" disabled={loading || !description || !amount} className="btn-primary flex-1">
-              {loading ? 'Adding...' : 'Add Transaction'}
+              {loading ? 'Adding...' : t('transactions.add')}
             </button>
           </div>
         </form>

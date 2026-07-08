@@ -6,7 +6,7 @@ import { formatCurrency, formatPercent } from '../lib/utils'
 import { Modal } from '../components/ui/Modal'
 import { cn } from '../lib/utils'
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const MONTH_KEYS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
 
 export function Budgets() {
   const now = new Date()
@@ -43,7 +43,7 @@ export function Budgets() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Budgets</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('budgets.title')}</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
             {totalBudgeted > 0
               ? `${formatCurrency(totalSpent)} ${t('budgets.of')} ${formatCurrency(totalBudgeted)} ${t('budgets.spent')} (${totalPct.toFixed(0)}%)`
@@ -66,7 +66,7 @@ export function Budgets() {
           </svg>
         </button>
         <span className="text-lg font-semibold text-gray-900 dark:text-white min-w-[140px] text-center">
-          {MONTHS[month - 1]} {year}
+          {t(`month.${MONTH_KEYS[month - 1]}`)} {year}
         </span>
         <button onClick={handleNextMonth} className="rounded-lg p-2 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-600 dark:hover:text-gray-300">
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -226,9 +226,9 @@ function AddBudgetModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="label mb-1.5 block">Category</label>
+            <label className="label mb-1.5 block dark:text-gray-400">{t('budgets.category')}</label>
             <select value={category} onChange={e => setCategory(e.target.value)} className="input" required>
-              <option value="">Select category...</option>
+              <option value="">{t('categories.selectCategory')}</option>
               {availableCategories.map(c => (
                 <option key={c.id} value={c.name}>{c.icon} {c.name}</option>
               ))}
@@ -236,7 +236,7 @@ function AddBudgetModal({
           </div>
 
           <div>
-            <label className="label mb-1.5 block">Monthly Limit</label>
+            <label className="label mb-1.5 block dark:text-gray-400">{t('budgets.monthlyLimit')}</label>
             <input
               type="number"
               value={amount}
@@ -249,9 +249,9 @@ function AddBudgetModal({
           </div>
 
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="btn-secondary flex-1">Cancel</button>
+            <button type="button" onClick={onClose} className="btn-secondary flex-1">{t('account.cancel')}</button>
             <button type="submit" disabled={loading || !category || !amount} className="btn-primary flex-1">
-              {loading ? 'Adding...' : 'Add Budget'}
+              {loading ? 'Adding...' : t('budgets.add')}
             </button>
           </div>
         </form>

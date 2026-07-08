@@ -22,7 +22,7 @@ const accountOptions: AccountOption[] = [
   // Assets
   {
     type: 'cash',
-    label: 'Cash',
+    label: 'account.cash',
     color: 'bg-emerald-500',
     section: 'asset',
     icon: (
@@ -33,7 +33,7 @@ const accountOptions: AccountOption[] = [
   },
   {
     type: 'investment',
-    label: 'Investment',
+    label: 'account.investment',
     color: 'bg-blue-500',
     section: 'asset',
     icon: (
@@ -44,7 +44,7 @@ const accountOptions: AccountOption[] = [
   },
   {
     type: 'crypto',
-    label: 'Crypto',
+    label: 'account.crypto',
     color: 'bg-amber-500',
     section: 'asset',
     icon: (
@@ -55,7 +55,7 @@ const accountOptions: AccountOption[] = [
   },
   {
     type: 'gold',
-    label: 'Gold',
+    label: 'account.gold',
     color: 'bg-yellow-500',
     section: 'asset',
     icon: (
@@ -67,7 +67,7 @@ const accountOptions: AccountOption[] = [
   },
   {
     type: 'property',
-    label: 'Property',
+    label: 'account.property',
     color: 'bg-teal-500',
     section: 'asset',
     icon: (
@@ -78,7 +78,7 @@ const accountOptions: AccountOption[] = [
   },
   {
     type: 'vehicle',
-    label: 'Vehicle',
+    label: 'account.vehicle',
     color: 'bg-gray-500',
     section: 'asset',
     icon: (
@@ -89,7 +89,7 @@ const accountOptions: AccountOption[] = [
   },
   {
     type: 'other_asset',
-    label: 'Other Asset',
+    label: 'account.otherAsset',
     color: 'bg-indigo-400',
     section: 'asset',
     icon: (
@@ -101,7 +101,7 @@ const accountOptions: AccountOption[] = [
   // Liabilities
   {
     type: 'credit_card',
-    label: 'Credit Card',
+    label: 'account.creditCard',
     color: 'bg-rose-500',
     section: 'liability',
     icon: (
@@ -112,7 +112,7 @@ const accountOptions: AccountOption[] = [
   },
   {
     type: 'loan',
-    label: 'Loan',
+    label: 'account.loan',
     color: 'bg-orange-500',
     section: 'liability',
     icon: (
@@ -123,7 +123,7 @@ const accountOptions: AccountOption[] = [
   },
   {
     type: 'other_liability',
-    label: 'Other Liability',
+    label: 'account.otherLiability',
     color: 'bg-slate-500',
     section: 'liability',
     icon: (
@@ -135,7 +135,7 @@ const accountOptions: AccountOption[] = [
   // Utility
   {
     type: 'cash',
-    label: 'Import Accounts',
+    label: 'accountTypeModal.importAccounts',
     color: 'bg-violet-500',
     section: 'utility',
     icon: (
@@ -212,7 +212,7 @@ export function AccountTypeModal({ open, onClose, onSelect }: AccountTypeModalPr
         {/* Options list */}
         <div ref={listRef} className="max-h-[400px] overflow-y-auto px-3 pb-3">
           {/* Assets */}
-          <p className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-gray-500">Assets</p>
+          <p className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-gray-500">{t('accountTypeModal.assets')}</p>
           {assets.map((opt, i) => (
             <OptionRow
               key={opt.type + opt.label}
@@ -224,7 +224,7 @@ export function AccountTypeModal({ open, onClose, onSelect }: AccountTypeModalPr
           ))}
 
           {/* Liabilities */}
-          <p className="px-3 py-2 mt-2 text-xs font-semibold uppercase tracking-wider text-gray-500">Liabilities</p>
+          <p className="px-3 py-2 mt-2 text-xs font-semibold uppercase tracking-wider text-gray-500">{t('accountTypeModal.liabilities')}</p>
           {liabilities.map((opt, i) => {
             const idx = assets.length + i
             return (
@@ -285,6 +285,7 @@ function OptionRow({
   onClick: () => void
   onMouseEnter: () => void
 }) {
+  const { t } = useTranslation()
   return (
     <button
       onClick={onClick}
@@ -297,7 +298,7 @@ function OptionRow({
       <div className={cn('flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg', option.color)}>
         {option.icon}
       </div>
-      <span className="text-sm font-medium">{option.label}</span>
+      <span className="text-sm font-medium">{t(option.label)}</span>
     </button>
   )
 }

@@ -26,10 +26,10 @@ export function Categories() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Categories</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('categories.title')}</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{categories.length} {t('categories.title')}</p>
         </div>
-        <button onClick={() => setShowAdd(true)} className="btn-primary">
+        <button onClick={() => setShowAdd(true)} className="btn-primary dark:text-white">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
@@ -158,7 +158,7 @@ function AddCategoryModal({
     <Modal open={open} onClose={onClose} className="max-w-sm">
       <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-gray-900">Add Category</h2>
+          <h2 className="text-lg font-bold text-gray-900">{t('categories.add')}</h2>
           <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -169,23 +169,23 @@ function AddCategoryModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Type */}
           <div className="flex gap-1 rounded-xl bg-gray-100 dark:bg-gray-800 p-1">
-            {(['expense', 'income'] as const).map(t => (
+            {(['expense', 'income'] as const).map(catType => (
               <button
-                key={t}
+                key={catType}
                 type="button"
-                onClick={() => setType(t)}
+                onClick={() => setType(catType)}
                 className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
-                  type === t ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                  type === catType ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                 }`}
               >
-                {t.charAt(0).toUpperCase() + t.slice(1)}
+                {catType === 'income' ? t('categories.income') : t('categories.expense')}
               </button>
             ))}
           </div>
 
           {/* Icon picker */}
           <div>
-            <label className="label mb-1.5 block">Icon</label>
+            <label className="label mb-1.5 block dark:text-gray-400">{t('categories.icon')}</label>
             <div className="flex flex-wrap gap-1.5">
               {EMOJI_OPTIONS.map(e => (
                 <button
@@ -205,12 +205,12 @@ function AddCategoryModal({
 
           {/* Name */}
           <div>
-            <label className="label mb-1.5 block">Name</label>
+            <label className="label mb-1.5 block dark:text-gray-400">{t('account.name')}</label>
             <input
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
-              placeholder="e.g. Groceries, Salary"
+              placeholder={t('categories.placeholder')}
               className="input"
               required
             />
@@ -218,7 +218,7 @@ function AddCategoryModal({
 
           {/* Actions */}
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="btn-secondary flex-1">Cancel</button>
+            <button type="button" onClick={onClose} className="btn-secondary flex-1">{t('account.cancel')}</button>
             <button type="submit" disabled={loading || !name} className="btn-primary flex-1">
               {loading ? 'Adding...' : t('categories.add')}
             </button>
