@@ -113,7 +113,7 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 rounded-xl bg-gray-100 p-1 w-fit">
+      <div className="flex gap-1 rounded-xl bg-gray-100 dark:bg-gray-800 p-1 w-fit">
         {(['all', 'assets', 'debts'] as Tab[]).map(tab => (
           <button
             key={tab}

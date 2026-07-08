@@ -36,13 +36,13 @@ export function Categories() {
       </div>
 
       {/* Filter tabs */}
-      <div className="flex gap-1 rounded-xl bg-gray-100 p-1 w-fit">
+      <div className="flex gap-1 rounded-xl bg-gray-100 dark:bg-gray-800 p-1 w-fit">
         {(['all', 'income', 'expense'] as const).map(f => (
           <button
             key={f}
             onClick={() => setFilter(f)}
             className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-              filter === f ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+              filter === f ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
             }`}
           >
             {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -55,14 +55,14 @@ export function Categories() {
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-500 border-t-transparent" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="card flex flex-col items-center justify-center py-16 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100">
-            <svg className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="card flex flex-col items-center justify-center py-16 text-center dark:bg-gray-800">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100 dark:bg-gray-700">
+            <svg className="h-8 w-8 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z" />
             </svg>
           </div>
-          <p className="text-sm font-medium text-gray-900">No categories yet</p>
-          <p className="text-sm text-gray-500 mt-1">Create categories to organize your transactions</p>
+          <p className="text-sm font-medium text-gray-900 dark:text-white">No categories yet</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Create categories to organize your transactions</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -108,8 +108,8 @@ function CategoryCard({ category, onDelete }: { category: any; onDelete: (id: st
         {category.icon || '📦'}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-900 truncate">{category.name}</p>
-        <p className="text-xs text-gray-500 capitalize">{category.type}</p>
+        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{category.name}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{category.type}</p>
       </div>
       <button
         onClick={() => onDelete(category.id)}
@@ -165,14 +165,14 @@ function AddCategoryModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Type */}
-          <div className="flex gap-1 rounded-xl bg-gray-100 p-1">
+          <div className="flex gap-1 rounded-xl bg-gray-100 dark:bg-gray-800 p-1">
             {(['expense', 'income'] as const).map(t => (
               <button
                 key={t}
                 type="button"
                 onClick={() => setType(t)}
                 className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
-                  type === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                  type === t ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                 }`}
               >
                 {t.charAt(0).toUpperCase() + t.slice(1)}
