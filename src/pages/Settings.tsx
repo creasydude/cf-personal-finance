@@ -4,6 +4,7 @@ import { api } from '../api/client'
 import { Modal } from '../components/ui/Modal'
 import { CurrencyPicker } from '../components/ui/CurrencyPicker'
 import { useTheme } from '../lib/theme'
+import { useTranslation } from '../hooks/useTranslation'
 import { cn } from '../lib/utils'
 
 type SettingsTab = 'account' | 'import-export' | 'preferences' | 'security'
@@ -27,6 +28,7 @@ const DATE_FORMATS = [
 
 export function Settings() {
   const auth = useAuth()
+  const { t } = useTranslation(auth.settings)
   const [activeTab, setActiveTab] = useState<SettingsTab>('account')
   const [settings, setSettings] = useState<any>(auth.settings || {})
   const [saving, setSaving] = useState(false)
@@ -105,23 +107,23 @@ export function Settings() {
   }
 
   const tabs: { key: SettingsTab; label: string; icon: React.ReactNode }[] = [
-    { key: 'account', label: 'Account', icon: (
+    { key: 'account', label: t('settings.account'), icon: (
       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
       </svg>
     )},
-    { key: 'import-export', label: 'Import / Export', icon: (
+    { key: 'import-export', label: t('settings.importExport'), icon: (
       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
       </svg>
     )},
-    { key: 'preferences', label: 'Preferences', icon: (
+    { key: 'preferences', label: t('settings.preferences'), icon: (
       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
         <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
       </svg>
     )},
-    { key: 'security', label: 'Security', icon: (
+    { key: 'security', label: t('settings.security'), icon: (
       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
       </svg>
@@ -130,7 +132,7 @@ export function Settings() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Settings</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('settings.title')}</h1>
 
       <div className="flex gap-6">
         {/* Sidebar tabs */}
@@ -179,6 +181,7 @@ export function Settings() {
               settings={settings}
               onSave={saveSetting}
               saving={saving}
+              t={t}
             />
           )}
 
@@ -187,6 +190,7 @@ export function Settings() {
               settings={settings}
               onSave={saveSetting}
               saving={saving}
+              t={t}
             />
           )}
         </div>
@@ -241,6 +245,7 @@ function AccountSection({
   onDelete: () => void
   onReset: () => void
 }) {
+  const { t } = useTranslation(settings)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [nickname, setNickname] = useState(settings.nickname || '')
   const [photoPreview, setPhotoPreview] = useState<string | null>(settings.photo || null)
@@ -281,7 +286,7 @@ function AccountSection({
     <div className="space-y-6">
       {/* Access Code */}
       <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Your Access Code</h3>
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{t('settings.accessCode')}</h3>
         <div className="rounded-xl border-2 border-dashed border-amber-300 bg-amber-50 p-4">
           <div className="flex items-center justify-between mb-2">
             <p className="font-mono text-2xl font-bold tracking-[0.15em] text-amber-800">
@@ -321,7 +326,7 @@ function AccountSection({
 
       {/* Profile */}
       <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Profile</h3>
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{t('settings.profile')}</h3>
 
         {/* Photo */}
         <div className="flex items-center gap-4 mb-6">
@@ -371,20 +376,20 @@ function AccountSection({
         {/* Save button */}
         <div className="flex items-center gap-3">
           <button onClick={handleSave} disabled={isSaving} className="btn-primary">
-            {isSaving ? 'Saving...' : saved ? '✓ Saved!' : 'Save Changes'}
+            {isSaving ? t('settings.saving') : saved ? t('settings.saved') : t('settings.saveChanges')}
           </button>
         </div>
       </div>
 
       {/* Danger zone */}
       <div className="card border-red-200 dark:border-red-800 p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-red-900 dark:text-red-400 mb-4">Danger Zone</h3>
+        <h3 className="text-sm font-semibold text-red-900 dark:text-red-400 mb-4">{t('settings.dangerZone')}</h3>
         <div className="flex flex-col gap-3 sm:flex-row">
           <button onClick={onReset} className="btn-secondary border-amber-300 text-amber-700 hover:bg-amber-50">
-            Reset Account
+            {t('settings.resetAccount')}
           </button>
           <button onClick={onDelete} className="rounded-xl px-4 py-2.5 border border-red-300 text-red-700 font-medium text-sm hover:bg-red-50 transition-colors">
-            Delete Account
+            {t('settings.deleteAccount')}
           </button>
         </div>
       </div>
@@ -402,13 +407,14 @@ function ImportExportSection({
   onImport: (file: File) => void
   exportHistory: any[]
 }) {
+  const { t } = useTranslation({})
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   return (
     <div className="space-y-6">
       {/* Export */}
       <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 mb-2">Export Data</h3>
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">{t('settings.exportData')}</h3>
         <p className="text-sm text-gray-500 mb-4">
           Download all your accounts, transactions, budgets, and categories as a JSON file.
         </p>
@@ -416,7 +422,7 @@ function ImportExportSection({
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
           </svg>
-          Export All Data
+          {t('settings.exportAll')}
         </button>
       </div>
 
@@ -439,7 +445,7 @@ function ImportExportSection({
 
       {/* Import */}
       <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 mb-2">Import Data</h3>
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">{t('settings.importData')}</h3>
         <p className="text-sm text-gray-500 mb-4">
           Restore from a previously exported JSON file. This will merge with your existing data.
         </p>
@@ -454,7 +460,7 @@ function ImportExportSection({
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
           </svg>
-          Import from File
+          {t('settings.importFile')}
         </button>
       </div>
     </div>
@@ -466,10 +472,12 @@ function PreferencesSection({
   settings,
   onSave,
   saving,
+  t,
 }: {
   settings: any
   onSave: (key: string, value: any) => Promise<void>
   saving: boolean
+  t: (key: string) => string
 }) {
   const { setTheme: applyTheme } = useTheme()
   const [language, setLanguage] = useState(settings.language || 'en')
@@ -493,7 +501,7 @@ function PreferencesSection({
   return (
     <div className="space-y-6">
       <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">General</h3>
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{t('settings.general')}</h3>
         <div className="space-y-4 max-w-lg">
           {/* Language */}
           <div>
@@ -547,20 +555,20 @@ function PreferencesSection({
 
       {/* Theme */}
       <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Appearance</h3>
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{t('settings.appearance')}</h3>
         <div className="flex gap-3">
           {([
-            { key: 'light', label: 'Light', icon: (
+            { key: 'light', label: t('settings.light'), icon: (
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
               </svg>
             )},
-            { key: 'dark', label: 'Dark', icon: (
+            { key: 'dark', label: t('settings.dark'), icon: (
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
               </svg>
             )},
-            { key: 'system', label: 'System', icon: (
+            { key: 'system', label: t('settings.system'), icon: (
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 7.41A2.25 2.25 0 012.25 5.496V5.25" />
               </svg>
@@ -587,7 +595,7 @@ function PreferencesSection({
       {/* Save button */}
       <div className="flex items-center gap-3">
         <button onClick={handleSave} disabled={saving} className="btn-primary">
-          {saving ? 'Saving...' : saved ? '✓ Saved!' : 'Save Preferences'}
+          {saving ? t('settings.saving') : saved ? t('settings.saved') : t('settings.saveChanges')}
         </button>
       </div>
     </div>
@@ -599,17 +607,19 @@ function SecuritySection({
   settings,
   onSave,
   saving,
+  t,
 }: {
   settings: any
   onSave: (key: string, value: any) => Promise<void>
   saving: boolean
+  t: (key: string) => string
 }) {
   const [twoFactor, setTwoFactor] = useState(settings.twoFactorEnabled || false)
 
   return (
     <div className="space-y-6">
       <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Two-Factor Authentication</h3>
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{t('settings.twoFactor')}</h3>
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-700">

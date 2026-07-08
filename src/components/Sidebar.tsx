@@ -34,7 +34,7 @@ export function Sidebar({ collapsed, onToggle, settings }: { collapsed: boolean;
   return (
     <aside
       className={cn(
-        'fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 transition-all duration-300',
+        'fixed start-0 top-0 z-40 flex h-screen flex-col border-e border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 transition-all duration-300',
         collapsed ? 'w-[68px]' : 'w-[220px]'
       )}
     >

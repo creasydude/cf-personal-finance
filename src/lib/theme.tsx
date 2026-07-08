@@ -14,7 +14,7 @@ const ThemeContext = createContext<ThemeContextType>({
   setTheme: () => {},
 })
 
-export function ThemeProvider({ children, initialTheme = 'system' }: { children: ReactNode; initialTheme?: Theme }) {
+export function ThemeProvider({ children, initialTheme = 'system', locale = 'en' }: { children: ReactNode; initialTheme?: Theme; locale?: string }) {
   const [theme, setThemeState] = useState<Theme>(initialTheme)
   const [resolved, setResolved] = useState<'light' | 'dark'>('light')
 
@@ -39,6 +39,12 @@ export function ThemeProvider({ children, initialTheme = 'system' }: { children:
     const saved = localStorage.getItem('theme') as Theme | null
     if (saved) setThemeState(saved)
   }, [])
+
+  // RTL support
+  useEffect(() => {
+    document.documentElement.dir = locale === 'fa' ? 'rtl' : 'ltr'
+    document.documentElement.lang = locale === 'fa' ? 'fa' : 'en'
+  }, [locale])
 
   return (
     <ThemeContext.Provider value={{ theme, resolved, setTheme }}>

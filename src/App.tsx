@@ -26,7 +26,7 @@ export default function App() {
 
   if (!auth.authenticated) {
     return (
-      <ThemeProvider initialTheme={auth.settings?.theme || 'system'}>
+      <ThemeProvider initialTheme={auth.settings?.theme || 'system'} locale={auth.settings?.language || 'en'}>
         <AuthModal
           open={true}
           onLogin={auth.login}
@@ -37,7 +37,7 @@ export default function App() {
   }
 
   return (
-    <ThemeProvider initialTheme={auth.settings?.theme || 'system'}>
+    <ThemeProvider initialTheme={auth.settings?.theme || 'system'} locale={auth.settings?.language || 'en'}>
       <Layout userCode={auth.code} settings={auth.settings} onLogout={auth.logout}>
         <Routes>
           <Route path="/" element={<Dashboard userCode={auth.code} settings={auth.settings} />} />
