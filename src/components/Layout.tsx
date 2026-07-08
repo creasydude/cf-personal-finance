@@ -37,7 +37,7 @@ export function Layout({ children, userCode, settings, onLogout }: LayoutProps) 
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
 
       <main
@@ -47,9 +47,9 @@ export function Layout({ children, userCode, settings, onLogout }: LayoutProps) 
         )}
       >
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-gray-100 bg-white/80 backdrop-blur-sm px-6">
-          <div className="flex items-center gap-2 text-sm text-gray-400">
-            <span className="text-gray-900 font-medium">Home</span>
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-gray-100 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm px-6">
+          <div className="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500">
+            <span className="text-gray-900 dark:text-white font-medium">Home</span>
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>

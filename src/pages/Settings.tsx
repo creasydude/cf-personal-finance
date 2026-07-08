@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth'
 import { api } from '../api/client'
 import { Modal } from '../components/ui/Modal'
 import { CurrencyPicker } from '../components/ui/CurrencyPicker'
+import { useTheme } from '../lib/theme'
 import { cn } from '../lib/utils'
 
 type SettingsTab = 'account' | 'import-export' | 'preferences' | 'security'
@@ -129,7 +130,7 @@ export function Settings() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Settings</h1>
 
       <div className="flex gap-6">
         {/* Sidebar tabs */}
@@ -142,8 +143,8 @@ export function Settings() {
                 className={cn(
                   'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
                   activeTab === tab.key
-                    ? 'bg-brand-50 text-brand-700'
-                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                    ? 'bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400'
+                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200'
                 )}
               >
                 {tab.icon}
@@ -470,6 +471,7 @@ function PreferencesSection({
   onSave: (key: string, value: any) => Promise<void>
   saving: boolean
 }) {
+  const { setTheme: applyTheme } = useTheme()
   const [language, setLanguage] = useState(settings.language || 'en')
   const [timezone, setTimezone] = useState(settings.timezone || 'UTC')
   const [dateFormat, setDateFormat] = useState(settings.dateFormat || 'YYYY-MM-DD')
@@ -483,6 +485,7 @@ function PreferencesSection({
     await onSave('dateFormat', dateFormat)
     await onSave('baseCurrency', defaultCurrency)
     await onSave('theme', theme)
+    applyTheme(theme) // Apply theme immediately
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }

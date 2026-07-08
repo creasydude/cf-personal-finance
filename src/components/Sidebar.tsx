@@ -45,7 +45,7 @@ export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle:
   return (
     <aside
       className={cn(
-        'fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-gray-100 bg-white transition-all duration-300',
+        'fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 transition-all duration-300',
         collapsed ? 'w-[68px]' : 'w-[220px]'
       )}
     >
@@ -55,7 +55,7 @@ export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle:
           <span className="text-sm font-bold text-white">F</span>
         </div>
         {!collapsed && (
-          <span className="text-base font-bold text-gray-900">Finance</span>
+          <span className="text-base font-bold text-gray-900 dark:text-white">Finance</span>
         )}
       </div>
 
@@ -70,8 +70,8 @@ export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle:
               cn(
                 'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150',
                 isActive
-                  ? 'bg-brand-50 text-brand-700'
-                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700',
+                  ? 'bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400'
+                  : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200',
                 collapsed && 'justify-center px-2'
               )
             }
@@ -83,10 +83,10 @@ export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle:
       </nav>
 
       {/* Bottom */}
-      <div className="border-t border-gray-100 p-3 space-y-1">
+      <div className="border-t border-gray-100 dark:border-gray-800 p-3 space-y-1">
         <button
           onClick={onToggle}
-          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors"
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
           title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           <svg
