@@ -68,7 +68,7 @@ export function CurrencyPicker({ value, onChange, className, showType = false, f
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search currencies..."
-              className="w-full rounded-lg border-0 bg-gray-50 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              className="w-full rounded-lg border-0 bg-gray-50 dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
             />
           </div>
 
