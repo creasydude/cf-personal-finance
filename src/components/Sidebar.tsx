@@ -46,7 +46,7 @@ export function Sidebar({ collapsed, onToggle, settings }: { collapsed: boolean;
           <span className="text-sm font-bold text-white">F</span>
         </div>
         {!collapsed && (
-          <span className="text-base font-bold text-gray-900 dark:text-white">Finance</span>
+          <span className="text-base font-bold text-gray-900 dark:text-white">{t('sidebar.finance')}</span>
         )}
       </div>
 
@@ -78,7 +78,7 @@ export function Sidebar({ collapsed, onToggle, settings }: { collapsed: boolean;
         <button
           onClick={onToggle}
           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          title={collapsed ? t('nav.expand') : t('nav.collapse')}
         >
           <svg
             className={cn('h-5 w-5 transition-transform', collapsed && 'rotate-180')}
@@ -89,7 +89,7 @@ export function Sidebar({ collapsed, onToggle, settings }: { collapsed: boolean;
           >
             <path strokeLinecap="round" strokeLinejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
           </svg>
-          {!collapsed && <span>Collapse</span>}
+          {!collapsed && <span>{t('nav.collapse')}</span>}
         </button>
       </div>
     </aside>

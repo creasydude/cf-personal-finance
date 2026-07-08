@@ -407,7 +407,7 @@ function ImportExportSection({
   onImport: (file: File) => void
   exportHistory: any[]
 }) {
-  const { t } = useTranslation({})
+  const { t } = useTranslation()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   return (

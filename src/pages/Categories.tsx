@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useCategories } from '../hooks/useCategories'
+import { useTranslation } from '../hooks/useTranslation'
 import { Modal } from '../components/ui/Modal'
 import { cn } from '../lib/utils'
 
@@ -12,6 +13,7 @@ const EMOJI_OPTIONS = [
 
 export function Categories() {
   const { categories, loading, createCategory, deleteCategory } = useCategories()
+  const { t } = useTranslation()
   const [showAdd, setShowAdd] = useState(false)
   const [filter, setFilter] = useState<'all' | 'income' | 'expense'>('all')
 
@@ -25,13 +27,13 @@ export function Categories() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Categories</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{categories.length} categories</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{categories.length} {t('categories.title')}</p>
         </div>
         <button onClick={() => setShowAdd(true)} className="btn-primary">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
-          Add Category
+          {t('categories.add')}
         </button>
       </div>
 
@@ -45,7 +47,7 @@ export function Categories() {
               filter === f ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
             }`}
           >
-            {f.charAt(0).toUpperCase() + f.slice(1)}
+            {f === 'all' ? t('tab.all') : f === 'income' ? t('categories.income') : t('categories.expense')}
           </button>
         ))}
       </div>
@@ -61,15 +63,15 @@ export function Categories() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z" />
             </svg>
           </div>
-          <p className="text-sm font-medium text-gray-900 dark:text-white">No categories yet</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Create categories to organize your transactions</p>
+          <p className="text-sm font-medium text-gray-900 dark:text-white">{t('categories.noCategories')}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('categories.createFirst')}</p>
         </div>
       ) : (
         <div className="space-y-6">
           {/* Income categories */}
           {incomeCategories.length > 0 && (
             <div>
-              <h3 className="label px-1 mb-3">Income</h3>
+              <h3 className="label px-1 mb-3">{t('categories.income')}</h3>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {incomeCategories.map(cat => (
                   <CategoryCard key={cat.id} category={cat} onDelete={deleteCategory} />
@@ -81,7 +83,7 @@ export function Categories() {
           {/* Expense categories */}
           {expenseCategories.length > 0 && (
             <div>
-              <h3 className="label px-1 mb-3">Expense</h3>
+              <h3 className="label px-1 mb-3">{t('categories.expense')}</h3>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {expenseCategories.map(cat => (
                   <CategoryCard key={cat.id} category={cat} onDelete={deleteCategory} />
@@ -132,6 +134,7 @@ function AddCategoryModal({
   onClose: () => void
   onSubmit: (data: any) => Promise<void>
 }) {
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState('')
   const [type, setType] = useState<'income' | 'expense'>('expense')
@@ -217,7 +220,7 @@ function AddCategoryModal({
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose} className="btn-secondary flex-1">Cancel</button>
             <button type="submit" disabled={loading || !name} className="btn-primary flex-1">
-              {loading ? 'Adding...' : 'Add Category'}
+              {loading ? 'Adding...' : t('categories.add')}
             </button>
           </div>
         </form>

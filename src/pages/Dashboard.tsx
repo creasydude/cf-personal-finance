@@ -124,7 +124,7 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
                 : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
             }`}
           >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            {t(`tab.${tab}`)}
           </button>
         ))}
       </div>

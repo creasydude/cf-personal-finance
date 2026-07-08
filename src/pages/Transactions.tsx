@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTransactions } from '../hooks/useTransactions'
 import { useAccounts } from '../hooks/useAccounts'
 import { useCategories } from '../hooks/useCategories'
+import { useTranslation } from '../hooks/useTranslation'
 import { formatCurrency, formatDate } from '../lib/utils'
 import { Badge } from '../components/ui/Badge'
 import { Modal } from '../components/ui/Modal'
@@ -17,6 +18,7 @@ export function Transactions() {
   const { transactions, total, loading, filters, setFilters, createTransaction, deleteTransaction } = useTransactions()
   const { accounts } = useAccounts()
   const { categories } = useCategories()
+  const { t } = useTranslation()
   const [showAdd, setShowAdd] = useState(false)
   const [search, setSearch] = useState('')
 
@@ -43,13 +45,13 @@ export function Transactions() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Transactions</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{total} transactions</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{total} {t('transactions.count')}</p>
         </div>
         <button onClick={() => setShowAdd(true)} className="btn-primary">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
-          Add Transaction
+          {t('transactions.add')}
         </button>
       </div>
 
@@ -64,7 +66,7 @@ export function Transactions() {
             type="text"
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
-            placeholder="Search transactions..."
+            placeholder={t('transactions.search')}
             className="input pl-10"
           />
         </div>
@@ -75,10 +77,10 @@ export function Transactions() {
           onChange={(e) => handleTypeFilter(e.target.value)}
           className="input w-auto"
         >
-          <option value="">All Types</option>
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
-          <option value="transfer">Transfer</option>
+          <option value="">{t('transactions.allTypes')}</option>
+          <option value="income">{t('transactions.income')}</option>
+          <option value="expense">{t('transactions.expense')}</option>
+          <option value="transfer">{t('transactions.transfer')}</option>
         </select>
       </div>
 
@@ -94,8 +96,8 @@ export function Transactions() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5-6L16.5 18m0 0L12 13.5m4.5 4.5V6" />
             </svg>
           </div>
-          <p className="text-sm font-medium text-gray-900 dark:text-white">No transactions yet</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Add your first transaction to get started</p>
+          <p className="text-sm font-medium text-gray-900 dark:text-white">{t('transactions.noTransactions')}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('transactions.addFirst')}</p>
         </div>
       ) : (
         <div className="card overflow-hidden">
@@ -210,6 +212,7 @@ function AddTransactionModal({
   expenseCategories: any[]
   incomeCategories: any[]
 }) {
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [type, setType] = useState<'income' | 'expense' | 'transfer'>('expense')
   const [description, setDescription] = useState('')
@@ -269,7 +272,7 @@ function AddTransactionModal({
     <Modal open={open} onClose={onClose} className="max-w-md">
       <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Add Transaction</h2>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('transactions.add')}</h2>
           <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -281,19 +284,19 @@ function AddTransactionModal({
           {/* Type tabs — dark pill style */}
           <div className="flex gap-2 rounded-2xl bg-[#1a1a1a] dark:bg-gray-700 p-1.5">
             {([
-              { key: 'expense' as const, label: 'Expense', icon: (
+              { key: 'expense' as const, label: t('transactions.expense'), icon: (
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                   <circle cx="12" cy="12" r="10" />
                   <path strokeLinecap="round" d="M8 12h8" />
                 </svg>
               )},
-              { key: 'income' as const, label: 'Income', icon: (
+              { key: 'income' as const, label: t('transactions.income'), icon: (
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                   <circle cx="12" cy="12" r="10" />
                   <path strokeLinecap="round" d="M12 8v8m-4-4h8" />
                 </svg>
               )},
-              { key: 'transfer' as const, label: 'Transfer', icon: (
+              { key: 'transfer' as const, label: t('transactions.transfer'), icon: (
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
                 </svg>
@@ -320,7 +323,7 @@ function AddTransactionModal({
             type="text"
             value={description}
             onChange={e => setDescription(e.target.value)}
-            placeholder="What was this for?"
+            placeholder={t('account.name')}
             className="input"
             required
           />

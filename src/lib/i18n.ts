@@ -9,6 +9,11 @@ const translations: Record<Locale, Record<string, string>> = {
     'nav.categories': 'Categories',
     'nav.settings': 'Settings',
     'nav.signOut': 'Sign Out',
+    'nav.collapse': 'Collapse',
+    'nav.expand': 'Expand',
+
+    // Sidebar
+    'sidebar.finance': 'Finance',
 
     // Dashboard
     'dashboard.welcome': 'Welcome back',
@@ -34,13 +39,17 @@ const translations: Record<Locale, Record<string, string>> = {
     'transactions.transfer': 'Transfer',
     'transactions.noTransactions': 'No transactions yet',
     'transactions.addFirst': 'Add your first transaction to get started',
+    'transactions.count': 'transactions',
 
     // Budgets
     'budgets.title': 'Budgets',
     'budgets.add': 'Add Budget',
     'budgets.noBudgets': 'No budgets for this month',
+    'budgets.noBudgetsSet': 'No budgets set for this month',
     'budgets.setLimits': 'Set spending limits for your categories',
     'budgets.overall': 'Overall',
+    'budgets.of': 'of',
+    'budgets.spent': 'spent',
     'budgets.used': 'used',
     'budgets.left': 'left',
     'budgets.over': 'over',
@@ -108,6 +117,14 @@ const translations: Record<Locale, Record<string, string>> = {
     'account.loan': 'Loan',
     'account.otherAsset': 'Other Asset',
     'account.otherLiability': 'Other Liability',
+    'accountTypeModal.title': 'What would you like to add?',
+    'accountTypeModal.selectHint': 'Select',
+    'accountTypeModal.navigateHint': 'Navigate',
+    'accountTypeModal.closeHint': 'Close',
+    'accountTypeModal.assets': 'Assets',
+    'accountTypeModal.liabilities': 'Liabilities',
+    'accountTypeModal.utility': 'Utility',
+    'accountTypeModal.importAccounts': 'Import Accounts',
     'account.add': 'Add',
     'account.edit': 'Edit',
     'account.name': 'Name',
@@ -158,6 +175,11 @@ const translations: Record<Locale, Record<string, string>> = {
     'nav.categories': 'دسته‌بندی‌ها',
     'nav.settings': 'تنظیمات',
     'nav.signOut': 'خروج',
+    'nav.collapse': 'جمع کردن',
+    'nav.expand': 'باز کردن',
+
+    // Sidebar
+    'sidebar.finance': 'مالی',
 
     // Dashboard
     'dashboard.welcome': 'خوش آمدید',
@@ -183,13 +205,17 @@ const translations: Record<Locale, Record<string, string>> = {
     'transactions.transfer': 'انتقال',
     'transactions.noTransactions': 'هنوز تراکنشی ندارید',
     'transactions.addFirst': 'اولین تراکنش خود را اضافه کنید',
+    'transactions.count': 'تراکنش',
 
     // Budgets
     'budgets.title': 'بودجه',
     'budgets.add': 'افزودن بودجه',
     'budgets.noBudgets': 'برای این ماه بودجه‌ای تنظیم نشده',
+    'budgets.noBudgetsSet': 'برای این ماه بودجه‌ای تنظیم نشده',
     'budgets.setLimits': 'محدودیت هزینه برای دسته‌بندی‌های خود تعیین کنید',
     'budgets.overall': 'مجموع',
+    'budgets.of': 'از',
+    'budgets.spent': 'هزینه شده',
     'budgets.used': 'استفاده شده',
     'budgets.left': 'باقی‌مانده',
     'budgets.over': 'بیش از',
@@ -259,6 +285,14 @@ const translations: Record<Locale, Record<string, string>> = {
     'account.otherLiability': 'بدهی دیگر',
     'account.add': 'افزودن',
     'account.edit': 'ویرایش',
+    'accountTypeModal.title': 'چه چیزی می‌خواهید اضافه کنید؟',
+    'accountTypeModal.selectHint': 'انتخاب',
+    'accountTypeModal.navigateHint': 'حرکت',
+    'accountTypeModal.closeHint': 'بستن',
+    'accountTypeModal.assets': 'دارایی‌ها',
+    'accountTypeModal.liabilities': 'بدهی‌ها',
+    'accountTypeModal.utility': 'ابزار',
+    'accountTypeModal.importAccounts': 'واردات حساب‌ها',
     'account.name': 'نام',
     'account.balance': 'مانده فعلی',
     'account.balanceOwed': 'مانده فعلی (بدهی)',

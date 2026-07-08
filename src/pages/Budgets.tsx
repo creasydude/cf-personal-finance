@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useBudgets } from '../hooks/useBudgets'
 import { useCategories } from '../hooks/useCategories'
+import { useTranslation } from '../hooks/useTranslation'
 import { formatCurrency, formatPercent } from '../lib/utils'
 import { Modal } from '../components/ui/Modal'
 import { cn } from '../lib/utils'
@@ -13,6 +14,7 @@ export function Budgets() {
   const [year, setYear] = useState(now.getFullYear())
   const { budgets, loading, createBudget, deleteBudget } = useBudgets(month, year)
   const { categories } = useCategories()
+  const { t } = useTranslation()
   const [showAdd, setShowAdd] = useState(false)
 
   const expenseCategories = useMemo(() => categories.filter(c => c.type === 'expense'), [categories])
@@ -44,15 +46,15 @@ export function Budgets() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Budgets</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
             {totalBudgeted > 0
-              ? `${formatCurrency(totalSpent)} of ${formatCurrency(totalBudgeted)} spent (${totalPct.toFixed(0)}%)`
-              : 'No budgets set for this month'}
+              ? `${formatCurrency(totalSpent)} ${t('budgets.of')} ${formatCurrency(totalBudgeted)} ${t('budgets.spent')} (${totalPct.toFixed(0)}%)`
+              : t('budgets.noBudgetsSet')}
           </p>
         </div>
         <button onClick={() => setShowAdd(true)} className="btn-primary">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
-          Add Budget
+          {t('budgets.add')}
         </button>
       </div>
 
@@ -77,7 +79,7 @@ export function Budgets() {
       {totalBudgeted > 0 && (
         <div className="card p-6 dark:bg-gray-800">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Overall</span>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('budgets.overall')}</span>
             <span className="text-sm text-gray-500 dark:text-gray-400">
               {formatCurrency(totalSpent)} / {formatCurrency(totalBudgeted)}
             </span>
@@ -108,8 +110,8 @@ export function Budgets() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
             </svg>
           </div>
-          <p className="text-sm font-medium text-gray-900 dark:text-white">No budgets for this month</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Set spending limits for your categories</p>
+          <p className="text-sm font-medium text-gray-900 dark:text-white">{t('budgets.noBudgets')}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('budgets.setLimits')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -191,6 +193,7 @@ function AddBudgetModal({
   categories: any[]
   existingCategories: string[]
 }) {
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [category, setCategory] = useState('')
   const [amount, setAmount] = useState('')
@@ -213,7 +216,7 @@ function AddBudgetModal({
     <Modal open={open} onClose={onClose} className="max-w-sm">
       <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Add Budget</h2>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('budgets.add')}</h2>
           <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

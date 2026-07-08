@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 import { ThemeProvider } from './lib/theme'
+import { SettingsProvider } from './lib/settings-context'
 import { AuthModal } from './components/AuthModal'
 import { RegisterSuccessModal } from './components/RegisterSuccessModal'
 import { Layout } from './components/Layout'
@@ -38,21 +39,23 @@ export default function App() {
 
   return (
     <ThemeProvider initialTheme={auth.settings?.theme || 'system'} locale={auth.settings?.language || 'en'}>
-      <Layout userCode={auth.code} settings={auth.settings} onLogout={auth.logout}>
-        <Routes>
-          <Route path="/" element={<Dashboard userCode={auth.code} settings={auth.settings} />} />
-          <Route path="/transactions" element={<Transactions />} />
-          <Route path="/budgets" element={<Budgets />} />
-          <Route path="/categories" element={<Categories />} />
-          <Route path="/settings" element={<Settings />} />
-        </Routes>
+      <SettingsProvider settings={auth.settings}>
+        <Layout userCode={auth.code} settings={auth.settings} onLogout={auth.logout}>
+          <Routes>
+            <Route path="/" element={<Dashboard userCode={auth.code} settings={auth.settings} />} />
+            <Route path="/transactions" element={<Transactions />} />
+            <Route path="/budgets" element={<Budgets />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/settings" element={<Settings />} />
+          </Routes>
 
-        <RegisterSuccessModal
-          open={auth.justRegistered}
-          code={auth.code}
-          onClose={auth.dismissRegisterModal}
-        />
-      </Layout>
+          <RegisterSuccessModal
+            open={auth.justRegistered}
+            code={auth.code}
+            onClose={auth.dismissRegisterModal}
+          />
+        </Layout>
+      </SettingsProvider>
     </ThemeProvider>
   )
 }

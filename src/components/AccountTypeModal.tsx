@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Modal } from './ui/Modal'
 import { cn } from '../lib/utils'
+import { useTranslation } from '../hooks/useTranslation'
 import type { AccountType } from '../types'
 
 interface AccountTypeModalProps {
@@ -146,6 +147,7 @@ const accountOptions: AccountOption[] = [
 ]
 
 export function AccountTypeModal({ open, onClose, onSelect }: AccountTypeModalProps) {
+  const { t } = useTranslation()
   const [selectedIndex, setSelectedIndex] = useState(0)
   const listRef = useRef<HTMLDivElement>(null)
 
@@ -196,7 +198,7 @@ export function AccountTypeModal({ open, onClose, onSelect }: AccountTypeModalPr
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-6 pb-4">
-          <h2 className="text-lg font-bold text-white">What would you like to add?</h2>
+          <h2 className="text-lg font-bold text-white">{t('accountTypeModal.title')}</h2>
           <button
             onClick={onClose}
             className="rounded-lg p-1.5 text-gray-400 hover:bg-white/10 hover:text-white transition-colors"
@@ -256,15 +258,15 @@ export function AccountTypeModal({ open, onClose, onSelect }: AccountTypeModalPr
         <div className="flex items-center gap-4 border-t border-white/10 px-6 py-3 text-xs text-gray-500">
           <span className="flex items-center gap-1.5">
             <kbd className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[10px]">↵</kbd>
-            Select
+            {t('accountTypeModal.selectHint')}
           </span>
           <span className="flex items-center gap-1.5">
             <kbd className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[10px]">↑↓</kbd>
-            Navigate
+            {t('accountTypeModal.navigateHint')}
           </span>
           <span className="flex items-center gap-1.5">
             <kbd className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[10px]">ESC</kbd>
-            Close
+            {t('accountTypeModal.closeHint')}
           </span>
         </div>
       </div>
