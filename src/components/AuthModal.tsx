@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, type KeyboardEvent } from 'react'
 import { Modal } from './ui/Modal'
 import { cn } from '../lib/utils'
+import { useTranslation } from '../hooks/useTranslation'
 
 interface AuthModalProps {
   open: boolean
@@ -11,6 +12,7 @@ interface AuthModalProps {
 type ModalView = 'login' | 'register' | 'code-reveal'
 
 export function AuthModal({ open, onLogin, onRegister }: AuthModalProps) {
+  const { t } = useTranslation()
   const [view, setView] = useState<ModalView>('login')
   const [code, setCode] = useState('')
   const [generatedCode, setGeneratedCode] = useState('')
@@ -38,7 +40,7 @@ export function AuthModal({ open, onLogin, onRegister }: AuthModalProps) {
 
   const handleLogin = async () => {
     if (code.length < 9) {
-      setError('Please enter a valid code (XXXX-XXXX)')
+      setError(t('auth.invalidCode'))
       return
     }
     setLoading(true)
@@ -46,7 +48,7 @@ export function AuthModal({ open, onLogin, onRegister }: AuthModalProps) {
     try {
       await onLogin(code)
     } catch (err: any) {
-      setError(err.message || 'Invalid code')
+      setError(err.message || t('auth.invalidCodeError'))
     } finally {
       setLoading(false)
     }
@@ -60,7 +62,7 @@ export function AuthModal({ open, onLogin, onRegister }: AuthModalProps) {
       setGeneratedCode(newCode)
       setView('code-reveal')
     } catch (err: any) {
-      setError(err.message || 'Failed to create account')
+      setError(err.message || t('auth.failedToCreate'))
     } finally {
       setLoading(false)
     }
@@ -88,8 +90,8 @@ export function AuthModal({ open, onLogin, onRegister }: AuthModalProps) {
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700">
                 <span className="text-2xl font-bold text-white">F</span>
               </div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Welcome back</h2>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Enter your access code to continue</p>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('auth.welcome')}</h2>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t('auth.enterCode')}</p>
             </div>
 
             <div className="space-y-3">
@@ -124,10 +126,10 @@ export function AuthModal({ open, onLogin, onRegister }: AuthModalProps) {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                  Logging in...
+                  {t('auth.loggingIn')}
                 </span>
               ) : (
-                'Login'
+                t('auth.login')
               )}
             </button>
 
@@ -136,7 +138,7 @@ export function AuthModal({ open, onLogin, onRegister }: AuthModalProps) {
                 onClick={() => setView('register')}
                 className="text-sm text-brand-600 hover:text-brand-700 font-medium"
               >
-                Don't have a code? Register
+                {t('auth.dontHaveCode')} {t('auth.register')}
               </button>
             </div>
           </div>
@@ -149,16 +151,15 @@ export function AuthModal({ open, onLogin, onRegister }: AuthModalProps) {
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700">
                 <span className="text-2xl font-bold text-white">F</span>
               </div>
-              <h2 className="text-xl font-bold text-gray-900">Create your account</h2>
-              <p className="mt-1 text-sm text-gray-500">
-                We'll generate a unique access code for you
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('auth.createAccount')}</h2>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {t('auth.codeHint')}
               </p>
             </div>
 
-            <div className="rounded-xl bg-amber-50 border border-amber-200 p-4">
-              <p className="text-sm text-amber-800">
-                <strong>Important:</strong> Your access code is the only way to access your account.
-                Save it somewhere safe — it cannot be recovered.
+            <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4">
+              <p className="text-sm text-amber-800 dark:text-amber-300">
+                <strong>{t('auth.important')}:</strong> {t('auth.saveWarning')}
               </p>
             </div>
 
@@ -173,19 +174,19 @@ export function AuthModal({ open, onLogin, onRegister }: AuthModalProps) {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                  Generating code...
+                  {t('auth.generating')}
                 </span>
               ) : (
-                'Generate Access Code'
+                t('auth.generateCode')
               )}
             </button>
 
             <div className="text-center">
               <button
                 onClick={() => { setView('login'); setError('') }}
-                className="text-sm text-gray-500 hover:text-gray-700"
+                className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
               >
-                Already have a code? Login
+                {t('auth.alreadyHaveCode')} {t('auth.login')}
               </button>
             </div>
           </div>
@@ -200,22 +201,22 @@ export function AuthModal({ open, onLogin, onRegister }: AuthModalProps) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold text-gray-900">Your Access Code</h2>
-              <p className="mt-1 text-sm text-gray-500">
-                Save this code — it's the only way to access your account
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('auth.savedCode')}</h2>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {t('auth.codeRevealSaveWarning')}
               </p>
             </div>
 
             <div className="relative">
-              <div className="rounded-xl border-2 border-dashed border-brand-200 bg-brand-50 p-6 text-center">
-                <p className="font-mono text-3xl font-bold tracking-[0.15em] text-brand-700">
+              <div className="rounded-xl border-2 border-dashed border-brand-200 bg-brand-50 dark:bg-brand-900/20 p-6 text-center">
+                <p className="font-mono text-3xl font-bold tracking-[0.15em] text-brand-700 dark:text-brand-400">
                   {generatedCode}
                 </p>
               </div>
               <button
                 onClick={handleCopyCode}
-                className="absolute right-2 top-2 rounded-lg p-2 text-gray-400 hover:bg-white hover:text-gray-600 transition-colors"
-                title="Copy to clipboard"
+                className="absolute right-2 top-2 rounded-lg p-2 text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:text-gray-600 transition-colors"
+                title={t('auth.copyToClipboard')}
               >
                 {copied ? (
                   <svg className="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -229,10 +230,9 @@ export function AuthModal({ open, onLogin, onRegister }: AuthModalProps) {
               </button>
             </div>
 
-            <div className="rounded-xl bg-red-50 border border-red-200 p-4">
-              <p className="text-sm text-red-800 text-center">
-                <strong>Warning:</strong> This code will not be shown again.
-                If you lose it, you'll lose access to your account.
+            <div className="rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
+              <p className="text-sm text-red-800 dark:text-red-300 text-center">
+                <strong>{t('auth.saveWarning')}</strong> {t('auth.codeRevealWarning')}
               </p>
             </div>
 
@@ -240,7 +240,7 @@ export function AuthModal({ open, onLogin, onRegister }: AuthModalProps) {
               onClick={() => onLogin(generatedCode)}
               className="btn-primary w-full py-3"
             >
-              I've saved my code — Continue
+              {t('auth.copiedSaved')}
             </button>
           </div>
         )}

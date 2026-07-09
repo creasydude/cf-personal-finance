@@ -35,7 +35,7 @@ const TYPE_COLORS: Record<string, string> = {
 type Tab = 'all' | 'assets' | 'debts'
 
 export function Dashboard({ userCode, settings }: { userCode: string | null; settings: Record<string, any> }) {
-  const { t } = useTranslation(settings)
+  const { t, locale } = useTranslation(settings)
   const { accounts, assetsTotal, liabilitiesTotal, loading: accountsLoading, createAccount, updateAccount, deleteAccount } = useAccounts()
   const { data: netWorth, range, setRange, loading: nwLoading, refetch: refetchNetWorth } = useNetWorth()
   const [activeTab, setActiveTab] = useState<Tab>('all')
@@ -152,7 +152,7 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
                   <p className="text-xs text-gray-500 dark:text-gray-400">{account.currency}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-gray-900 dark:text-white">{formatCurrency(account.balance, account.currency)}</p>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">{formatCurrency(account.balance, account.currency, locale)}</p>
                 </div>
               </div>
             ))
@@ -169,7 +169,7 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
                 <div className="mt-1 flex items-baseline gap-3">
                   <AnimatedNumber
                     value={netWorthValue}
-                    format={(v) => formatCurrency(v, baseCurrency)}
+                    format={(v) => formatCurrency(v, baseCurrency, locale)}
                     className="stat-value"
                   />
                   <Badge variant={changePct >= 0 ? 'success' : 'danger'}>
@@ -197,7 +197,7 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
               </Dropdown>
             </div>
 
-            <NetWorthChart data={netWorth?.history || []} baseCurrency={baseCurrency} />
+            <NetWorthChart data={netWorth?.history || []} baseCurrency={baseCurrency} locale={locale} />
           </div>
 
           {/* Assets Breakdown */}
@@ -211,9 +211,9 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-100 dark:border-gray-700">
-                      <th className="pb-3 text-left label">Name</th>
-                      <th className="pb-3 text-right label">Weight</th>
-                      <th className="pb-3 text-right label">Value</th>
+                      <th className="pb-3 text-start label">{t('account.name')}</th>
+                      <th className="pb-3 text-end label">{t('budgets.used')}</th>
+                      <th className="pb-3 text-end label">{t('table.amount')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -239,7 +239,7 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
                             </div>
                           </td>
                           <td className="py-3 text-right">
-                            <span className="text-sm font-semibold text-gray-900">{formatCurrency(Math.abs(t.value), baseCurrency)}</span>
+                            <span className="text-sm font-semibold text-gray-900">{formatCurrency(Math.abs(t.value), baseCurrency, locale)}</span>
                           </td>
                         </tr>
                       )

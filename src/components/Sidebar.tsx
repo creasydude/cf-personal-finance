@@ -81,7 +81,7 @@ export function Sidebar({ collapsed, onToggle, settings }: { collapsed: boolean;
           title={collapsed ? t('nav.expand') : t('nav.collapse')}
         >
           <svg
-            className={cn('h-5 w-5 transition-transform', collapsed && 'rotate-180')}
+            className={cn('h-5 w-5 transition-transform', (collapsed && !isRTL) || (!collapsed && isRTL) ? 'rotate-180' : '')}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

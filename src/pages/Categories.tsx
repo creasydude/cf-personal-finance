@@ -29,7 +29,7 @@ export function Categories() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('categories.title')}</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{categories.length} {t('categories.title')}</p>
         </div>
-        <button onClick={() => setShowAdd(true)} className="btn-primary dark:text-white">
+        <button onClick={() => setShowAdd(true)} className="btn-primary">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
@@ -101,6 +101,7 @@ export function Categories() {
 }
 
 function CategoryCard({ category, onDelete }: { category: any; onDelete: (id: string) => void }) {
+  const { t } = useTranslation()
   return (
     <div className="card-hover flex items-center gap-3 p-3 group">
       <div className={cn(
@@ -111,7 +112,7 @@ function CategoryCard({ category, onDelete }: { category: any; onDelete: (id: st
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{category.name}</p>
-        <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{category.type}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">{category.type === 'income' ? t('categories.income') : t('categories.expense')}</p>
       </div>
       <button
         onClick={() => onDelete(category.id)}
@@ -158,8 +159,8 @@ function AddCategoryModal({
     <Modal open={open} onClose={onClose} className="max-w-sm">
       <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-gray-900">{t('categories.add')}</h2>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('categories.add')}</h2>
+          <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -220,7 +221,7 @@ function AddCategoryModal({
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose} className="btn-secondary flex-1">{t('account.cancel')}</button>
             <button type="submit" disabled={loading || !name} className="btn-primary flex-1">
-              {loading ? 'Adding...' : t('categories.add')}
+              {loading ? t('loading.adding') : t('categories.add')}
             </button>
           </div>
         </form>

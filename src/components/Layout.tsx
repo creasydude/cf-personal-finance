@@ -78,7 +78,7 @@ export function Layout({ children, userCode, settings, onLogout }: LayoutProps) 
               {menuOpen && (
                 <div className="absolute end-0 top-full mt-2 w-48 rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 py-1 shadow-lg animate-slide-down">
                   <div className="px-3 py-2 border-b border-gray-100 dark:border-gray-700">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Signed in as</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{t('auth.signedInAs')}</p>
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium text-gray-900 dark:text-white font-mono truncate">{userCode}</p>
                       <button

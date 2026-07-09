@@ -83,7 +83,7 @@ export function Settings() {
       window.location.reload()
     } catch (err) {
       console.error('Import failed:', err)
-      alert('Import failed. Please check the file format.')
+      alert(t('delete.importFailed'))
     }
   }
 
@@ -198,15 +198,15 @@ export function Settings() {
 
       {/* Delete Account Confirm */}
       <Modal open={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} className="max-w-sm">
-        <div className="rounded-2xl bg-white p-6 shadow-2xl">
-          <h3 className="text-lg font-bold text-gray-900 mb-2">{t('settings.deleteAccount')}</h3>
-          <p className="text-sm text-gray-500 mb-6">
-            This will permanently delete your account and all data. This action cannot be undone.
+        <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{t('settings.deleteAccount')}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+            {t('delete.permanentlyDelete')}
           </p>
           <div className="flex gap-3">
             <button onClick={() => setShowDeleteConfirm(false)} className="btn-secondary flex-1">{t('account.cancel')}</button>
             <button onClick={handleDeleteAccount} className="flex-1 rounded-xl px-4 py-2.5 bg-red-600 text-white font-medium text-sm hover:bg-red-700 transition-colors">
-              Delete Forever
+              {t('delete.forever')}
             </button>
           </div>
         </div>
@@ -214,15 +214,15 @@ export function Settings() {
 
       {/* Reset Account Confirm */}
       <Modal open={showResetConfirm} onClose={() => setShowResetConfirm(false)} className="max-w-sm">
-        <div className="rounded-2xl bg-white p-6 shadow-2xl">
-          <h3 className="text-lg font-bold text-gray-900 mb-2">{t('settings.resetAccount')}</h3>
-          <p className="text-sm text-gray-500 mb-6">
+        <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{t('settings.resetAccount')}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
             {t('settings.resetAccount')} — {t('settings.deleteAccount')}
           </p>
           <div className="flex gap-3">
             <button onClick={() => setShowResetConfirm(false)} className="btn-secondary flex-1">{t('account.cancel')}</button>
             <button onClick={handleResetAccount} className="flex-1 rounded-xl px-4 py-2.5 bg-amber-600 text-white font-medium text-sm hover:bg-amber-700 transition-colors">
-              Reset Everything
+              {t('delete.resetEverything')}
             </button>
           </div>
         </div>
@@ -407,7 +407,7 @@ function ImportExportSection({
   onImport: (file: File) => void
   exportHistory: any[]
 }) {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   return (
@@ -436,7 +436,7 @@ function ImportExportSection({
                 <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                {new Date(exp.date).toLocaleString()}
+                {new Date(exp.date).toLocaleString(locale === 'fa' ? 'fa-IR' : 'en-US')}
               </div>
             ))}
           </div>

@@ -150,6 +150,12 @@ const translations: Record<Locale, Record<string, string>> = {
     'account.saveChanges': 'Save Changes',
     'account.cancel': 'Cancel',
 
+    // Cash Subtypes
+    'cash.checking': 'Checking',
+    'cash.savings': 'Savings',
+    'cash.cash': 'Cash',
+    'cash.other': 'Other',
+
     // Gold
     'gold.weight': 'Weight (grams)',
     'gold.karat': 'Karat',
@@ -180,6 +186,66 @@ const translations: Record<Locale, Record<string, string>> = {
     'auth.saveWarning': 'This code cannot be recovered. Save it somewhere safe.',
     'auth.copiedSaved': 'I\'ve saved my code — Continue',
     'auth.signedInAs': 'Signed in as',
+    'auth.important': 'Important',
+    'auth.codeRevealWarning': 'This code will not be shown again. If you lose it, you\'ll lose access to your account.',
+    'auth.codeRevealSaveWarning': 'Save this code — it\'s the only way to access your account',
+    'auth.codeRevealDesc': 'Here\'s your access code. Save it somewhere safe.',
+    'auth.codeRevealCannotRecover': 'This code cannot be recovered. If you lose it, you\'ll lose access to your account permanently.',
+    'auth.copyCode': 'Copy Code',
+    'auth.continueToDashboard': 'Continue to Dashboard',
+    'auth.copyToClipboard': 'Copy to clipboard',
+    'auth.codeHint': 'We\'ll generate a unique access code for you',
+    'auth.invalidCode': 'Please enter a valid code (XXXX-XXXX)',
+    'auth.failedToCreate': 'Failed to create account',
+    'auth.invalidCodeError': 'Invalid code',
+
+    // Table Headers
+    'table.date': 'Date',
+    'table.description': 'Description',
+    'table.category': 'Category',
+    'table.type': 'Type',
+    'table.amount': 'Amount',
+
+    // Account Form
+    'accountForm.name': 'Name',
+    'accountForm.accountType': 'Account Type',
+    'accountForm.selectType': 'Select type...',
+    'accountForm.currentBalance': 'Current Balance',
+    'accountForm.currentBalanceOwed': 'Current Balance (owed)',
+    'accountForm.goldInfo': 'Gold value is automatically calculated using live gold prices from the API based on weight and karat.',
+    'accountForm.currency': 'Currency',
+    'accountForm.address': 'Address',
+    'accountForm.purchasePrice': 'Purchase Price',
+    'accountForm.addressPlaceholder': '123 Main St, City',
+    'accountForm.make': 'Make',
+    'accountForm.model': 'Model',
+    'accountForm.year': 'Year',
+    'accountForm.interestRate': 'Interest Rate (%)',
+    'accountForm.term': 'Term (months)',
+    'accountForm.creditLimit': 'Credit Limit',
+    'accountForm.cancel': 'Cancel',
+    'accountForm.saving': 'Saving...',
+    'accountForm.adding': 'Adding...',
+    'accountForm.saveChanges': 'Save Changes',
+    'accountForm.addAccount': 'Add Account',
+    'accountForm.deleteTitle': 'Delete Account',
+    'accountForm.deleteDesc': 'This action cannot be undone.',
+    'accountForm.deleteConfirm': 'Are you sure you want to delete',
+    'accountForm.deleteNote': 'All associated transactions will remain but won\'t be linked to this account anymore.',
+    'accountForm.deleting': 'Deleting...',
+    'accountForm.delete': 'Delete',
+    'accountForm.edit': 'Edit',
+
+    // Loading states
+    'loading.adding': 'Adding...',
+    'loading.saving': 'Saving...',
+    'loading.deleting': 'Deleting...',
+
+    // Delete Forever / Reset
+    'delete.forever': 'Delete Forever',
+    'delete.resetEverything': 'Reset Everything',
+    'delete.permanentlyDelete': 'This will permanently delete your account and all data. This action cannot be undone.',
+    'delete.importFailed': 'Import failed. Please check the file format.',
   },
   fa: {
     // Navigation
@@ -330,6 +396,12 @@ const translations: Record<Locale, Record<string, string>> = {
     'account.saveChanges': 'ذخیره تغییرات',
     'account.cancel': 'لغو',
 
+    // Cash Subtypes
+    'cash.checking': 'حساب جاری',
+    'cash.savings': 'پس‌انداز',
+    'cash.cash': 'نقد',
+    'cash.other': 'سایر',
+
     // Gold
     'gold.weight': 'وزن (گرم)',
     'gold.karat': 'عیار',
@@ -360,6 +432,66 @@ const translations: Record<Locale, Record<string, string>> = {
     'auth.saveWarning': 'این کد قابل بازیابی نیست. آن را در جای امنی ذخیره کنید.',
     'auth.copiedSaved': 'کد را ذخیره کردم — ادامه',
     'auth.signedInAs': 'ورود با',
+    'auth.important': 'مهم',
+    'auth.codeRevealWarning': 'این کد دیگر نمایش داده نخواهد شد. در صورت گم کردن، به حساب خود دسترسی نخواهید داشت.',
+    'auth.codeRevealSaveWarning': 'این کد را ذخیره کنید — تنها راه دسترسی به حساب شماست',
+    'auth.codeRevealDesc': 'کد دسترسی شما. آن را در جای امنی ذخیره کنید.',
+    'auth.codeRevealCannotRecover': 'این کد قابل بازیابی نیست. در صورت گم کردن، به حساب خود به صورت دائمی دسترسی نخواهید داشت.',
+    'auth.copyCode': 'کپی کد',
+    'auth.continueToDashboard': 'ادامه به داشبورد',
+    'auth.copyToClipboard': 'کپی در کلیپبورد',
+    'auth.codeHint': 'یک کد دسترسی منحصربفرد برای شما تولید می‌کنیم',
+    'auth.invalidCode': 'لطفاً یک کد معتبر وارد کنید (XXXX-XXXX)',
+    'auth.failedToCreate': 'ایجاد حساب ناموفق بود',
+    'auth.invalidCodeError': 'کد نامعتبر',
+
+    // Table Headers
+    'table.date': 'تاریخ',
+    'table.description': 'شرح',
+    'table.category': 'دسته‌بندی',
+    'table.type': 'نوع',
+    'table.amount': 'مبلغ',
+
+    // Account Form
+    'accountForm.name': 'نام',
+    'accountForm.accountType': 'نوع حساب',
+    'accountForm.selectType': 'انتخاب نوع...',
+    'accountForm.currentBalance': 'مانده فعلی',
+    'accountForm.currentBalanceOwed': 'مانده فعلی (بدهی)',
+    'accountForm.goldInfo': 'ارزش طلا بر اساس قیمت لحظه‌ای از API و وزن و عیار به صورت خودکار محاسبه می‌شود.',
+    'accountForm.currency': 'ارز',
+    'accountForm.address': 'آدرس',
+    'accountForm.purchasePrice': 'قیمت خرید',
+    'accountForm.addressPlaceholder': 'خیابان، شهر',
+    'accountForm.make': 'سازنده',
+    'accountForm.model': 'مدل',
+    'accountForm.year': 'سال',
+    'accountForm.interestRate': 'نرخ بهره (%)',
+    'accountForm.term': 'مدت (ماه)',
+    'accountForm.creditLimit': 'حد اعتبار',
+    'accountForm.cancel': 'لغو',
+    'accountForm.saving': 'در حال ذخیره...',
+    'accountForm.adding': 'در حال افزودن...',
+    'accountForm.saveChanges': 'ذخیره تغییرات',
+    'accountForm.addAccount': 'افزودن حساب',
+    'accountForm.deleteTitle': 'حذف حساب',
+    'accountForm.deleteDesc': 'این عمل غیرقابل بازگشت است.',
+    'accountForm.deleteConfirm': 'آیا مطمئن هستید که می‌خواهید حذف کنید',
+    'accountForm.deleteNote': 'تمام تراکنش‌های مرتبط باقی می‌مانند اما به این حساب متصل نخواهند بود.',
+    'accountForm.deleting': 'در حال حذف...',
+    'accountForm.delete': 'حذف',
+    'accountForm.edit': 'ویرایش',
+
+    // Loading states
+    'loading.adding': 'در حال افزودن...',
+    'loading.saving': 'در حال ذخیره...',
+    'loading.deleting': 'در حال حذف...',
+
+    // Delete Forever / Reset
+    'delete.forever': 'حذف دائمی',
+    'delete.resetEverything': 'بازنشانی همه',
+    'delete.permanentlyDelete': 'این عمل حساب و تمام داده‌های شما را به صورت دائمی حذف می‌کند. این عمل غیرقابل بازگشت است.',
+    'delete.importFailed': 'واردات ناموفق بود. لطفاً فرمت فایل را بررسی کنید.',
   },
 }
 

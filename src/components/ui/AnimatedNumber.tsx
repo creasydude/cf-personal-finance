@@ -9,7 +9,7 @@ interface AnimatedNumberProps {
 
 export function AnimatedNumber({
   value,
-  format = (n) => n.toLocaleString(),
+  format = (n) => n.toLocaleString('en-US'),
   duration = 800,
   className,
 }: AnimatedNumberProps) {

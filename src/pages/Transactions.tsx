@@ -9,16 +9,16 @@ import { Modal } from '../components/ui/Modal'
 import { CurrencyPicker } from '../components/ui/CurrencyPicker'
 
 const TYPE_CONFIG = {
-  income: { label: 'Income', variant: 'success' as const, color: 'text-emerald-600', icon: '↓' },
-  expense: { label: 'Expense', variant: 'danger' as const, color: 'text-red-600', icon: '↑' },
-  transfer: { label: 'Transfer', variant: 'info' as const, color: 'text-blue-600', icon: '↔' },
+  income: { key: 'transactions.income', variant: 'success' as const, color: 'text-emerald-600', icon: '↓' },
+  expense: { key: 'transactions.expense', variant: 'danger' as const, color: 'text-red-600', icon: '↑' },
+  transfer: { key: 'transactions.transfer', variant: 'info' as const, color: 'text-blue-600', icon: '↔' },
 }
 
 export function Transactions() {
   const { transactions, total, loading, filters, setFilters, createTransaction, deleteTransaction } = useTransactions()
   const { accounts } = useAccounts()
   const { categories } = useCategories()
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const [showAdd, setShowAdd] = useState(false)
   const [search, setSearch] = useState('')
 
@@ -59,7 +59,7 @@ export function Transactions() {
       <div className="flex flex-wrap gap-3">
         {/* Search */}
         <div className="relative flex-1 min-w-[200px] max-w-sm">
-          <svg className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <input
@@ -67,7 +67,7 @@ export function Transactions() {
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
             placeholder={t('transactions.search')}
-            className="input pl-10"
+            className="input ps-10"
           />
         </div>
 
@@ -106,11 +106,11 @@ export function Transactions() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Description</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Category</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Type</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Amount</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.date')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.description')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.category')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.type')}</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.amount')}</th>
                   <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"></th>
                 </tr>
               </thead>
@@ -119,7 +119,7 @@ export function Transactions() {
                   const config = TYPE_CONFIG[txn.type as keyof typeof TYPE_CONFIG]
                   return (
                     <tr key={txn.id} className="border-b border-gray-50 dark:border-gray-700 last:border-0 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
-                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{formatDate(txn.date)}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{formatDate(txn.date, locale)}</td>
                       <td className="px-4 py-3">
                         <p className="text-sm font-medium text-gray-900 dark:text-white">{txn.description}</p>
                         {txn.notes && <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate max-w-[300px]">{txn.notes}</p>}
@@ -134,12 +134,12 @@ export function Transactions() {
                       <td className="px-4 py-3">
                         <Badge variant={config?.variant}>
                           <span className={config?.color}>{config?.icon}</span>
-                          {config?.label}
+                          {config?.key ? t(config.key) : ''}
                         </Badge>
                       </td>
                       <td className="px-4 py-3 text-right">
                         <span className={`text-sm font-semibold ${config?.color}`}>
-                          {txn.type === 'income' ? '+' : txn.type === 'expense' ? '-' : ''}{formatCurrency(txn.amount, txn.currency)}
+                          {txn.type === 'income' ? '+' : txn.type === 'expense' ? '-' : ''}{formatCurrency(txn.amount, txn.currency, locale)}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">
@@ -168,13 +168,13 @@ export function Transactions() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900 truncate">{txn.description}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">{formatDate(txn.date)}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{formatDate(txn.date, locale)}</p>
                     </div>
-                    <div className="text-right ml-3">
+                    <div className="text-end ms-3">
                       <p className={`text-sm font-semibold ${config?.color}`}>
-                        {txn.type === 'income' ? '+' : txn.type === 'expense' ? '-' : ''}{formatCurrency(txn.amount, txn.currency)}
+                        {txn.type === 'income' ? '+' : txn.type === 'expense' ? '-' : ''}{formatCurrency(txn.amount, txn.currency, locale)}
                       </p>
-                      <Badge variant={config?.variant} className="mt-1">{config?.label}</Badge>
+                      <Badge variant={config?.variant} className="mt-1">{config?.key ? t(config.key) : ''}</Badge>
                     </div>
                   </div>
                 </div>
@@ -388,7 +388,7 @@ function AddTransactionModal({
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose} className="btn-secondary flex-1">{t('account.cancel')}</button>
             <button type="submit" disabled={loading || !description || !amount} className="btn-primary flex-1">
-              {loading ? 'Adding...' : t('transactions.add')}
+              {loading ? t('loading.adding') : t('transactions.add')}
             </button>
           </div>
         </form>

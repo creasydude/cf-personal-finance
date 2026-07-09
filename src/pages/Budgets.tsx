@@ -14,7 +14,7 @@ export function Budgets() {
   const [year, setYear] = useState(now.getFullYear())
   const { budgets, loading, createBudget, deleteBudget } = useBudgets(month, year)
   const { categories } = useCategories()
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const [showAdd, setShowAdd] = useState(false)
 
   const expenseCategories = useMemo(() => categories.filter(c => c.type === 'expense'), [categories])
@@ -46,7 +46,7 @@ export function Budgets() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('budgets.title')}</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
             {totalBudgeted > 0
-              ? `${formatCurrency(totalSpent)} ${t('budgets.of')} ${formatCurrency(totalBudgeted)} ${t('budgets.spent')} (${totalPct.toFixed(0)}%)`
+              ? `${formatCurrency(totalSpent, undefined, locale)} ${t('budgets.of')} ${formatCurrency(totalBudgeted, undefined, locale)} ${t('budgets.spent')} (${totalPct.toFixed(0)}%)`
               : t('budgets.noBudgetsSet')}
           </p>
         </div>
@@ -81,7 +81,7 @@ export function Budgets() {
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('budgets.overall')}</span>
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              {formatCurrency(totalSpent)} / {formatCurrency(totalBudgeted)}
+              {formatCurrency(totalSpent, undefined, locale)} / {formatCurrency(totalBudgeted, undefined, locale)}
             </span>
           </div>
           <div className="h-3 rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
@@ -124,7 +124,7 @@ export function Budgets() {
                   <div>
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">{budget.category}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                      {formatCurrency(budget.spent || 0)} of {formatCurrency(budget.amount)}
+                      {formatCurrency(budget.spent || 0, undefined, locale)} of {formatCurrency(budget.amount, undefined, locale)}
                     </p>
                   </div>
                   <button
@@ -153,13 +153,13 @@ export function Budgets() {
                     'text-xs font-medium',
                     pct > 100 ? 'text-red-600 dark:text-red-400' : pct > 80 ? 'text-amber-600 dark:text-amber-400' : 'text-gray-500 dark:text-gray-400'
                   )}>
-                    {pct.toFixed(0)}% used
+                    {pct.toFixed(0)}% {t('budgets.used')}
                   </span>
                   <span className={cn(
                     'text-xs',
                     remaining >= 0 ? 'text-gray-500 dark:text-gray-400' : 'text-red-600 dark:text-red-400'
                   )}>
-                    {remaining >= 0 ? `${formatCurrency(remaining)} left` : `${formatCurrency(Math.abs(remaining))} over`}
+                    {remaining >= 0 ? `${formatCurrency(remaining, undefined, locale)} ${t('budgets.left')}` : `${formatCurrency(Math.abs(remaining), undefined, locale)} ${t('budgets.over')}`}
                   </span>
                 </div>
               </div>
@@ -251,7 +251,7 @@ function AddBudgetModal({
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose} className="btn-secondary flex-1">{t('account.cancel')}</button>
             <button type="submit" disabled={loading || !category || !amount} className="btn-primary flex-1">
-              {loading ? 'Adding...' : t('budgets.add')}
+              {loading ? t('loading.adding') : t('budgets.add')}
             </button>
           </div>
         </form>

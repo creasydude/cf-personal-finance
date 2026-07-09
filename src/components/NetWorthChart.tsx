@@ -4,19 +4,20 @@ import { formatCurrency } from '../lib/utils'
 interface NetWorthChartProps {
   data: { date: string; value: number }[]
   baseCurrency?: string
+  locale?: string
 }
 
-function CustomTooltip({ active, payload, label, baseCurrency }: any) {
+function CustomTooltip({ active, payload, label, baseCurrency, locale }: any) {
   if (!active || !payload?.length) return null
   return (
     <div className="rounded-xl border border-gray-100 bg-white px-4 py-3 shadow-lg">
       <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-sm font-bold text-gray-900">{formatCurrency(payload[0].value, baseCurrency || 'USD')}</p>
+      <p className="text-sm font-bold text-gray-900">{formatCurrency(payload[0].value, baseCurrency || 'USD', locale)}</p>
     </div>
   )
 }
 
-export function NetWorthChart({ data, baseCurrency = 'USD' }: NetWorthChartProps) {
+export function NetWorthChart({ data, baseCurrency = 'USD', locale = 'en' }: NetWorthChartProps) {
   if (!data?.length) {
     return (
       <div className="flex h-[300px] items-center justify-center text-gray-400">
@@ -42,7 +43,7 @@ export function NetWorthChart({ data, baseCurrency = 'USD' }: NetWorthChartProps
             tick={{ fontSize: 12, fill: '#9ca3af' }}
             tickFormatter={(v) => {
               const d = new Date(v)
-              return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+              return d.toLocaleDateString(locale === 'fa' ? 'fa-IR' : 'en-US', { month: 'short', day: 'numeric' })
             }}
             interval="preserveStartEnd"
             minTickGap={60}
@@ -60,7 +61,7 @@ export function NetWorthChart({ data, baseCurrency = 'USD' }: NetWorthChartProps
             }}
             width={70}
           />
-          <Tooltip content={(props) => <CustomTooltip {...props} baseCurrency={baseCurrency} />} />
+          <Tooltip content={(props) => <CustomTooltip {...props} baseCurrency={baseCurrency} locale={locale} />} />
           <Area
             type="monotone"
             dataKey="value"

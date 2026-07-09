@@ -5,8 +5,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatCurrency(amount: number, currency: string = 'USD'): string {
-  // Custom display for non-standard currencies
+const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹']
+
+export function toPersianNumber(str: string | number): string {
+  return String(str).replace(/\d/g, d => persianDigits[parseInt(d)])
+}
+
+export function formatCurrency(amount: number, currency: string = 'USD', locale: string = 'en'): string {
   const customCurrencies: Record<string, string> = {
     IRR: 'IRR',
     GOLD_GRAM24: 'g Au24',
@@ -15,8 +20,10 @@ export function formatCurrency(amount: number, currency: string = 'USD'): string
     XAU: 'oz Au',
   }
 
+  const loc = locale === 'fa' ? 'fa-IR' : 'en-US'
+
   if (customCurrencies[currency]) {
-    const formatted = new Intl.NumberFormat('en-US', {
+    const formatted = new Intl.NumberFormat(loc, {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     }).format(amount)
@@ -24,20 +31,19 @@ export function formatCurrency(amount: number, currency: string = 'USD'): string
   }
 
   try {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat(loc, {
       style: 'currency',
       currency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     }).format(amount)
   } catch {
-    // Fallback for unknown currency codes
-    return `${amount.toLocaleString()} ${currency}`
+    return `${new Intl.NumberFormat(loc).format(amount)} ${currency}`
   }
 }
 
-export function formatNumber(n: number): string {
-  return new Intl.NumberFormat('en-US').format(n)
+export function formatNumber(n: number, locale: string = 'en'): string {
+  return new Intl.NumberFormat(locale === 'fa' ? 'fa-IR' : 'en-US').format(n)
 }
 
 export function formatPercent(n: number): string {
@@ -45,16 +51,16 @@ export function formatPercent(n: number): string {
   return `${sign}${n.toFixed(1)}%`
 }
 
-export function formatDate(date: string): string {
-  return new Date(date).toLocaleDateString('en-US', {
+export function formatDate(date: string, locale: string = 'en'): string {
+  return new Date(date).toLocaleDateString(locale === 'fa' ? 'fa-IR' : 'en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
   })
 }
 
-export function formatDateShort(date: string): string {
-  return new Date(date).toLocaleDateString('en-US', {
+export function formatDateShort(date: string, locale: string = 'en'): string {
+  return new Date(date).toLocaleDateString(locale === 'fa' ? 'fa-IR' : 'en-US', {
     month: 'short',
     day: 'numeric',
   })

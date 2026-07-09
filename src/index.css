@@ -136,3 +136,15 @@
 .animate-count-up {
   animation: countUp 0.4s ease-out forwards;
 }
+
+/* Vazir Matn for Persian — only when lang=fa */
+html[lang="fa"] body,
+html[lang="fa"] body * {
+  font-family: 'Vazirmatn', system-ui, sans-serif;
+}
+
+/* Force Western Arabic numerals when lang=en, regardless of font */
+html[lang="en"] body,
+html[lang="en"] body * {
+  font-variant-numeric: lining-nums;
+}

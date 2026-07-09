@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Modal } from './ui/Modal'
 import { CurrencyPicker } from './ui/CurrencyPicker'
+import { useTranslation } from '../hooks/useTranslation'
 import type { AccountType } from '../types'
 
 interface AccountFormProps {
@@ -12,22 +13,28 @@ interface AccountFormProps {
   account?: any // for edit mode
 }
 
-const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
-  cash: 'Cash Account',
-  investment: 'Investment Account',
-  crypto: 'Crypto Wallet',
-  gold: 'Gold',
-  property: 'Property',
-  vehicle: 'Vehicle',
-  credit_card: 'Credit Card',
-  loan: 'Loan',
-  other_asset: 'Other Asset',
-  other_liability: 'Other Liability',
+const ACCOUNT_TYPE_KEYS: Record<AccountType, string> = {
+  cash: 'account.cash',
+  investment: 'account.investment',
+  crypto: 'account.crypto',
+  gold: 'account.gold',
+  property: 'account.property',
+  vehicle: 'account.vehicle',
+  credit_card: 'account.creditCard',
+  loan: 'account.loan',
+  other_asset: 'account.otherAsset',
+  other_liability: 'account.otherLiability',
 }
 
-const CASH_SUBTYPES = ['Checking', 'Savings', 'Cash', 'Other']
+const CASH_SUBTYPES = [
+  { key: 'cash.checking', value: 'checking' },
+  { key: 'cash.savings', value: 'savings' },
+  { key: 'cash.cash', value: 'cash' },
+  { key: 'cash.other', value: 'other' },
+]
 
 export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }: AccountFormProps) {
+  const { t } = useTranslation()
   const isEditing = !!account
   const [loading, setLoading] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
@@ -90,7 +97,7 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
     <Modal open={open} onClose={onClose} className="max-w-md">
       <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">{isEditing ? 'Edit' : 'Add'} {ACCOUNT_TYPE_LABELS[type]}</h2>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">{isEditing ? t('accountForm.edit') : t('accountForm.addAccount')} {t(ACCOUNT_TYPE_KEYS[type])}</h2>
           <div className="flex items-center gap-1">
             {isEditing && onDelete && (
               <button
@@ -114,12 +121,12 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">Name</label>
+            <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.name')}</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder={ACCOUNT_TYPE_LABELS[type]}
+              placeholder={t(ACCOUNT_TYPE_KEYS[type])}
               className="input"
               required
             />
@@ -128,10 +135,10 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
           {/* Subtype for cash */}
           {type === 'cash' && (
             <div>
-              <label className="label mb-1.5 block dark:text-gray-400">Account Type</label>
+              <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.accountType')}</label>
               <select value={subtype} onChange={(e) => setSubtype(e.target.value)} className="input">
-                <option value="">Select type...</option>
-                {CASH_SUBTYPES.map(s => <option key={s} value={s.toLowerCase()}>{s}</option>)}
+                <option value="">{t('accountForm.selectType')}</option>
+                {CASH_SUBTYPES.map(s => <option key={s.value} value={s.value}>{t(s.key)}</option>)}
               </select>
             </div>
           )}
@@ -139,7 +146,7 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
           {/* Balance — hidden for gold (auto-calculated) */}
           {!isGold && (
             <div>
-              <label className="label mb-1.5 block dark:text-gray-400">{isLiability ? 'Current Balance (owed)' : 'Current Balance'}</label>
+              <label className="label mb-1.5 block dark:text-gray-400">{isLiability ? t('accountForm.currentBalanceOwed') : t('accountForm.currentBalance')}</label>
               <input
                 type="number"
                 value={balance}
@@ -156,14 +163,14 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
           {isGold && (
             <div className="rounded-xl bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 p-3">
               <p className="text-xs text-yellow-800 dark:text-yellow-300">
-                Gold value is automatically calculated using live gold prices from the API based on weight and karat.
+                {t('accountForm.goldInfo')}
               </p>
             </div>
           )}
 
           {/* Currency */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">Currency</label>
+            <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.currency')}</label>
             <CurrencyPicker value={currency} onChange={setCurrency} showType filter={currencyFilter} />
           </div>
 
@@ -171,11 +178,11 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
           {type === 'property' && (
             <>
               <div>
-                <label className="label mb-1.5 block dark:text-gray-400">Address</label>
-                <input type="text" value={details.address || ''} onChange={e => setDetails(d => ({ ...d, address: e.target.value }))} className="input" placeholder="123 Main St, City" />
+                <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.address')}</label>
+                <input type="text" value={details.address || ''} onChange={e => setDetails(d => ({ ...d, address: e.target.value }))} className="input" placeholder={t('accountForm.addressPlaceholder')} />
               </div>
               <div>
-                <label className="label mb-1.5 block dark:text-gray-400">Purchase Price</label>
+                <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.purchasePrice')}</label>
                 <input type="number" value={details.purchase_price || ''} onChange={e => setDetails(d => ({ ...d, purchase_price: e.target.value }))} className="input" placeholder="0.00" step="0.01" />
               </div>
             </>
@@ -184,11 +191,11 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
           {type === 'gold' && (
             <>
               <div>
-                <label className="label mb-1.5 block dark:text-gray-400">Weight (grams)</label>
+                <label className="label mb-1.5 block dark:text-gray-400">{t('gold.weight')}</label>
                 <input type="number" value={details.grams || ''} onChange={e => setDetails(d => ({ ...d, grams: e.target.value }))} className="input" placeholder="0.00" step="0.01" required />
               </div>
               <div>
-                <label className="label mb-1.5 block dark:text-gray-400">Karat</label>
+                <label className="label mb-1.5 block dark:text-gray-400">{t('gold.karat')}</label>
                 <select
                   value={details.karat || '18'}
                   onChange={e => {
@@ -207,9 +214,9 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
                 </select>
               </div>
               <div>
-                <label className="label mb-1.5 block dark:text-gray-400">Purchase Price per Gram (optional)</label>
+                <label className="label mb-1.5 block dark:text-gray-400">{t('gold.purchasePrice')}</label>
                 <input type="number" value={details.purchase_price_per_gram || ''} onChange={e => setDetails(d => ({ ...d, purchase_price_per_gram: e.target.value }))} className="input" placeholder="0.00" step="0.01" />
-                <p className="text-xs text-gray-400 mt-1">Used to calculate profit/loss</p>
+                <p className="text-xs text-gray-400 mt-1">{t('gold.purchaseHint')}</p>
               </div>
             </>
           )}
@@ -218,16 +225,16 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
             <>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label mb-1.5 block dark:text-gray-400">Make</label>
+                  <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.make')}</label>
                   <input type="text" value={details.make || ''} onChange={e => setDetails(d => ({ ...d, make: e.target.value }))} className="input" placeholder="Toyota" />
                 </div>
                 <div>
-                  <label className="label mb-1.5 block dark:text-gray-400">Model</label>
+                  <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.model')}</label>
                   <input type="text" value={details.model || ''} onChange={e => setDetails(d => ({ ...d, model: e.target.value }))} className="input" placeholder="Camry" />
                 </div>
               </div>
               <div>
-                <label className="label mb-1.5 block dark:text-gray-400">Year</label>
+                <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.year')}</label>
                 <input type="number" value={details.year || ''} onChange={e => setDetails(d => ({ ...d, year: e.target.value }))} className="input" placeholder="2024" />
               </div>
             </>
@@ -236,11 +243,11 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
           {type === 'loan' && (
             <>
               <div>
-                <label className="label mb-1.5 block dark:text-gray-400">Interest Rate (%)</label>
+                <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.interestRate')}</label>
                 <input type="number" value={details.interest_rate || ''} onChange={e => setDetails(d => ({ ...d, interest_rate: e.target.value }))} className="input" placeholder="5.5" step="0.1" />
               </div>
               <div>
-                <label className="label mb-1.5 block dark:text-gray-400">Term (months)</label>
+                <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.term')}</label>
                 <input type="number" value={details.term || ''} onChange={e => setDetails(d => ({ ...d, term: e.target.value }))} className="input" placeholder="60" />
               </div>
             </>
@@ -248,16 +255,16 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
 
           {type === 'credit_card' && (
             <div>
-              <label className="label mb-1.5 block dark:text-gray-400">Credit Limit</label>
+              <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.creditLimit')}</label>
               <input type="number" value={details.credit_limit || ''} onChange={e => setDetails(d => ({ ...d, credit_limit: e.target.value }))} className="input" placeholder="10000" step="0.01" />
             </div>
           )}
 
           {/* Actions */}
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="btn-secondary flex-1">Cancel</button>
+            <button type="button" onClick={onClose} className="btn-secondary flex-1">{t('accountForm.cancel')}</button>
             <button type="submit" disabled={loading || !name} className="btn-primary flex-1">
-              {loading ? (isEditing ? 'Saving...' : 'Adding...') : (isEditing ? 'Save Changes' : 'Add Account')}
+              {loading ? (isEditing ? t('accountForm.saving') : t('accountForm.adding')) : (isEditing ? t('accountForm.saveChanges') : t('accountForm.addAccount'))}
             </button>
           </div>
         </form>
@@ -275,15 +282,15 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-gray-900">Delete Account</h3>
-              <p className="text-sm text-gray-500">This action cannot be undone.</p>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t('accountForm.deleteTitle')}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t('accountForm.deleteDesc')}</p>
             </div>
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-            Are you sure you want to delete <strong className="dark:text-white">{account?.name}</strong>? All associated transactions will remain but won't be linked to this account anymore.
+            {t('accountForm.deleteConfirm')} <strong className="dark:text-white">{account?.name}</strong>? {t('accountForm.deleteNote')}
           </p>
           <div className="flex gap-3">
-            <button onClick={() => setShowDeleteConfirm(false)} className="btn-secondary flex-1">Cancel</button>
+            <button onClick={() => setShowDeleteConfirm(false)} className="btn-secondary flex-1">{t('accountForm.cancel')}</button>
             <button
               onClick={async () => {
                 if (!onDelete || !account) return
@@ -296,48 +303,11 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
               disabled={deleting}
               className="flex-1 rounded-xl px-4 py-2.5 bg-red-600 text-white font-medium text-sm hover:bg-red-700 transition-colors disabled:opacity-50"
             >
-              {deleting ? 'Deleting...' : 'Delete'}
+              {deleting ? t('accountForm.deleting') : t('accountForm.delete')}
             </button>
           </div>
         </div>
-    </Modal>
-
-    {/* Delete Confirmation Modal */}
-    <Modal open={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} className="max-w-sm">
-      <div className="rounded-2xl bg-white p-6 shadow-2xl">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-            <svg className="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-            </svg>
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Delete Account</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">This action cannot be undone.</p>
-          </div>
-        </div>
-        <p className="text-sm text-gray-600 mb-6">
-          Are you sure you want to delete <strong>{account?.name}</strong>? All associated transactions will remain but won't be linked to this account anymore.
-        </p>
-        <div className="flex gap-3">
-          <button onClick={() => setShowDeleteConfirm(false)} className="btn-secondary flex-1">Cancel</button>
-          <button
-            onClick={async () => {
-              if (!onDelete || !account) return
-              setDeleting(true)
-              await onDelete(account.id)
-              setDeleting(false)
-              setShowDeleteConfirm(false)
-              onClose()
-            }}
-            disabled={deleting}
-            className="flex-1 rounded-xl px-4 py-2.5 bg-red-600 text-white font-medium text-sm hover:bg-red-700 transition-colors disabled:opacity-50"
-          >
-            {deleting ? 'Deleting...' : 'Delete'}
-          </button>
-        </div>
-      </div>
-    </Modal>
+      </Modal>
     </>
   )
 }
