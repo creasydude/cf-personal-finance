@@ -206,6 +206,7 @@ const translations: Record<Locale, Record<string, string>> = {
     'table.category': 'Category',
     'table.type': 'Type',
     'table.amount': 'Amount',
+    'table.weight': 'Weight',
 
     // Account Form
     'accountForm.name': 'Name',
@@ -390,8 +391,8 @@ const translations: Record<Locale, Record<string, string>> = {
     'account.selectAccount': 'انتخاب حساب...',
     'account.noCategory': 'بدون دسته‌بندی',
     'account.notes': 'یادداشت (اختیاری)',
-    'account.balance': 'مانده فعلی',
-    'account.balanceOwed': 'مانده فعلی (بدهی)',
+    'account.balance': 'موجودی فعلی',
+    'account.balanceOwed': 'موجودی فعلی (بدهی)',
     'account.currency': 'ارز',
     'account.accountType': 'نوع حساب',
     'account.addAccount': 'افزودن حساب',
@@ -453,13 +454,14 @@ const translations: Record<Locale, Record<string, string>> = {
     'table.category': 'دسته‌بندی',
     'table.type': 'نوع',
     'table.amount': 'مبلغ',
+    'table.weight': 'وزن',
 
     // Account Form
     'accountForm.name': 'نام',
     'accountForm.accountType': 'نوع حساب',
     'accountForm.selectType': 'انتخاب نوع...',
-    'accountForm.currentBalance': 'مانده فعلی',
-    'accountForm.currentBalanceOwed': 'مانده فعلی (بدهی)',
+    'accountForm.currentBalance': 'موجودی فعلی',
+    'accountForm.currentBalanceOwed': 'موجودی فعلی (بدهی)',
     'accountForm.goldInfo': 'ارزش طلا بر اساس قیمت لحظه‌ای از API و وزن و عیار به صورت خودکار محاسبه می‌شود.',
     'accountForm.currency': 'ارز',
     'accountForm.address': 'آدرس',

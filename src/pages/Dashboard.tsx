@@ -57,12 +57,15 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
   }, [accounts, activeTab])
 
   const segments = useMemo(() => {
-    return netWorth?.by_type?.map((t: any) => ({
-      label: t.label,
-      value: Math.abs(t.value),
-      color: TYPE_COLORS[t.type] || 'bg-gray-400',
-    })) || []
-  }, [netWorth])
+    return netWorth?.by_type?.map((item: any) => {
+      const typeKey = `account.${item.type === 'other_asset' ? 'otherAsset' : item.type === 'other_liability' ? 'otherLiability' : item.type === 'credit_card' ? 'creditCard' : item.type}`
+      return {
+        label: t(typeKey) || item.label,
+        value: Math.abs(item.value),
+        color: TYPE_COLORS[item.type] || 'bg-gray-400',
+      }
+    }) || []
+  }, [netWorth, locale])
 
   const handleAccountTypeSelect = (type: AccountType) => {
     setTypeModalOpen(false)
@@ -212,38 +215,43 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
                   <thead>
                     <tr className="border-b border-gray-100 dark:border-gray-700">
                       <th className="pb-3 text-start label dark:text-gray-400">{t('account.name')}</th>
-                      <th className="pb-3 text-end label dark:text-gray-400">{t('budgets.used')}</th>
+                      <th className="pb-3 text-end label dark:text-gray-400">{t('table.weight')}</th>
                       <th className="pb-3 text-end label dark:text-gray-400">{t('table.amount')}</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {netWorth?.by_type?.filter((t: any) => t.value > 0).map((t: any) => {
-                      const pct = assetsTotal > 0 ? (Math.abs(t.value) / assetsTotal) * 100 : 0
-                      return (
-                        <tr key={t.type} className="border-b border-gray-50 dark:border-gray-700 last:border-0">
-                          <td className="py-3">
-                            <div className="flex items-center gap-2">
-                              <div className={`h-2.5 w-2.5 rounded-full ${TYPE_COLORS[t.type] || 'bg-gray-400'}`} />
-                              <span className="text-sm text-gray-700 dark:text-gray-300">{t.label}</span>
-                            </div>
-                          </td>
-                          <td className="py-3 text-end">
-                            <div className="flex items-center justify-end gap-2">
-                              <div className="w-20 h-1.5 rounded-full bg-gray-100 dark:bg-gray-600 overflow-hidden">
-                                <div
-                                  className={`h-full rounded-full ${TYPE_COLORS[t.type] || 'bg-gray-400'}`}
-                                  style={{ width: `${pct}%` }}
-                                />
+                    {(() => {
+                      const typeValues = netWorth?.by_type?.filter((item: any) => item.value > 0) || []
+                      const totalByType = typeValues.reduce((sum: number, item: any) => sum + Math.abs(item.value), 0)
+                      return typeValues.map((item: any) => {
+                        const pct = totalByType > 0 ? (Math.abs(item.value) / totalByType) * 100 : 0
+                        const typeKey = `account.${item.type === 'other_asset' ? 'otherAsset' : item.type === 'other_liability' ? 'otherLiability' : item.type === 'credit_card' ? 'creditCard' : item.type}`
+                        return (
+                          <tr key={item.type} className="border-b border-gray-50 dark:border-gray-700 last:border-0">
+                            <td className="py-3">
+                              <div className="flex items-center gap-2">
+                                <div className={`h-2.5 w-2.5 rounded-full ${TYPE_COLORS[item.type] || 'bg-gray-400'}`} />
+                                <span className="text-sm text-gray-700 dark:text-gray-300">{t(typeKey) || item.label}</span>
                               </div>
-                              <span className="text-sm font-medium text-gray-900 dark:text-white w-12 text-end">{pct.toFixed(1)}%</span>
-                            </div>
-                          </td>
-                          <td className="py-3 text-end">
-                            <span className="text-sm font-semibold text-gray-900 dark:text-white">{formatCurrency(Math.abs(t.value), baseCurrency, locale)}</span>
-                          </td>
-                        </tr>
-                      )
-                    })}
+                            </td>
+                            <td className="py-3 text-end">
+                              <div className="flex items-center justify-end gap-2">
+                                <div className="w-20 h-1.5 rounded-full bg-gray-100 dark:bg-gray-600 overflow-hidden">
+                                  <div
+                                    className={`h-full rounded-full ${TYPE_COLORS[item.type] || 'bg-gray-400'}`}
+                                    style={{ width: `${pct}%` }}
+                                  />
+                                </div>
+                                <span className="text-sm font-medium text-gray-900 dark:text-white w-12 text-end">{pct.toFixed(1)}%</span>
+                              </div>
+                            </td>
+                            <td className="py-3 text-end">
+                              <span className="text-sm font-semibold text-gray-900 dark:text-white">{formatCurrency(Math.abs(item.value), baseCurrency, locale)}</span>
+                            </td>
+                          </tr>
+                        )
+                      })
+                    })()}
                   </tbody>
                 </table>
               </div>
