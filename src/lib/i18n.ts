@@ -40,6 +40,7 @@ const translations: Record<Locale, Record<string, string>> = {
     'transactions.noTransactions': 'No transactions yet',
     'transactions.addFirst': 'Add your first transaction to get started',
     'transactions.count': 'transactions',
+    'transactions.notes': 'Extra notes (optional)',
 
     // Budgets
     'budgets.title': 'Budgets',
@@ -285,6 +286,7 @@ const translations: Record<Locale, Record<string, string>> = {
     'transactions.transfer': 'انتقال',
     'transactions.noTransactions': 'هنوز تراکنشی ندارید',
     'transactions.addFirst': 'اولین تراکنش خود را اضافه کنید',
+    'transactions.notes': 'یادداشت اضافی (اختیاری)',
     'transactions.count': 'تراکنش',
 
     // Budgets

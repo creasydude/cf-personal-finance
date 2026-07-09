@@ -253,6 +253,11 @@ function AccountSection({
   const [saved, setSaved] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
+  useEffect(() => {
+    setNickname(settings.nickname || '')
+    setPhotoPreview(settings.photo || null)
+  }, [settings.nickname, settings.photo])
+
   const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -268,8 +273,7 @@ function AccountSection({
       if (photoPreview !== settings.photo) {
         await onSave('photo', photoPreview)
       }
-      setSaved(true)
-      setTimeout(() => setSaved(false), 2000)
+      window.location.reload()
     } finally {
       setIsSaving(false)
     }
@@ -487,15 +491,22 @@ function PreferencesSection({
   const [theme, setTheme] = useState(settings.theme || 'system')
   const [saved, setSaved] = useState(false)
 
+  useEffect(() => {
+    setLanguage(settings.language || 'en')
+    setTimezone(settings.timezone || 'UTC')
+    setDateFormat(settings.dateFormat || 'YYYY-MM-DD')
+    setDefaultCurrency(settings.baseCurrency || 'IRR')
+    setTheme(settings.theme || 'system')
+  }, [settings.language, settings.timezone, settings.dateFormat, settings.baseCurrency, settings.theme])
+
   const handleSave = async () => {
     await onSave('language', language)
     await onSave('timezone', timezone)
     await onSave('dateFormat', dateFormat)
     await onSave('baseCurrency', defaultCurrency)
     await onSave('theme', theme)
-    applyTheme(theme) // Apply theme immediately
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+    applyTheme(theme)
+    window.location.reload()
   }
 
   return (

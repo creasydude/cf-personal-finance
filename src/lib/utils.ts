@@ -12,22 +12,23 @@ export function toPersianNumber(str: string | number): string {
 }
 
 export function formatCurrency(amount: number, currency: string = 'USD', locale: string = 'en'): string {
-  const customCurrencies: Record<string, string> = {
-    IRR: 'IRR',
-    GOLD_GRAM24: 'g Au24',
-    GOLD_GRAM18: 'g Au18',
-    GOLD_GRAM22: 'g Au22',
-    XAU: 'oz Au',
+  const customCurrencies: Record<string, Record<string, string>> = {
+    IRR: { en: 'IRR', fa: 'ریال' },
+    GOLD_GRAM24: { en: 'g Au24', fa: 'g Au24' },
+    GOLD_GRAM18: { en: 'g Au18', fa: 'g Au18' },
+    GOLD_GRAM22: { en: 'g Au22', fa: 'g Au22' },
+    XAU: { en: 'oz Au', fa: 'oz Au' },
   }
 
   const loc = locale === 'fa' ? 'fa-IR' : 'en-US'
 
   if (customCurrencies[currency]) {
+    const label = customCurrencies[currency][locale] || customCurrencies[currency].en
     const formatted = new Intl.NumberFormat(loc, {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     }).format(amount)
-    return `${formatted} ${customCurrencies[currency]}`
+    return `${formatted} ${label}`
   }
 
   try {

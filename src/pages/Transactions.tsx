@@ -380,7 +380,7 @@ function AddTransactionModal({
           <textarea
             value={notes}
             onChange={e => setNotes(e.target.value)}
-            placeholder={t('settings.nickname') + ' (' + t('account.balance') + ')'}
+            placeholder={t('transactions.notes')}
             className="input min-h-[80px] resize-none"
           />
 

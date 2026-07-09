@@ -166,7 +166,7 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
             <div className="flex items-start justify-between mb-6">
               <div>
                 <p className="stat-label">{t('dashboard.netWorth')}</p>
-                <div className="mt-1 flex items-baseline gap-3">
+                <div className="mt-1 flex items-baseline gap-4">
                   <AnimatedNumber
                     value={netWorthValue}
                     format={(v) => formatCurrency(v, baseCurrency, locale)}
@@ -211,9 +211,9 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-100 dark:border-gray-700">
-                      <th className="pb-3 text-start label">{t('account.name')}</th>
-                      <th className="pb-3 text-end label">{t('budgets.used')}</th>
-                      <th className="pb-3 text-end label">{t('table.amount')}</th>
+                      <th className="pb-3 text-start label dark:text-gray-400">{t('account.name')}</th>
+                      <th className="pb-3 text-end label dark:text-gray-400">{t('budgets.used')}</th>
+                      <th className="pb-3 text-end label dark:text-gray-400">{t('table.amount')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -227,19 +227,19 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
                               <span className="text-sm text-gray-700 dark:text-gray-300">{t.label}</span>
                             </div>
                           </td>
-                          <td className="py-3 text-right">
+                          <td className="py-3 text-end">
                             <div className="flex items-center justify-end gap-2">
-                              <div className="w-20 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                              <div className="w-20 h-1.5 rounded-full bg-gray-100 dark:bg-gray-600 overflow-hidden">
                                 <div
                                   className={`h-full rounded-full ${TYPE_COLORS[t.type] || 'bg-gray-400'}`}
                                   style={{ width: `${pct}%` }}
                                 />
                               </div>
-                              <span className="text-sm font-medium text-gray-900 w-12 text-right">{pct.toFixed(1)}%</span>
+                              <span className="text-sm font-medium text-gray-900 dark:text-white w-12 text-end">{pct.toFixed(1)}%</span>
                             </div>
                           </td>
-                          <td className="py-3 text-right">
-                            <span className="text-sm font-semibold text-gray-900">{formatCurrency(Math.abs(t.value), baseCurrency, locale)}</span>
+                          <td className="py-3 text-end">
+                            <span className="text-sm font-semibold text-gray-900 dark:text-white">{formatCurrency(Math.abs(t.value), baseCurrency, locale)}</span>
                           </td>
                         </tr>
                       )
