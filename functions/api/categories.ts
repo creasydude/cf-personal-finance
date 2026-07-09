@@ -38,6 +38,39 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   return Response.json(category, { status: 201 })
 }
 
+// PUT /api/categories?id=xxx
+export const onRequestPut: PagesFunction<Env> = async (context) => {
+  const user = await getAuthenticatedUser(context.env.DB, context.request)
+  if (!user) return jsonError('Unauthorized', 401)
+
+  const url = new URL(context.request.url)
+  const id = url.searchParams.get('id')
+  if (!id) return jsonError('Category id is required', 400)
+
+  const existing = await context.env.DB
+    .prepare('SELECT id FROM categories WHERE id = ? AND user_id = ?')
+    .bind(id, user.user_id)
+    .first()
+  if (!existing) return jsonError('Category not found', 404)
+
+  const body = await context.request.json() as any
+  const { name, type, icon } = body
+
+  if (type && !['income', 'expense'].includes(type)) return jsonError('Invalid type', 400)
+
+  await context.env.DB
+    .prepare('UPDATE categories SET name = COALESCE(?, name), type = COALESCE(?, type), icon = COALESCE(?, icon) WHERE id = ? AND user_id = ?')
+    .bind(name || null, type || null, icon || null, id, user.user_id)
+    .run()
+
+  const category = await context.env.DB
+    .prepare('SELECT * FROM categories WHERE id = ?')
+    .bind(id)
+    .first()
+
+  return Response.json(category)
+}
+
 // DELETE /api/categories?id=xxx
 export const onRequestDelete: PagesFunction<Env> = async (context) => {
   const user = await getAuthenticatedUser(context.env.DB, context.request)

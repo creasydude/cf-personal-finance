@@ -132,18 +132,6 @@ const accountOptions: AccountOption[] = [
       </svg>
     ),
   },
-  // Utility
-  {
-    type: 'cash',
-    label: 'accountTypeModal.importAccounts',
-    color: 'bg-violet-500',
-    section: 'utility',
-    icon: (
-      <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-      </svg>
-    ),
-  },
 ]
 
 export function AccountTypeModal({ open, onClose, onSelect }: AccountTypeModalProps) {
@@ -153,9 +141,8 @@ export function AccountTypeModal({ open, onClose, onSelect }: AccountTypeModalPr
 
   const assets = accountOptions.filter(o => o.section === 'asset')
   const liabilities = accountOptions.filter(o => o.section === 'liability')
-  const utility = accountOptions.filter(o => o.section === 'utility')
 
-  const allItems = [...assets, ...liabilities, ...utility]
+  const allItems = [...assets, ...liabilities]
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     switch (e.key) {
@@ -230,21 +217,6 @@ export function AccountTypeModal({ open, onClose, onSelect }: AccountTypeModalPr
             return (
               <OptionRow
                 key={opt.type + opt.label}
-                option={opt}
-                selected={selectedIndex === idx}
-                onClick={() => onSelect(opt.type)}
-                onMouseEnter={() => setSelectedIndex(idx)}
-              />
-            )
-          })}
-
-          {/* Utility divider */}
-          <div className="mx-3 my-2 border-t border-white/10" />
-          {utility.map((opt, i) => {
-            const idx = assets.length + liabilities.length + i
-            return (
-              <OptionRow
-                key={opt.label}
                 option={opt}
                 selected={selectedIndex === idx}
                 onClick={() => onSelect(opt.type)}

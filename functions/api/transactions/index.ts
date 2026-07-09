@@ -30,7 +30,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   if (account_id) { where += ' AND (account_id = ? OR from_account_id = ? OR to_account_id = ?)'; params.push(account_id, account_id, account_id) }
   if (category) { where += ' AND category = ?'; params.push(category) }
   if (tag) { where += ' AND tags LIKE ?'; params.push(`%${tag}%`) }
-  if (search) { where += ' AND description LIKE ?'; params.push(`%${search}%`) }
+  if (search) { where += ' AND (description LIKE ? OR notes LIKE ?)'; params.push(`%${search}%`, `%${search}%`) }
   if (from) { where += ' AND date >= ?'; params.push(from) }
   if (to) { where += ' AND date <= ?'; params.push(to) }
 
@@ -43,7 +43,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .first<{ count: number }>()
 
   const { results: transactions } = await context.env.DB
-    .prepare(`SELECT * FROM transactions ${where} ORDER BY ${validSort} ${validOrder} LIMIT ? OFFSET ?`)
+    .prepare(`SELECT t.*, COALESCE(a.attachment_count, 0) as attachment_count FROM transactions t LEFT JOIN (SELECT transaction_id, COUNT(*) as attachment_count FROM attachments GROUP BY transaction_id) a ON t.id = a.transaction_id ${where} ORDER BY t.${validSort} ${validOrder} LIMIT ? OFFSET ?`)
     .bind(...params, limit, offset)
     .all()
 

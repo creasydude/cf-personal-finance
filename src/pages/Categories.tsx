@@ -12,9 +12,10 @@ const EMOJI_OPTIONS = [
 ]
 
 export function Categories() {
-  const { categories, loading, createCategory, deleteCategory } = useCategories()
+  const { categories, loading, createCategory, updateCategory, deleteCategory } = useCategories()
   const { t } = useTranslation()
   const [showAdd, setShowAdd] = useState(false)
+  const [editingCategory, setEditingCategory] = useState<any>(null)
   const [filter, setFilter] = useState<'all' | 'income' | 'expense'>('all')
 
   const filtered = categories.filter(c => filter === 'all' || c.type === filter)
@@ -74,7 +75,7 @@ export function Categories() {
               <h3 className="label px-1 mb-3">{t('categories.income')}</h3>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {incomeCategories.map(cat => (
-                  <CategoryCard key={cat.id} category={cat} onDelete={deleteCategory} />
+                  <CategoryCard key={cat.id} category={cat} onClick={() => setEditingCategory(cat)} onDelete={deleteCategory} />
                 ))}
               </div>
             </div>
@@ -86,7 +87,7 @@ export function Categories() {
               <h3 className="label px-1 mb-3">{t('categories.expense')}</h3>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {expenseCategories.map(cat => (
-                  <CategoryCard key={cat.id} category={cat} onDelete={deleteCategory} />
+                  <CategoryCard key={cat.id} category={cat} onClick={() => setEditingCategory(cat)} onDelete={deleteCategory} />
                 ))}
               </div>
             </div>
@@ -96,14 +97,27 @@ export function Categories() {
 
       {/* Add modal */}
       <AddCategoryModal open={showAdd} onClose={() => setShowAdd(false)} onSubmit={createCategory} />
+
+      {/* Edit modal */}
+      {editingCategory && (
+        <EditCategoryModal
+          open={!!editingCategory}
+          category={editingCategory}
+          onClose={() => setEditingCategory(null)}
+          onSubmit={async (data) => {
+            await updateCategory(editingCategory.id, data)
+            setEditingCategory(null)
+          }}
+        />
+      )}
     </div>
   )
 }
 
-function CategoryCard({ category, onDelete }: { category: any; onDelete: (id: string) => void }) {
+function CategoryCard({ category, onClick, onDelete }: { category: any; onClick: () => void; onDelete: (id: string) => void }) {
   const { t } = useTranslation()
   return (
-    <div className="card-hover flex items-center gap-3 p-3 group">
+    <div onClick={onClick} className="card-hover flex items-center gap-3 p-3 cursor-pointer group">
       <div className={cn(
         'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl text-lg',
         category.type === 'income' ? 'bg-emerald-50' : 'bg-red-50'
@@ -222,6 +236,109 @@ function AddCategoryModal({
             <button type="button" onClick={onClose} className="btn-secondary flex-1">{t('account.cancel')}</button>
             <button type="submit" disabled={loading || !name} className="btn-primary flex-1">
               {loading ? t('loading.adding') : t('categories.add')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </Modal>
+  )
+}
+
+function EditCategoryModal({
+  open,
+  category,
+  onClose,
+  onSubmit,
+}: {
+  open: boolean
+  category: any
+  onClose: () => void
+  onSubmit: (data: any) => Promise<void>
+}) {
+  const { t } = useTranslation()
+  const [loading, setLoading] = useState(false)
+  const [name, setName] = useState(category.name)
+  const [type, setType] = useState<'income' | 'expense'>(category.type)
+  const [icon, setIcon] = useState(category.icon || '📦')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      await onSubmit({ name, type, icon })
+      onClose()
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <Modal open={open} onClose={onClose} className="max-w-sm">
+      <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('account.edit')} {t('categories.title')}</h2>
+          <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Type */}
+          <div className="flex gap-1 rounded-xl bg-gray-100 dark:bg-gray-700 p-1">
+            {(['expense', 'income'] as const).map(catType => (
+              <button
+                key={catType}
+                type="button"
+                onClick={() => setType(catType)}
+                className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
+                  type === catType ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                }`}
+              >
+                {catType === 'income' ? t('categories.income') : t('categories.expense')}
+              </button>
+            ))}
+          </div>
+
+          {/* Icon picker */}
+          <div>
+            <label className="label mb-1.5 block dark:text-gray-400">{t('categories.icon')}</label>
+            <div className="flex flex-wrap gap-1.5">
+              {EMOJI_OPTIONS.map(e => (
+                <button
+                  key={e}
+                  type="button"
+                  onClick={() => setIcon(e)}
+                  className={cn(
+                    'flex h-9 w-9 items-center justify-center rounded-lg text-lg transition-all',
+                    icon === e ? 'bg-brand-100 ring-2 ring-brand-500' : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                  )}
+                >
+                  {e}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Name */}
+          <div>
+            <label className="label mb-1.5 block dark:text-gray-400">{t('account.name')}</label>
+            <input
+              type="text"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              placeholder={t('categories.placeholder')}
+              className="input"
+              required
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose} className="btn-secondary flex-1">{t('account.cancel')}</button>
+            <button type="submit" disabled={loading || !name} className="btn-primary flex-1">
+              {loading ? t('loading.saving') : t('account.saveChanges')}
             </button>
           </div>
         </form>

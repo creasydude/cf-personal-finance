@@ -67,6 +67,7 @@ export const api = {
   categories: {
     list: () => request<{ categories: any[] }>('/categories'),
     create: (data: any) => request<any>('/categories', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id: string, data: any) => request<any>(`/categories?id=${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     delete: (id: string) => request<{ ok: boolean }>(`/categories?id=${id}`, { method: 'DELETE' }),
   },
 
@@ -84,6 +85,28 @@ export const api = {
   importData: (data: any) => request<any>('/import', { method: 'POST', body: JSON.stringify(data) }),
   deleteAccount: () => request<{ ok: boolean }>('/account', { method: 'DELETE' }),
   resetAccount: () => request<{ ok: boolean }>('/account/reset', { method: 'POST' }),
+
+  // Attachments
+  attachments: {
+    list: (transactionId: string) => request<{ attachments: any[] }>(`/attachments?transaction_id=${transactionId}`),
+    upload: async (transactionId: string, file: File) => {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('transaction_id', transactionId)
+      const res = await fetch(`${BASE_URL}/attachments`, {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin',
+      })
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({ error: res.statusText })) as ApiError
+        throw new Error(body.error || `Upload failed: ${res.status}`)
+      }
+      return res.json() as Promise<any>
+    },
+    delete: (id: string) => request<{ ok: boolean }>(`/attachments?id=${id}`, { method: 'DELETE' }),
+    getUrl: (id: string) => `${BASE_URL}/attachments/${id}/data`,
+  },
 
   // Currency conversion
   convertCurrency: (from: string, to: string, amount: number) =>

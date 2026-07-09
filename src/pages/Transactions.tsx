@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useTransactions } from '../hooks/useTransactions'
 import { useAccounts } from '../hooks/useAccounts'
 import { useCategories } from '../hooks/useCategories'
 import { useTranslation } from '../hooks/useTranslation'
 import { formatCurrency, formatDate } from '../lib/utils'
+import { api } from '../api/client'
 import { Badge } from '../components/ui/Badge'
 import { Modal } from '../components/ui/Modal'
 import { CurrencyPicker } from '../components/ui/CurrencyPicker'
@@ -32,8 +33,9 @@ export function Transactions() {
   }
 
   const handleAdd = async (data: any) => {
-    await createTransaction(data)
+    const txn = await createTransaction(data)
     setShowAdd(false)
+    return txn
   }
 
   const expenseCategories = categories.filter(c => c.type === 'expense')
@@ -106,12 +108,12 @@ export function Transactions() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.date')}</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.description')}</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.category')}</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.type')}</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.amount')}</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"></th>
+                  <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.date')}</th>
+                  <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.description')}</th>
+                  <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.category')}</th>
+                  <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.type')}</th>
+                  <th className="px-4 py-3 text-end text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.amount')}</th>
+                  <th className="px-4 py-3 text-end text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"></th>
                 </tr>
               </thead>
               <tbody>
@@ -121,12 +123,22 @@ export function Transactions() {
                     <tr key={txn.id} className="border-b border-gray-50 dark:border-gray-700 last:border-0 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
                       <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{formatDate(txn.date, locale)}</td>
                       <td className="px-4 py-3">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">{txn.description}</p>
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">{txn.description}</p>
+                          {txn.attachment_count > 0 && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-brand-50 dark:bg-brand-900/30 px-1.5 py-0.5 text-[10px] font-medium text-brand-600 dark:text-brand-400" title={t('transactions.hasAttachments')}>
+                              <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.686 7.687a1.5 1.5 0 002.112 2.13" />
+                              </svg>
+                              {txn.attachment_count}
+                            </span>
+                          )}
+                        </div>
                         {txn.notes && <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate max-w-[300px]">{txn.notes}</p>}
                       </td>
                       <td className="px-4 py-3">
                         {txn.category && (
-                          <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
+                          <span className="inline-flex items-center rounded-full bg-gray-100 dark:bg-gray-700 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:text-gray-300">
                             {txn.category}
                           </span>
                         )}
@@ -137,15 +149,15 @@ export function Transactions() {
                           {config?.key ? t(config.key) : ''}
                         </Badge>
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-4 py-3 text-end">
                         <span className={`text-sm font-semibold ${config?.color}`}>
                           {txn.type === 'income' ? '+' : txn.type === 'expense' ? '-' : ''}{formatCurrency(txn.amount, txn.currency, locale)}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-4 py-3 text-end">
                         <button
                           onClick={() => deleteTransaction(txn.id)}
-                          className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+                          className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 transition-colors"
                         >
                           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -224,8 +236,19 @@ function AddTransactionModal({
   const [category, setCategory] = useState('')
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
   const [notes, setNotes] = useState('')
+  const [files, setFiles] = useState<File[]>([])
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const categories = type === 'income' ? incomeCategories : expenseCategories
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = Array.from(e.target.files || [])
+    setFiles(prev => [...prev, ...selected])
+  }
+
+  const removeFile = (index: number) => {
+    setFiles(prev => prev.filter((_, i) => i !== index))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -248,7 +271,13 @@ function AddTransactionModal({
         data.account_id = accountId
       }
 
-      await onSubmit(data)
+      await onSubmit(data).then(async (txn: any) => {
+        if (txn?.id && files.length > 0) {
+          for (const file of files) {
+            await api.attachments.upload(txn.id, file)
+          }
+        }
+      })
       resetForm()
     } finally {
       setLoading(false)
@@ -383,6 +412,43 @@ function AddTransactionModal({
             placeholder={t('transactions.notes')}
             className="input min-h-[80px] resize-none"
           />
+
+          {/* Attachments */}
+          <div>
+            <label className="label mb-1.5 block dark:text-gray-400">{t('transactions.attachments')}</label>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="btn-secondary w-full"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.686 7.687a1.5 1.5 0 002.112 2.13" />
+              </svg>
+              {t('transactions.attachFile')}
+            </button>
+            {files.length > 0 && (
+              <div className="mt-2 space-y-1">
+                {files.map((file, i) => (
+                  <div key={i} className="flex items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-700 px-3 py-2 text-sm">
+                    <span className="truncate text-gray-700 dark:text-gray-300">{file.name}</span>
+                    <button type="button" onClick={() => removeFile(i)} className="ml-2 text-gray-400 hover:text-red-500">
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* Actions */}
           <div className="flex gap-3 pt-2">
