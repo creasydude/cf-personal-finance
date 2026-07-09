@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useTransactions } from '../hooks/useTransactions'
 import { useAccounts } from '../hooks/useAccounts'
 import { useCategories } from '../hooks/useCategories'
@@ -22,6 +22,7 @@ export function Transactions() {
   const { t, locale } = useTranslation()
   const [showAdd, setShowAdd] = useState(false)
   const [search, setSearch] = useState('')
+  const [detailTxn, setDetailTxn] = useState<any>(null)
 
   const handleSearch = (value: string) => {
     setSearch(value)
@@ -124,17 +125,26 @@ export function Transactions() {
                       <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{formatDate(txn.date, locale)}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1.5">
-                          <p className="text-sm font-medium text-gray-900 dark:text-white">{txn.description}</p>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-[200px]">{txn.description}</p>
                           {txn.attachment_count > 0 && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-brand-50 dark:bg-brand-900/30 px-1.5 py-0.5 text-[10px] font-medium text-brand-600 dark:text-brand-400" title={t('transactions.hasAttachments')}>
+                            <span className="inline-flex items-center gap-0.5 rounded-full bg-brand-50 dark:bg-brand-900/30 px-1.5 py-0.5 text-[10px] font-medium text-brand-600 dark:text-brand-400">
                               <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.686 7.687a1.5 1.5 0 002.112 2.13" />
                               </svg>
                               {txn.attachment_count}
                             </span>
                           )}
+                          <button
+                            onClick={() => setDetailTxn(txn)}
+                            className="rounded p-0.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                            title={t('transactions.details')}
+                          >
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                            </svg>
+                          </button>
                         </div>
-                        {txn.notes && <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate max-w-[300px]">{txn.notes}</p>}
+                        {txn.notes && <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate max-w-[200px]">{txn.notes}</p>}
                       </td>
                       <td className="px-4 py-3">
                         {txn.category && (
@@ -205,6 +215,15 @@ export function Transactions() {
         expenseCategories={expenseCategories}
         incomeCategories={incomeCategories}
       />
+
+      {/* Detail Modal */}
+      {detailTxn && (
+        <TransactionDetailModal
+          txn={detailTxn}
+          onClose={() => setDetailTxn(null)}
+          locale={locale}
+        />
+      )}
     </div>
   )
 }
@@ -458,6 +477,122 @@ function AddTransactionModal({
             </button>
           </div>
         </form>
+      </div>
+    </Modal>
+  )
+}
+
+function TransactionDetailModal({ txn, onClose, locale }: { txn: any; onClose: () => void; locale: string }) {
+  const { t } = useTranslation()
+  const [attachments, setAttachments] = useState<any[]>([])
+  const [loadingAttachments, setLoadingAttachments] = useState(true)
+
+  useEffect(() => {
+    api.attachments.list(txn.id).then(res => {
+      setAttachments(res.attachments)
+      setLoadingAttachments(false)
+    }).catch(() => setLoadingAttachments(false))
+  }, [txn.id])
+
+  const config = TYPE_CONFIG[txn.type as keyof typeof TYPE_CONFIG]
+  const isImage = (ct: string) => ct?.startsWith('image/')
+  const isPDF = (ct: string) => ct === 'application/pdf'
+
+  return (
+    <Modal open={true} onClose={onClose} className="max-w-lg">
+      <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('transactions.details')}</h2>
+          <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          {/* Description */}
+          <div>
+            <p className="label mb-1">{t('table.description')}</p>
+            <p className="text-sm text-gray-900 dark:text-white">{txn.description}</p>
+          </div>
+
+          {/* Notes */}
+          {txn.notes && (
+            <div>
+              <p className="label mb-1">{t('transactions.notes')}</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{txn.notes}</p>
+            </div>
+          )}
+
+          {/* Meta */}
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <p className="label mb-1">{t('table.date')}</p>
+              <p className="text-sm text-gray-900 dark:text-white">{formatDate(txn.date, locale)}</p>
+            </div>
+            <div>
+              <p className="label mb-1">{t('table.type')}</p>
+              <Badge variant={config?.variant}>
+                <span className={config?.color}>{config?.icon}</span>
+                {config?.key ? t(config.key) : ''}
+              </Badge>
+            </div>
+            <div>
+              <p className="label mb-1">{t('table.amount')}</p>
+              <p className={`text-sm font-semibold ${config?.color}`}>
+                {txn.type === 'income' ? '+' : txn.type === 'expense' ? '-' : ''}{formatCurrency(txn.amount, txn.currency, locale)}
+              </p>
+            </div>
+          </div>
+
+          {/* Attachments */}
+          <div>
+            <p className="label mb-2">{t('transactions.attachments')}</p>
+            {loadingAttachments ? (
+              <div className="flex h-10 items-center justify-center">
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-brand-500 border-t-transparent" />
+              </div>
+            ) : attachments.length === 0 ? (
+              <p className="text-sm text-gray-400 dark:text-gray-500">—</p>
+            ) : (
+              <div className="space-y-2">
+                {attachments.map(att => (
+                  <a
+                    key={att.id}
+                    href={api.attachments.getUrl(att.id)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 rounded-lg border border-gray-100 dark:border-gray-700 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg ${isImage(att.content_type) ? 'bg-emerald-50 dark:bg-emerald-900/30' : isPDF(att.content_type) ? 'bg-red-50 dark:bg-red-900/30' : 'bg-gray-100 dark:bg-gray-700'}`}>
+                      {isImage(att.content_type) ? (
+                        <svg className="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" />
+                        </svg>
+                      ) : isPDF(att.content_type) ? (
+                        <svg className="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                        </svg>
+                      ) : (
+                        <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                        </svg>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{att.filename}</p>
+                      <p className="text-xs text-gray-400">{(att.size / 1024).toFixed(1)} KB</p>
+                    </div>
+                    <svg className="h-4 w-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </Modal>
   )

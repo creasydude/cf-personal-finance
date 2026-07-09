@@ -105,7 +105,7 @@ export const api = {
       return res.json() as Promise<any>
     },
     delete: (id: string) => request<{ ok: boolean }>(`/attachments?id=${id}`, { method: 'DELETE' }),
-    getUrl: (id: string) => `${BASE_URL}/attachments/${id}/data`,
+    getUrl: (id: string) => `${BASE_URL}/attachments?id=${id}&action=data`,
   },
 
   // Currency conversion

@@ -1,13 +1,36 @@
 import { getAuthenticatedUser, jsonError } from './_lib/auth'
 
-// GET /api/attachments?transaction_id=xxx
+// GET /api/attachments?transaction_id=xxx OR /api/attachments?id=xxx&action=data
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const user = await getAuthenticatedUser(context.env.DB, context.request)
   if (!user) return jsonError('Unauthorized', 401)
 
   const url = new URL(context.request.url)
   const transactionId = url.searchParams.get('transaction_id')
+  const id = url.searchParams.get('id')
+  const action = url.searchParams.get('action')
 
+  // Download file: /api/attachments?id=xxx&action=data
+  if (id && action === 'data') {
+    const attachment = await context.env.DB
+      .prepare('SELECT * FROM attachments WHERE id = ? AND user_id = ?')
+      .bind(id, user.user_id)
+      .first<{ id: string; filename: string; content_type: string; size: number; data: string }>()
+
+    if (!attachment) return jsonError('Attachment not found', 404)
+
+    const binaryData = Uint8Array.from(atob(attachment.data), c => c.charCodeAt(0))
+
+    return new Response(binaryData, {
+      headers: {
+        'Content-Type': attachment.content_type,
+        'Content-Disposition': `inline; filename="${attachment.filename}"`,
+        'Cache-Control': 'private, max-age=31536000',
+      },
+    })
+  }
+
+  // List attachments: /api/attachments?transaction_id=xxx
   if (!transactionId) return jsonError('transaction_id is required', 400)
 
   const { results: attachments } = await context.env.DB
@@ -16,32 +39,6 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .all()
 
   return Response.json({ attachments })
-}
-
-// GET /api/attachments/:id/data — download file
-export const onRequestGetById: PagesFunction<Env> = async (context) => {
-  const user = await getAuthenticatedUser(context.env.DB, context.request)
-  if (!user) return jsonError('Unauthorized', 401)
-
-  const id = (context.params as any).id
-  if (!id) return jsonError('Attachment id is required', 400)
-
-  const attachment = await context.env.DB
-    .prepare('SELECT * FROM attachments WHERE id = ? AND user_id = ?')
-    .bind(id, user.user_id)
-    .first<{ id: string; filename: string; content_type: string; size: number; data: string }>()
-
-  if (!attachment) return jsonError('Attachment not found', 404)
-
-  const binaryData = Uint8Array.from(atob(attachment.data), c => c.charCodeAt(0))
-
-  return new Response(binaryData, {
-    headers: {
-      'Content-Type': attachment.content_type,
-      'Content-Disposition': `inline; filename="${attachment.filename}"`,
-      'Cache-Control': 'private, max-age=31536000',
-    },
-  })
 }
 
 // POST /api/attachments — upload file

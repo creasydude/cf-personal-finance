@@ -10,8 +10,11 @@
     "deploy": "npm run build && wrangler pages deploy dist",
     "db:init": "wrangler d1 execute personal-finance-db --local --file=migrations/0001_init.sql",
     "db:seed": "wrangler d1 execute personal-finance-db --local --file=migrations/0002_seed.sql",
+    "db:attachments": "wrangler d1 execute personal-finance-db --local --file=migrations/0003_attachments.sql",
+    "db:reset": "rm -rf .wrangler/state && npm run db:init && npm run db:seed && npm run db:attachments",
     "db:init:remote": "wrangler d1 execute personal-finance-db --remote --file=migrations/0001_init.sql",
-    "db:seed:remote": "wrangler d1 execute personal-finance-db --remote --file=migrations/0002_seed.sql"
+    "db:seed:remote": "wrangler d1 execute personal-finance-db --remote --file=migrations/0002_seed.sql",
+    "db:attachments:remote": "wrangler d1 execute personal-finance-db --remote --file=migrations/0003_attachments.sql"
   },
   "dependencies": {
     "@tanstack/react-table": "^8.20.0",

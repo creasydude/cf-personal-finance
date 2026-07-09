@@ -29,6 +29,12 @@ const translations: Record<Locale, Record<string, string>> = {
     'tab.assets': 'Assets',
     'tab.debts': 'Debts',
 
+    // Range
+    'range.30d': '30D',
+    'range.90d': '90D',
+    'range.1y': '1Y',
+    'range.all': 'ALL',
+
     // Transactions
     'transactions.title': 'Transactions',
     'transactions.add': 'Add Transaction',
@@ -59,6 +65,7 @@ const translations: Record<Locale, Record<string, string>> = {
     'transactions.attachments': 'Attachments',
     'transactions.attachFile': 'Attach File',
     'transactions.hasAttachments': 'Has attachments',
+    'transactions.details': 'Details',
     'month.jan': 'Jan', 'month.feb': 'Feb', 'month.mar': 'Mar', 'month.apr': 'Apr',
     'month.may': 'May', 'month.jun': 'Jun', 'month.jul': 'Jul', 'month.aug': 'Aug',
     'month.sep': 'Sep', 'month.oct': 'Oct', 'month.nov': 'Nov', 'month.dec': 'Dec',
@@ -280,6 +287,12 @@ const translations: Record<Locale, Record<string, string>> = {
     'tab.assets': 'دارایی‌ها',
     'tab.debts': 'بدهی‌ها',
 
+    // Range
+    'range.30d': '۳۰ روز',
+    'range.90d': '۹۰ روز',
+    'range.1y': '۱ سال',
+    'range.all': 'همه',
+
     // Transactions
     'transactions.title': 'تراکنش‌ها',
     'transactions.add': 'افزودن تراکنش',
@@ -310,6 +323,7 @@ const translations: Record<Locale, Record<string, string>> = {
     'transactions.attachments': 'پیوست‌ها',
     'transactions.attachFile': 'پیوست فایل',
     'transactions.hasAttachments': 'دارای پیوست',
+    'transactions.details': 'جزئیات',
     'month.jan': 'ژانویه', 'month.feb': 'فوریه', 'month.mar': 'مارس', 'month.apr': 'آوریل',
     'month.may': 'مه', 'month.jun': 'ژوئن', 'month.jul': 'ژوئیه', 'month.aug': 'اوت',
     'month.sep': 'سپتامبر', 'month.oct': 'اکتبر', 'month.nov': 'نوامبر', 'month.dec': 'دسامبر',

@@ -13,10 +13,10 @@ import { useNetWorth } from '../hooks/useNetWorth'
 import type { AccountType } from '../types'
 
 const RANGE_OPTIONS = [
-  { label: '30D', value: '30d' },
-  { label: '90D', value: '90d' },
-  { label: '1Y', value: '1y' },
-  { label: 'ALL', value: 'all' },
+  { key: 'range.30d', value: '30d' },
+  { key: 'range.90d', value: '90d' },
+  { key: 'range.1y', value: '1y' },
+  { key: 'range.all', value: 'all' },
 ]
 
 const TYPE_COLORS: Record<string, string> = {
@@ -184,7 +184,7 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
               <Dropdown
                 trigger={
                   <button className="btn-secondary text-xs">
-                    {RANGE_OPTIONS.find(r => r.value === range)?.label}
+                    {t(RANGE_OPTIONS.find(r => r.value === range)?.key || 'range.all')}
                     <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
@@ -194,7 +194,7 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
               >
                 {RANGE_OPTIONS.map(opt => (
                   <DropdownItem key={opt.value} onClick={() => setRange(opt.value)}>
-                    {opt.label}
+                    {t(opt.key)}
                   </DropdownItem>
                 ))}
               </Dropdown>
