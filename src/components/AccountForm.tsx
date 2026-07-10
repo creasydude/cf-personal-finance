@@ -95,14 +95,14 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
   return (
     <>
     <Modal open={open} onClose={onClose} className="max-w-md">
-      <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
+      <div>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">{isEditing ? t('accountForm.edit') : t('accountForm.addAccount')} {t(ACCOUNT_TYPE_KEYS[type])}</h2>
+          <h2 className="text-lg font-bold text-foreground">{isEditing ? t('accountForm.edit') : t('accountForm.addAccount')} {t(ACCOUNT_TYPE_KEYS[type])}</h2>
           <div className="flex items-center gap-1">
             {isEditing && onDelete && (
               <button
                 onClick={() => setShowDeleteConfirm(true)}
-                className="rounded-lg p-1.5 text-gray-400 dark:text-gray-500 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500 transition-colors"
+                className="rounded-lg p-1.5 text-muted-foreground hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500 transition-colors"
                 title="Delete account"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -273,7 +273,7 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
 
       {/* Delete Confirmation Modal */}
       <Modal open={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} className="max-w-sm">
-        <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
+        <div>
           <div className="flex items-center gap-3 mb-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
               <svg className="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -282,8 +282,8 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t('accountForm.deleteTitle')}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{t('accountForm.deleteDesc')}</p>
+              <h3 className="text-lg font-bold text-foreground">{t('accountForm.deleteTitle')}</h3>
+              <p className="text-sm text-muted-foreground">{t('accountForm.deleteDesc')}</p>
             </div>
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">

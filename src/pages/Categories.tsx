@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { useCategories } from '../hooks/useCategories'
 import { useTranslation } from '../hooks/useTranslation'
+import { Button } from '../components/ui/button'
 import { Modal } from '../components/ui/Modal'
 import { ConfirmModal } from '../components/ui/ConfirmModal'
 import { cn } from '../lib/utils'
+import { Plus, Trash2 } from 'lucide-react'
 
 const EMOJI_OPTIONS = [
   '💼', '💻', '📈', '🏠', '🚀', '🎁', '💰', '🛒', '🍽️', '☕',
@@ -29,25 +31,23 @@ export function Categories() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('categories.title')}</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{categories.length} {t('categories.title')}</p>
+          <h1 className="text-2xl font-bold text-foreground">{t('categories.title')}</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">{categories.length} {t('categories.title')}</p>
         </div>
-        <button onClick={() => setShowAdd(true)} className="btn-primary">
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
+        <Button onClick={() => setShowAdd(true)}>
+          <Plus className="h-4 w-4" />
           {t('categories.add')}
-        </button>
+        </Button>
       </div>
 
       {/* Filter tabs */}
-      <div className="flex gap-1 rounded-xl bg-gray-100 dark:bg-gray-800 p-1 w-fit">
+      <div className="flex gap-1 rounded-xl bg-muted p-1 w-fit">
         {(['all', 'income', 'expense'] as const).map(f => (
           <button
             key={f}
             onClick={() => setFilter(f)}
             className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-              filter === f ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+              filter === f ? 'bg-white dark:bg-gray-700 text-foreground shadow-sm' : 'text-muted-foreground hover:text-gray-700 dark:hover:text-gray-200'
             }`}
           >
             {f === 'all' ? t('tab.all') : f === 'income' ? t('categories.income') : t('categories.expense')}
@@ -60,14 +60,14 @@ export function Categories() {
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-500 border-t-transparent" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="card flex flex-col items-center justify-center py-16 text-center dark:bg-gray-800">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100 dark:bg-gray-700">
-            <svg className="h-8 w-8 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="card flex flex-col items-center justify-center py-16 text-center">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted">
+            <svg className="h-8 w-8 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z" />
             </svg>
           </div>
-          <p className="text-sm font-medium text-gray-900 dark:text-white">{t('categories.noCategories')}</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('categories.createFirst')}</p>
+          <p className="text-sm font-medium text-foreground">{t('categories.noCategories')}</p>
+          <p className="text-sm text-muted-foreground mt-1">{t('categories.createFirst')}</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -134,8 +134,8 @@ function CategoryCard({ category, onClick, onDelete }: { category: any; onClick:
         {category.icon || '📦'}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{category.name}</p>
-        <p className="text-xs text-gray-500 dark:text-gray-400">{category.type === 'income' ? t('categories.income') : t('categories.expense')}</p>
+        <p className="text-sm font-medium text-foreground truncate">{category.name}</p>
+        <p className="text-xs text-muted-foreground">{category.type === 'income' ? t('categories.income') : t('categories.expense')}</p>
       </div>
       <button
         onClick={(e) => { e.stopPropagation(); onDelete() }}
@@ -180,9 +180,9 @@ function AddCategoryModal({
 
   return (
     <Modal open={open} onClose={onClose} className="max-w-sm">
-      <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
+      <div>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('categories.add')}</h2>
+          <h2 className="text-lg font-bold text-foreground">{t('categories.add')}</h2>
           <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -192,14 +192,14 @@ function AddCategoryModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Type */}
-          <div className="flex gap-1 rounded-xl bg-gray-100 dark:bg-gray-800 p-1">
+          <div className="flex gap-1 rounded-xl bg-muted p-1">
             {(['expense', 'income'] as const).map(catType => (
               <button
                 key={catType}
                 type="button"
                 onClick={() => setType(catType)}
                 className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
-                  type === catType ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                  type === catType ? 'bg-white dark:bg-gray-700 text-foreground shadow-sm' : 'text-muted-foreground hover:text-gray-700 dark:hover:text-gray-200'
                 }`}
               >
                 {catType === 'income' ? t('categories.income') : t('categories.expense')}
@@ -283,9 +283,9 @@ function EditCategoryModal({
 
   return (
     <Modal open={open} onClose={onClose} className="max-w-sm">
-      <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
+      <div>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('account.edit')} {t('categories.title')}</h2>
+          <h2 className="text-lg font-bold text-foreground">{t('account.edit')} {t('categories.title')}</h2>
           <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -295,14 +295,14 @@ function EditCategoryModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Type */}
-          <div className="flex gap-1 rounded-xl bg-gray-100 dark:bg-gray-700 p-1">
+          <div className="flex gap-1 rounded-xl bg-muted p-1">
             {(['expense', 'income'] as const).map(catType => (
               <button
                 key={catType}
                 type="button"
                 onClick={() => setType(catType)}
                 className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
-                  type === catType ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                  type === catType ? 'bg-white dark:bg-gray-600 text-foreground shadow-sm' : 'text-muted-foreground hover:text-gray-700 dark:hover:text-gray-200'
                 }`}
               >
                 {catType === 'income' ? t('categories.income') : t('categories.expense')}

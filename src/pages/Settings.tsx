@@ -132,7 +132,7 @@ export function Settings() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('settings.title')}</h1>
+      <h1 className="text-2xl font-bold text-foreground">{t('settings.title')}</h1>
 
       <div className="flex gap-6 flex-col md:flex-row">
         {/* Sidebar tabs */}
@@ -146,7 +146,7 @@ export function Settings() {
                   'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
                   activeTab === tab.key
                     ? 'bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400'
-                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200'
+                    : 'text-muted-foreground hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200'
                 )}
               >
                 {tab.icon}
@@ -198,9 +198,9 @@ export function Settings() {
 
       {/* Delete Account Confirm */}
       <Modal open={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} className="max-w-sm">
-        <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{t('settings.deleteAccount')}</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+        <div>
+          <h3 className="text-lg font-bold text-foreground mb-2">{t('settings.deleteAccount')}</h3>
+          <p className="text-sm text-muted-foreground mb-6">
             {t('delete.permanentlyDelete')}
           </p>
           <div className="flex gap-3">
@@ -214,9 +214,9 @@ export function Settings() {
 
       {/* Reset Account Confirm */}
       <Modal open={showResetConfirm} onClose={() => setShowResetConfirm(false)} className="max-w-sm">
-        <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{t('settings.resetAccount')}</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+        <div>
+          <h3 className="text-lg font-bold text-foreground mb-2">{t('settings.resetAccount')}</h3>
+          <p className="text-sm text-muted-foreground mb-6">
             {t('settings.resetAccount')} — {t('settings.deleteAccount')}
           </p>
           <div className="flex gap-3">
@@ -289,8 +289,8 @@ function AccountSection({
   return (
     <div className="space-y-6">
       {/* Access Code */}
-      <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{t('settings.accessCode')}</h3>
+      <div className="card p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-4">{t('settings.accessCode')}</h3>
         <div className="rounded-xl border-2 border-dashed border-amber-300 bg-amber-50 p-4">
           <div className="flex items-center justify-between mb-2">
             <p className="font-mono text-2xl font-bold tracking-[0.15em] text-amber-800">
@@ -329,8 +329,8 @@ function AccountSection({
       </div>
 
       {/* Profile */}
-      <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{t('settings.profile')}</h3>
+      <div className="card p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-4">{t('settings.profile')}</h3>
 
         {/* Photo */}
         <div className="flex items-center gap-4 mb-6">
@@ -360,8 +360,8 @@ function AccountSection({
             />
           </div>
           <div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{t('settings.uploadPhoto')}</p>
-            <p className="text-xs text-gray-400 dark:text-gray-500">{t('settings.photoHint')}</p>
+            <p className="text-sm text-muted-foreground">{t('settings.uploadPhoto')}</p>
+            <p className="text-xs text-muted-foreground">{t('settings.photoHint')}</p>
           </div>
         </div>
 
@@ -386,7 +386,7 @@ function AccountSection({
       </div>
 
       {/* Danger zone */}
-      <div className="card border-red-200 dark:border-red-800 p-6 dark:bg-gray-800">
+      <div className="card p-6 border-destructive/20">
         <h3 className="text-sm font-semibold text-red-900 dark:text-red-400 mb-4">{t('settings.dangerZone')}</h3>
         <div className="flex flex-col gap-3 sm:flex-row">
           <button onClick={onReset} className="btn-secondary border-amber-300 text-amber-700 hover:bg-amber-50">
@@ -417,8 +417,8 @@ function ImportExportSection({
   return (
     <div className="space-y-6">
       {/* Export */}
-      <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">{t('settings.exportData')}</h3>
+      <div className="card p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-2">{t('settings.exportData')}</h3>
         <p className="text-sm text-gray-500 mb-4">
           {t('settings.exportHint')}
         </p>
@@ -432,8 +432,8 @@ function ImportExportSection({
 
       {/* Export History */}
       {exportHistory.length > 0 && (
-        <div className="card p-6 dark:bg-gray-800">
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">{t('settings.recentExports')}</h3>
+        <div className="card p-6">
+          <h3 className="text-sm font-semibold text-foreground mb-3">{t('settings.recentExports')}</h3>
           <div className="space-y-2">
             {exportHistory.map((exp, i) => (
               <div key={i} className="flex items-center gap-3 text-sm text-gray-600">
@@ -448,8 +448,8 @@ function ImportExportSection({
       )}
 
       {/* Import */}
-      <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">{t('settings.importData')}</h3>
+      <div className="card p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-2">{t('settings.importData')}</h3>
         <p className="text-sm text-gray-500 mb-4">
           {t('settings.importHint')}
         </p>
@@ -511,8 +511,8 @@ function PreferencesSection({
 
   return (
     <div className="space-y-6">
-      <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{t('settings.general')}</h3>
+      <div className="card p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-4">{t('settings.general')}</h3>
         <div className="space-y-4 max-w-lg">
           {/* Language */}
           <div>
@@ -559,14 +559,14 @@ function PreferencesSection({
           <div>
             <label className="label mb-1.5 block dark:text-gray-400">{t('settings.defaultCurrency')}</label>
             <CurrencyPicker value={defaultCurrency} onChange={setDefaultCurrency} showType />
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{t('settings.defaultCurrencyHint')}</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('settings.defaultCurrencyHint')}</p>
           </div>
         </div>
       </div>
 
       {/* Theme */}
-      <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{t('settings.appearance')}</h3>
+      <div className="card p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-4">{t('settings.appearance')}</h3>
         <div className="flex gap-3">
           {([
             { key: 'light', label: t('settings.light'), icon: (
@@ -692,8 +692,8 @@ function SecuritySection({
 
   return (
     <div className="space-y-6">
-      <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{t('settings.twoFactor')}</h3>
+      <div className="card p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-4">{t('settings.twoFactor')}</h3>
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-700 dark:text-gray-300">
@@ -724,9 +724,9 @@ function SecuritySection({
 
       {/* Enable 2FA Modal */}
       <Modal open={showEnableModal} onClose={() => setShowEnableModal(false)} className="max-w-md">
-        <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2 text-center">{t('settings.enable2FA')}</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">{t('settings.scanQRCode')}</p>
+        <div>
+          <h2 className="text-lg font-bold text-foreground mb-2 text-center">{t('settings.enable2FA')}</h2>
+          <p className="text-sm text-muted-foreground text-center mb-6">{t('settings.scanQRCode')}</p>
 
           {/* QR Code */}
           <div className="flex justify-center mb-4">
@@ -741,9 +741,9 @@ function SecuritySection({
 
           {/* Manual code */}
           <div className="mb-6">
-            <p className="text-xs text-gray-500 dark:text-gray-400 text-center mb-2">{t('settings.manualCode')}</p>
+            <p className="text-xs text-muted-foreground text-center mb-2">{t('settings.manualCode')}</p>
             <div className="flex items-center justify-center gap-2">
-              <code className="bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg font-mono text-sm text-gray-800 dark:text-gray-200 tracking-wider select-all">
+              <code className="bg-muted px-3 py-2 rounded-lg font-mono text-sm text-gray-800 dark:text-gray-200 tracking-wider select-all">
                 {secret}
               </code>
             </div>
@@ -776,9 +776,9 @@ function SecuritySection({
 
       {/* Disable 2FA Modal */}
       <Modal open={showDisableModal} onClose={() => setShowDisableModal(false)} className="max-w-sm">
-        <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2 text-center">{t('settings.disable2FA')}</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">{t('settings.disable2FAHint')}</p>
+        <div>
+          <h2 className="text-lg font-bold text-foreground mb-2 text-center">{t('settings.disable2FA')}</h2>
+          <p className="text-sm text-muted-foreground text-center mb-6">{t('settings.disable2FAHint')}</p>
 
           <div className="mb-4">
             <input

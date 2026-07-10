@@ -179,27 +179,18 @@ export function AccountTypeModal({ open, onClose, onSelect }: AccountTypeModalPr
   return (
     <Modal open={open} onClose={onClose} className="max-w-lg">
       <div
-        className="rounded-2xl bg-[#171717] shadow-2xl overflow-hidden"
         onKeyDown={handleKeyDown}
         tabIndex={0}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-4">
-          <h2 className="text-lg font-bold text-white">{t('accountTypeModal.title')}</h2>
-          <button
-            onClick={onClose}
-            className="rounded-lg p-1.5 text-gray-400 hover:bg-white/10 hover:text-white transition-colors"
-          >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-foreground">{t('accountTypeModal.title')}</h2>
         </div>
 
         {/* Options list */}
-        <div ref={listRef} className="max-h-[400px] overflow-y-auto px-3 pb-3">
+        <div ref={listRef} className="max-h-[400px] overflow-y-auto">
           {/* Assets */}
-          <p className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-gray-500">{t('accountTypeModal.assets')}</p>
+          <p className="py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('accountTypeModal.assets')}</p>
           {assets.map((opt, i) => (
             <OptionRow
               key={opt.type + opt.label}
@@ -211,7 +202,7 @@ export function AccountTypeModal({ open, onClose, onSelect }: AccountTypeModalPr
           ))}
 
           {/* Liabilities */}
-          <p className="px-3 py-2 mt-2 text-xs font-semibold uppercase tracking-wider text-gray-500">{t('accountTypeModal.liabilities')}</p>
+          <p className="py-2 mt-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('accountTypeModal.liabilities')}</p>
           {liabilities.map((opt, i) => {
             const idx = assets.length + i
             return (
@@ -227,17 +218,17 @@ export function AccountTypeModal({ open, onClose, onSelect }: AccountTypeModalPr
         </div>
 
         {/* Footer hints */}
-        <div className="flex items-center gap-4 border-t border-white/10 px-6 py-3 text-xs text-gray-500">
+        <div className="flex items-center gap-4 border-t border-border mt-4 pt-3 text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
-            <kbd className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[10px]">↵</kbd>
+            <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px]">↵</kbd>
             {t('accountTypeModal.selectHint')}
           </span>
           <span className="flex items-center gap-1.5">
-            <kbd className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[10px]">↑↓</kbd>
+            <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px]">↑↓</kbd>
             {t('accountTypeModal.navigateHint')}
           </span>
           <span className="flex items-center gap-1.5">
-            <kbd className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[10px]">ESC</kbd>
+            <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px]">ESC</kbd>
             {t('accountTypeModal.closeHint')}
           </span>
         </div>
@@ -263,8 +254,8 @@ function OptionRow({
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       className={cn(
-        'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors',
-        selected ? 'bg-white/10 text-white' : 'text-gray-300 hover:bg-white/5'
+        'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors',
+        selected ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
       )}
     >
       <div className={cn('flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg', option.color)}>

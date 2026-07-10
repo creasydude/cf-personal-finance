@@ -121,8 +121,8 @@ export function AuthModal({ open, onLogin, onRegister, pending2FA, onLoginWith2F
   }
 
   return (
-    <Modal open={open} dismissible={false} className="max-w-md">
-      <div className="rounded-2xl bg-white dark:bg-gray-800 p-8 shadow-2xl">
+    <Modal open={open} onClose={() => {}} dismissible={false} className="max-w-md">
+      <div>
         {/* Login View */}
         {view === 'login' && (
           <div className="space-y-6">
@@ -130,8 +130,8 @@ export function AuthModal({ open, onLogin, onRegister, pending2FA, onLoginWith2F
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700">
                 <span className="text-2xl font-bold text-white">F</span>
               </div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('auth.welcome')}</h2>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t('auth.enterCode')}</p>
+              <h2 className="text-xl font-bold text-foreground">{t('auth.welcome')}</h2>
+              <p className="mt-1 text-sm text-muted-foreground">{t('auth.enterCode')}</p>
             </div>
 
             <div className="space-y-3">
@@ -146,7 +146,7 @@ export function AuthModal({ open, onLogin, onRegister, pending2FA, onLoginWith2F
                 autoComplete="off"
                 spellCheck={false}
                 className={cn(
-                  'w-full rounded-xl border bg-gray-50 dark:bg-gray-700 px-4 py-3.5 text-center font-mono text-xl tracking-[0.2em] text-gray-900 dark:text-white placeholder:text-gray-300 dark:placeholder:text-gray-500 focus:border-brand-500 focus:bg-white dark:focus:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all',
+                  'w-full rounded-xl border bg-gray-50 dark:bg-gray-700 px-4 py-3.5 text-center font-mono text-xl tracking-[0.2em] text-foreground placeholder:text-gray-300 dark:placeholder:text-gray-500 focus:border-brand-500 focus:bg-white dark:focus:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all',
                   error ? 'border-red-300' : 'border-gray-200 dark:border-gray-600'
                 )}
               />
@@ -191,8 +191,8 @@ export function AuthModal({ open, onLogin, onRegister, pending2FA, onLoginWith2F
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700">
                 <span className="text-2xl font-bold text-white">F</span>
               </div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('auth.createAccount')}</h2>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <h2 className="text-xl font-bold text-foreground">{t('auth.createAccount')}</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
                 {t('auth.codeHint')}
               </p>
             </div>
@@ -241,8 +241,8 @@ export function AuthModal({ open, onLogin, onRegister, pending2FA, onLoginWith2F
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('auth.savedCode')}</h2>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <h2 className="text-xl font-bold text-foreground">{t('auth.savedCode')}</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
                 {t('auth.codeRevealSaveWarning')}
               </p>
             </div>
@@ -294,8 +294,8 @@ export function AuthModal({ open, onLogin, onRegister, pending2FA, onLoginWith2F
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('auth.twoFactorVerify')}</h2>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t('auth.twoFactorVerifyHint')}</p>
+              <h2 className="text-xl font-bold text-foreground">{t('auth.twoFactorVerify')}</h2>
+              <p className="mt-1 text-sm text-muted-foreground">{t('auth.twoFactorVerifyHint')}</p>
             </div>
 
             <div className="space-y-3">
@@ -309,7 +309,7 @@ export function AuthModal({ open, onLogin, onRegister, pending2FA, onLoginWith2F
                 maxLength={6}
                 autoComplete="one-time-code"
                 className={cn(
-                  'w-full rounded-xl border bg-gray-50 dark:bg-gray-700 px-4 py-3.5 text-center font-mono text-2xl tracking-[0.3em] text-gray-900 dark:text-white placeholder:text-gray-300 dark:placeholder:text-gray-500 focus:border-brand-500 focus:bg-white dark:focus:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all',
+                  'w-full rounded-xl border bg-gray-50 dark:bg-gray-700 px-4 py-3.5 text-center font-mono text-2xl tracking-[0.3em] text-foreground placeholder:text-gray-300 dark:placeholder:text-gray-500 focus:border-brand-500 focus:bg-white dark:focus:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all',
                   error ? 'border-red-300' : 'border-gray-200 dark:border-gray-600'
                 )}
               />

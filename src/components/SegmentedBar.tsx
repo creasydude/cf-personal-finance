@@ -26,7 +26,7 @@ const COLORS = [
 export function SegmentedBar({ segments, total }: SegmentedBarProps) {
   if (!segments.length || total === 0) {
     return (
-      <div className="h-4 rounded-full bg-gray-100" />
+      <div className="h-4 rounded-full bg-muted" />
     )
   }
 
@@ -56,8 +56,8 @@ export function SegmentedBar({ segments, total }: SegmentedBarProps) {
           return (
             <div key={seg.label} className="flex items-center gap-2">
               <div className={cn('h-2.5 w-2.5 rounded-full', seg.color || COLORS[i % COLORS.length])} />
-              <span className="text-xs text-gray-600">{seg.label}</span>
-              <span className="text-xs font-medium text-gray-900">{pct.toFixed(1)}%</span>
+              <span className="text-xs text-muted-foreground">{seg.label}</span>
+              <span className="text-xs font-medium text-foreground">{pct.toFixed(1)}%</span>
             </div>
           )
         })}

@@ -19,8 +19,8 @@ export function RegisterSuccessModal({ open, code, onClose }: RegisterSuccessMod
   }
 
   return (
-    <Modal open={open} dismissible={copied} onClose={copied ? onClose : undefined} className="max-w-md">
-      <div className="rounded-2xl bg-white dark:bg-gray-800 p-8 shadow-2xl text-center">
+    <Modal open={open} dismissible={copied} onClose={onClose || (() => {})} className="max-w-md">
+      <div className="text-center">
         <div className="mb-5 flex justify-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
             <svg className="h-8 w-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -29,8 +29,8 @@ export function RegisterSuccessModal({ open, code, onClose }: RegisterSuccessMod
           </div>
         </div>
 
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{t('auth.savedCode')}</h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+        <h2 className="text-xl font-bold text-foreground mb-2">{t('auth.savedCode')}</h2>
+        <p className="text-sm text-muted-foreground mb-6">
           {t('auth.codeRevealDesc')}
         </p>
 
