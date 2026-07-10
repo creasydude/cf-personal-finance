@@ -287,13 +287,16 @@ function AddTransactionModal({
     const selected = Array.from(e.target.files || [])
     const rejected: string[] = []
     const accepted: File[] = []
+    const maxSize = 500 * 1024
 
     for (const file of selected) {
       const ext = '.' + file.name.split('.').pop()?.toLowerCase()
-      if (ALLOWED_TYPES.includes(file.type) || ALLOWED_EXTENSIONS.includes(ext)) {
-        accepted.push(file)
-      } else {
+      if (!ALLOWED_TYPES.includes(file.type) && !ALLOWED_EXTENSIONS.includes(ext)) {
         rejected.push(file.name)
+      } else if (file.size > maxSize) {
+        rejected.push(file.name + ' (' + t('transactions.fileTooLarge') + ')')
+      } else {
+        accepted.push(file)
       }
     }
 
@@ -335,7 +338,11 @@ function AddTransactionModal({
       await onSubmit(data).then(async (txn: any) => {
         if (txn?.id && files.length > 0) {
           for (const file of files) {
-            await api.attachments.upload(txn.id, file)
+            try {
+              await api.attachments.upload(txn.id, file)
+            } catch (err) {
+              console.error('Attachment upload failed:', file.name, err)
+            }
           }
           onUploaded?.()
         }

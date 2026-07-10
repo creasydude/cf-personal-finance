@@ -61,9 +61,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     .first()
   if (!txn) return jsonError('Transaction not found', 404)
 
-  // Limit: 10MB
-  if (file.size > 10 * 1024 * 1024) {
-    return jsonError('File size must be under 10MB', 400)
+  // Limit: 500KB (base64 expands ~33%, must stay under D1's 1MB column limit)
+  if (file.size > 500 * 1024) {
+    return jsonError('File size must be under 500KB', 400)
   }
 
   const arrayBuffer = await file.arrayBuffer()
