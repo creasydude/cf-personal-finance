@@ -268,13 +268,43 @@ function AddTransactionModal({
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
   const [notes, setNotes] = useState('')
   const [files, setFiles] = useState<File[]>([])
+  const [fileError, setFileError] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const ALLOWED_TYPES = [
+    'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/bmp', 'image/tiff',
+    'application/pdf',
+    'text/csv',
+    'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  ]
+  const ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp', '.tiff', '.tif', '.pdf', '.csv', '.doc', '.docx', '.xls', '.xlsx']
 
   const categories = type === 'income' ? incomeCategories : expenseCategories
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFileError('')
     const selected = Array.from(e.target.files || [])
-    setFiles(prev => [...prev, ...selected])
+    const rejected: string[] = []
+    const accepted: File[] = []
+
+    for (const file of selected) {
+      const ext = '.' + file.name.split('.').pop()?.toLowerCase()
+      if (ALLOWED_TYPES.includes(file.type) || ALLOWED_EXTENSIONS.includes(ext)) {
+        accepted.push(file)
+      } else {
+        rejected.push(file.name)
+      }
+    }
+
+    if (rejected.length > 0) {
+      setFileError(t('transactions.unsupportedFormat') + ': ' + rejected.join(', '))
+    }
+    if (accepted.length > 0) {
+      setFiles(prev => [...prev, ...accepted])
+    }
+
+    if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
   const removeFile = (index: number) => {
@@ -453,7 +483,7 @@ function AddTransactionModal({
               ref={fileInputRef}
               type="file"
               multiple
-              accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
+              accept=".jpg,.jpeg,.png,.gif,.webp,.svg,.bmp,.tiff,.tif,.pdf,.csv,.doc,.docx,.xls,.xlsx"
               className="hidden"
               onChange={handleFileChange}
             />
@@ -480,6 +510,9 @@ function AddTransactionModal({
                   </div>
                 ))}
               </div>
+            )}
+            {fileError && (
+              <p className="mt-2 text-xs text-red-500 dark:text-red-400">{fileError}</p>
             )}
           </div>
 
@@ -572,36 +605,46 @@ function TransactionDetailModal({ txn, onClose, locale }: { txn: any; onClose: (
             ) : (
               <div className="space-y-2">
                 {attachments.map(att => (
-                  <a
-                    key={att.id}
-                    href={api.attachments.getUrl(att.id)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 rounded-lg border border-gray-100 dark:border-gray-700 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                  >
-                    <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg ${isImage(att.content_type) ? 'bg-emerald-50 dark:bg-emerald-900/30' : isPDF(att.content_type) ? 'bg-red-50 dark:bg-red-900/30' : 'bg-gray-100 dark:bg-gray-700'}`}>
-                      {isImage(att.content_type) ? (
-                        <svg className="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" />
-                        </svg>
-                      ) : isPDF(att.content_type) ? (
-                        <svg className="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                        </svg>
-                      ) : (
-                        <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                        </svg>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{att.filename}</p>
-                      <p className="text-xs text-gray-400">{(att.size / 1024).toFixed(1)} KB</p>
-                    </div>
-                    <svg className="h-4 w-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                    </svg>
-                  </a>
+                  <div key={att.id} className="rounded-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    {isImage(att.content_type) && (
+                      <a href={api.attachments.getUrl(att.id)} target="_blank" rel="noopener noreferrer">
+                        <img
+                          src={api.attachments.getUrl(att.id)}
+                          alt={att.filename}
+                          className="w-full max-h-48 object-cover bg-gray-100 dark:bg-gray-700"
+                        />
+                      </a>
+                    )}
+                    <a
+                      href={api.attachments.getUrl(att.id)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg ${isImage(att.content_type) ? 'bg-emerald-50 dark:bg-emerald-900/30' : isPDF(att.content_type) ? 'bg-red-50 dark:bg-red-900/30' : 'bg-gray-100 dark:bg-gray-700'}`}>
+                        {isImage(att.content_type) ? (
+                          <svg className="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" />
+                          </svg>
+                        ) : isPDF(att.content_type) ? (
+                          <svg className="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                          </svg>
+                        ) : (
+                          <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                          </svg>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{att.filename}</p>
+                        <p className="text-xs text-gray-400">{(att.size / 1024).toFixed(1)} KB</p>
+                      </div>
+                      <svg className="h-4 w-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                      </svg>
+                    </a>
+                  </div>
                 ))}
               </div>
             )}

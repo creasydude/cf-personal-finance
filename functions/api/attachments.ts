@@ -67,7 +67,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   const arrayBuffer = await file.arrayBuffer()
-  const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
+  const bytes = new Uint8Array(arrayBuffer)
+  let binary = ''
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i])
+  }
+  const base64 = btoa(binary)
 
   const id = `att_${crypto.randomUUID().substring(0, 8)}`
   await context.env.DB
