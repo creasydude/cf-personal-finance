@@ -16,7 +16,7 @@ const TYPE_CONFIG = {
 }
 
 export function Transactions() {
-  const { transactions, total, loading, filters, setFilters, createTransaction, deleteTransaction } = useTransactions()
+  const { transactions, total, loading, filters, setFilters, createTransaction, deleteTransaction, refetch } = useTransactions()
   const { accounts } = useAccounts()
   const { categories } = useCategories()
   const { t, locale } = useTranslation()
@@ -211,6 +211,7 @@ export function Transactions() {
         open={showAdd}
         onClose={() => setShowAdd(false)}
         onSubmit={handleAdd}
+        onUploaded={refetch}
         accounts={accounts}
         expenseCategories={expenseCategories}
         incomeCategories={incomeCategories}
@@ -232,13 +233,15 @@ function AddTransactionModal({
   open,
   onClose,
   onSubmit,
+  onUploaded,
   accounts,
   expenseCategories,
   incomeCategories,
 }: {
   open: boolean
   onClose: () => void
-  onSubmit: (data: any) => Promise<void>
+  onSubmit: (data: any) => Promise<any>
+  onUploaded?: () => void
   accounts: any[]
   expenseCategories: any[]
   incomeCategories: any[]
@@ -295,9 +298,11 @@ function AddTransactionModal({
           for (const file of files) {
             await api.attachments.upload(txn.id, file)
           }
+          onUploaded?.()
         }
       })
       resetForm()
+      setFiles([])
     } finally {
       setLoading(false)
     }
