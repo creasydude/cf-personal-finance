@@ -7,6 +7,7 @@ import { formatCurrency, formatDate } from '../lib/utils'
 import { api } from '../api/client'
 import { Badge } from '../components/ui/Badge'
 import { Modal } from '../components/ui/Modal'
+import { ConfirmModal } from '../components/ui/ConfirmModal'
 import { CurrencyPicker } from '../components/ui/CurrencyPicker'
 
 const TYPE_CONFIG = {
@@ -23,6 +24,7 @@ export function Transactions() {
   const [showAdd, setShowAdd] = useState(false)
   const [search, setSearch] = useState('')
   const [detailTxn, setDetailTxn] = useState<any>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const handleSearch = (value: string) => {
     setSearch(value)
@@ -166,7 +168,7 @@ export function Transactions() {
                       </td>
                       <td className="px-4 py-3 text-end">
                         <button
-                          onClick={() => deleteTransaction(txn.id)}
+                          onClick={() => setDeletingId(txn.id)}
                           className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 transition-colors"
                         >
                           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -225,6 +227,13 @@ export function Transactions() {
           locale={locale}
         />
       )}
+
+      {/* Delete Confirm */}
+      <ConfirmModal
+        open={!!deletingId}
+        onClose={() => setDeletingId(null)}
+        onConfirm={() => { if (deletingId) deleteTransaction(deletingId) }}
+      />
     </div>
   )
 }

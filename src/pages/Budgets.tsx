@@ -4,6 +4,7 @@ import { useCategories } from '../hooks/useCategories'
 import { useTranslation } from '../hooks/useTranslation'
 import { formatCurrency, formatPercent } from '../lib/utils'
 import { Modal } from '../components/ui/Modal'
+import { ConfirmModal } from '../components/ui/ConfirmModal'
 import { cn } from '../lib/utils'
 
 const MONTH_KEYS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
@@ -16,6 +17,7 @@ export function Budgets() {
   const { categories } = useCategories()
   const { t, locale } = useTranslation()
   const [showAdd, setShowAdd] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const expenseCategories = useMemo(() => categories.filter(c => c.type === 'expense'), [categories])
 
@@ -128,7 +130,7 @@ export function Budgets() {
                     </p>
                   </div>
                   <button
-                    onClick={() => deleteBudget(budget.id)}
+                    onClick={() => setDeletingId(budget.id)}
                     className="rounded-lg p-1 text-gray-400 dark:text-gray-500 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 transition-colors"
                   >
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -175,6 +177,13 @@ export function Budgets() {
         onSubmit={handleAdd}
         categories={expenseCategories}
         existingCategories={budgets.map(b => b.category)}
+      />
+
+      {/* Delete Confirm */}
+      <ConfirmModal
+        open={!!deletingId}
+        onClose={() => setDeletingId(null)}
+        onConfirm={() => { if (deletingId) deleteBudget(deletingId) }}
       />
     </div>
   )

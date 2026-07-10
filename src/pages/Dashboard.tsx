@@ -215,7 +215,7 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
                   <thead>
                     <tr className="border-b border-gray-100 dark:border-gray-700">
                       <th className="pb-3 text-start label dark:text-gray-400">{t('account.name')}</th>
-                      <th className="pb-3 text-end label dark:text-gray-400">{t('table.weight')}</th>
+                      <th className="pb-3 text-center label dark:text-gray-400">{t('table.weight')}</th>
                       <th className="pb-3 text-end label dark:text-gray-400">{t('table.amount')}</th>
                     </tr>
                   </thead>
@@ -234,15 +234,15 @@ export function Dashboard({ userCode, settings }: { userCode: string | null; set
                                 <span className="text-sm text-gray-700 dark:text-gray-300">{t(typeKey) || item.label}</span>
                               </div>
                             </td>
-                            <td className="py-3 text-end">
-                              <div className="flex items-center justify-end gap-2">
+                            <td className="py-3">
+                              <div className="flex items-center justify-center gap-2">
+                                <span className="text-sm font-medium text-gray-900 dark:text-white w-12 text-end">{pct.toFixed(1)}%</span>
                                 <div className="w-20 h-1.5 rounded-full bg-gray-100 dark:bg-gray-600 overflow-hidden">
                                   <div
                                     className={`h-full rounded-full ${TYPE_COLORS[item.type] || 'bg-gray-400'}`}
                                     style={{ width: `${pct}%` }}
                                   />
                                 </div>
-                                <span className="text-sm font-medium text-gray-900 dark:text-white w-12 text-end">{pct.toFixed(1)}%</span>
                               </div>
                             </td>
                             <td className="py-3 text-end">

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useCategories } from '../hooks/useCategories'
 import { useTranslation } from '../hooks/useTranslation'
 import { Modal } from '../components/ui/Modal'
+import { ConfirmModal } from '../components/ui/ConfirmModal'
 import { cn } from '../lib/utils'
 
 const EMOJI_OPTIONS = [
@@ -16,6 +17,7 @@ export function Categories() {
   const { t } = useTranslation()
   const [showAdd, setShowAdd] = useState(false)
   const [editingCategory, setEditingCategory] = useState<any>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
   const [filter, setFilter] = useState<'all' | 'income' | 'expense'>('all')
 
   const filtered = categories.filter(c => filter === 'all' || c.type === filter)
@@ -75,7 +77,7 @@ export function Categories() {
               <h3 className="label px-1 mb-3">{t('categories.income')}</h3>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {incomeCategories.map(cat => (
-                  <CategoryCard key={cat.id} category={cat} onClick={() => setEditingCategory(cat)} onDelete={deleteCategory} />
+                  <CategoryCard key={cat.id} category={cat} onClick={() => setEditingCategory(cat)} onDelete={() => setDeletingId(cat.id)} />
                 ))}
               </div>
             </div>
@@ -87,7 +89,7 @@ export function Categories() {
               <h3 className="label px-1 mb-3">{t('categories.expense')}</h3>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {expenseCategories.map(cat => (
-                  <CategoryCard key={cat.id} category={cat} onClick={() => setEditingCategory(cat)} onDelete={deleteCategory} />
+                  <CategoryCard key={cat.id} category={cat} onClick={() => setEditingCategory(cat)} onDelete={() => setDeletingId(cat.id)} />
                 ))}
               </div>
             </div>
@@ -110,11 +112,18 @@ export function Categories() {
           }}
         />
       )}
+
+      {/* Delete Confirm */}
+      <ConfirmModal
+        open={!!deletingId}
+        onClose={() => setDeletingId(null)}
+        onConfirm={() => { if (deletingId) deleteCategory(deletingId) }}
+      />
     </div>
   )
 }
 
-function CategoryCard({ category, onClick, onDelete }: { category: any; onClick: () => void; onDelete: (id: string) => void }) {
+function CategoryCard({ category, onClick, onDelete }: { category: any; onClick: () => void; onDelete: () => void }) {
   const { t } = useTranslation()
   return (
     <div onClick={onClick} className="card-hover flex items-center gap-3 p-3 cursor-pointer group">
@@ -129,7 +138,7 @@ function CategoryCard({ category, onClick, onDelete }: { category: any; onClick:
         <p className="text-xs text-gray-500 dark:text-gray-400">{category.type === 'income' ? t('categories.income') : t('categories.expense')}</p>
       </div>
       <button
-        onClick={() => onDelete(category.id)}
+        onClick={(e) => { e.stopPropagation(); onDelete() }}
         className="rounded-lg p-1.5 text-gray-400 opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-600 transition-all"
       >
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

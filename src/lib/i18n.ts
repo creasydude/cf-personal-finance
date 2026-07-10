@@ -176,6 +176,7 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Delete
     'delete.title': 'Delete Account',
+    'delete.confirmTitle': 'Are you sure?',
     'delete.cannotUndo': 'This action cannot be undone.',
     'delete.confirm': 'Are you sure you want to delete',
     'delete.transactionsNote': 'All associated transactions will remain but won\'t be linked to this account anymore.',
@@ -434,6 +435,7 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Delete
     'delete.title': 'حذف حساب',
+    'delete.confirmTitle': 'آیا مطمئن هستید؟',
     'delete.cannotUndo': 'این عمل غیرقابل بازگشت است.',
     'delete.confirm': 'آیا مطمئن هستید که می‌خواهید حذف کنید',
     'delete.transactionsNote': 'تمام تراکنش‌های مرتبط باقی می‌مانند اما به این حساب متصل نخواهند بود.',
