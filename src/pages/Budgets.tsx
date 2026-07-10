@@ -13,11 +13,12 @@ export function Budgets() {
   const now = new Date()
   const [month, setMonth] = useState(now.getMonth() + 1)
   const [year, setYear] = useState(now.getFullYear())
-  const { budgets, loading, createBudget, deleteBudget } = useBudgets(month, year)
+  const { budgets, loading, createBudget, updateBudget, deleteBudget } = useBudgets(month, year)
   const { categories } = useCategories()
   const { t, locale } = useTranslation()
   const [showAdd, setShowAdd] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [editingBudget, setEditingBudget] = useState<any>(null)
 
   const expenseCategories = useMemo(() => categories.filter(c => c.type === 'expense'), [categories])
 
@@ -121,7 +122,7 @@ export function Budgets() {
             const pct = budget.pct || 0
             const remaining = budget.remaining || 0
             return (
-              <div key={budget.id} className="card-hover p-5 dark:bg-gray-800">
+              <div key={budget.id} onClick={() => setEditingBudget(budget)} className="card-hover p-5 dark:bg-gray-800 cursor-pointer">
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">{budget.category}</p>
@@ -130,7 +131,7 @@ export function Budgets() {
                     </p>
                   </div>
                   <button
-                    onClick={() => setDeletingId(budget.id)}
+                    onClick={(e) => { e.stopPropagation(); setDeletingId(budget.id) }}
                     className="rounded-lg p-1 text-gray-400 dark:text-gray-500 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 transition-colors"
                   >
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -185,6 +186,20 @@ export function Budgets() {
         onClose={() => setDeletingId(null)}
         onConfirm={() => { if (deletingId) deleteBudget(deletingId) }}
       />
+
+      {/* Edit Budget Modal */}
+      {editingBudget && (
+        <EditBudgetModal
+          open={!!editingBudget}
+          budget={editingBudget}
+          onClose={() => setEditingBudget(null)}
+          onSubmit={async (data) => {
+            await updateBudget(editingBudget.id, data)
+            setEditingBudget(null)
+          }}
+          categories={expenseCategories}
+        />
+      )}
     </div>
   )
 }
@@ -261,6 +276,77 @@ function AddBudgetModal({
             <button type="button" onClick={onClose} className="btn-secondary flex-1">{t('account.cancel')}</button>
             <button type="submit" disabled={loading || !category || !amount} className="btn-primary flex-1">
               {loading ? t('loading.adding') : t('budgets.add')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </Modal>
+  )
+}
+
+function EditBudgetModal({
+  open,
+  budget,
+  onClose,
+  onSubmit,
+  categories,
+}: {
+  open: boolean
+  budget: any
+  onClose: () => void
+  onSubmit: (data: any) => Promise<void>
+  categories: any[]
+}) {
+  const { t } = useTranslation()
+  const [loading, setLoading] = useState(false)
+  const [amount, setAmount] = useState(budget.amount?.toString() || '')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      await onSubmit({ amount: parseFloat(amount) || 0 })
+      onClose()
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <Modal open={open} onClose={onClose} className="max-w-sm">
+      <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('account.edit')} {t('budgets.title')}</h2>
+          <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="label mb-1.5 block dark:text-gray-400">{t('budgets.category')}</label>
+            <input type="text" value={budget.category} disabled className="input opacity-60 cursor-not-allowed" />
+          </div>
+
+          <div>
+            <label className="label mb-1.5 block dark:text-gray-400">{t('budgets.monthlyLimit')}</label>
+            <input
+              type="number"
+              value={amount}
+              onChange={e => setAmount(e.target.value)}
+              placeholder="0.00"
+              step="0.01"
+              className="input"
+              required
+            />
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose} className="btn-secondary flex-1">{t('account.cancel')}</button>
+            <button type="submit" disabled={loading || !amount} className="btn-primary flex-1">
+              {loading ? t('loading.saving') : t('account.saveChanges')}
             </button>
           </div>
         </form>

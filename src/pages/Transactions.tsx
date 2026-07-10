@@ -25,6 +25,7 @@ export function Transactions() {
   const [search, setSearch] = useState('')
   const [detailTxn, setDetailTxn] = useState<any>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [editingTxn, setEditingTxn] = useState<any>(null)
 
   const handleSearch = (value: string) => {
     setSearch(value)
@@ -39,6 +40,13 @@ export function Transactions() {
     const txn = await createTransaction(data)
     setShowAdd(false)
     return txn
+  }
+
+  const handleEdit = async (data: any) => {
+    if (!editingTxn) return
+    await api.transactions.update(editingTxn.id, data)
+    refetch()
+    setEditingTxn(null)
   }
 
   const expenseCategories = categories.filter(c => c.type === 'expense')
@@ -87,6 +95,33 @@ export function Transactions() {
           <option value="expense">{t('transactions.expense')}</option>
           <option value="transfer">{t('transactions.transfer')}</option>
         </select>
+
+        {/* Category filter */}
+        <select
+          value={filters.category || ''}
+          onChange={(e) => setFilters({ category: e.target.value || undefined, page: '1' })}
+          className="input w-auto"
+        >
+          <option value="">{t('transactions.allCategories')}</option>
+          {categories.map(c => (
+            <option key={c.id} value={c.name}>{c.icon} {c.name}</option>
+          ))}
+        </select>
+
+        {/* Sort */}
+        <select
+          value={`${filters.sort || 'date'}-${filters.order || 'desc'}`}
+          onChange={(e) => {
+            const [sort, order] = e.target.value.split('-')
+            setFilters({ sort, order, page: '1' })
+          }}
+          className="input w-auto"
+        >
+          <option value="date-desc">{t('transactions.newest')}</option>
+          <option value="date-asc">{t('transactions.oldest')}</option>
+          <option value="amount-desc">{t('transactions.highestAmount')}</option>
+          <option value="amount-asc">{t('transactions.lowestAmount')}</option>
+        </select>
       </div>
 
       {/* Table */}
@@ -123,7 +158,7 @@ export function Transactions() {
                 {transactions.map(txn => {
                   const config = TYPE_CONFIG[txn.type as keyof typeof TYPE_CONFIG]
                   return (
-                    <tr key={txn.id} className="border-b border-gray-50 dark:border-gray-700 last:border-0 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
+                    <tr key={txn.id} onClick={() => setEditingTxn(txn)} className="border-b border-gray-50 dark:border-gray-700 last:border-0 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer">
                       <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{formatDate(txn.date, locale)}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1.5">
@@ -168,7 +203,7 @@ export function Transactions() {
                       </td>
                       <td className="px-4 py-3 text-end">
                         <button
-                          onClick={() => setDeletingId(txn.id)}
+                          onClick={(e) => { e.stopPropagation(); setDeletingId(txn.id) }}
                           className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 transition-colors"
                         >
                           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -234,6 +269,19 @@ export function Transactions() {
         onClose={() => setDeletingId(null)}
         onConfirm={() => { if (deletingId) deleteTransaction(deletingId) }}
       />
+
+      {/* Edit Transaction Modal */}
+      {editingTxn && (
+        <AddTransactionModal
+          open={!!editingTxn}
+          onClose={() => setEditingTxn(null)}
+          onSubmit={handleEdit}
+          accounts={accounts}
+          expenseCategories={expenseCategories}
+          incomeCategories={incomeCategories}
+          editData={editingTxn}
+        />
+      )}
     </div>
   )
 }
@@ -246,6 +294,7 @@ function AddTransactionModal({
   accounts,
   expenseCategories,
   incomeCategories,
+  editData,
 }: {
   open: boolean
   onClose: () => void
@@ -254,6 +303,7 @@ function AddTransactionModal({
   accounts: any[]
   expenseCategories: any[]
   incomeCategories: any[]
+  editData?: any
 }) {
   const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
@@ -270,6 +320,25 @@ function AddTransactionModal({
   const [files, setFiles] = useState<File[]>([])
   const [fileError, setFileError] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Pre-fill form when editing
+  useEffect(() => {
+    if (editData && open) {
+      setType(editData.type || 'expense')
+      setDescription(editData.description || '')
+      setAmount(editData.amount?.toString() || '')
+      setCurrency(editData.currency || 'USD')
+      setAccountId(editData.account_id || '')
+      setFromAccountId(editData.from_account_id || '')
+      setToAccountId(editData.to_account_id || '')
+      setCategory(editData.category || '')
+      setDate(editData.date || new Date().toISOString().split('T')[0])
+      setNotes(editData.notes || '')
+      setFiles([])
+    } else if (open) {
+      resetForm()
+    }
+  }, [editData, open])
 
   const ALLOWED_TYPES = [
     'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/bmp', 'image/tiff',
@@ -371,7 +440,7 @@ function AddTransactionModal({
     <Modal open={open} onClose={onClose} className="max-w-md">
       <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('transactions.add')}</h2>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">{editData ? t('account.edit') : t('transactions.add')}</h2>
           <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -527,7 +596,7 @@ function AddTransactionModal({
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose} className="btn-secondary flex-1">{t('account.cancel')}</button>
             <button type="submit" disabled={loading || !description || !amount} className="btn-primary flex-1">
-              {loading ? t('loading.adding') : t('transactions.add')}
+              {loading ? t('loading.saving') : editData ? t('account.saveChanges') : t('transactions.add')}
             </button>
           </div>
         </form>
