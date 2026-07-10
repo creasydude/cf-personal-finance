@@ -158,9 +158,9 @@ export const CURRENCIES: Currency[] = [
   { code: 'XLM', name: 'Stellar', symbol: 'XLM', type: 'crypto' },
   // Gold
   { code: 'XAU', name: 'Gold (per oz)', symbol: 'Au', type: 'gold' },
-  { code: 'GOLD_GRAM24', name: 'Gold 24K (per gram)', symbol: 'Au24', type: 'gold' },
-  { code: 'GOLD_GRAM18', name: 'Gold 18K (per gram)', symbol: 'Au18', type: 'gold' },
-  { code: 'GOLD_GRAM22', name: 'Gold 22K (per gram)', symbol: 'Au22', type: 'gold' },
+  { code: 'GOLD_GRAM24', name: 'Gold 24K', symbol: 'Au', type: 'gold' },
+  { code: 'GOLD_GRAM22', name: 'Gold 22K', symbol: 'Au', type: 'gold' },
+  { code: 'GOLD_GRAM18', name: 'Gold 18K', symbol: 'Au', type: 'gold' },
 ]
 
 export function searchCurrencies(query: string): Currency[] {

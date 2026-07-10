@@ -14,10 +14,10 @@ export function toPersianNumber(str: string | number): string {
 export function formatCurrency(amount: number, currency: string = 'USD', locale: string = 'en'): string {
   const customCurrencies: Record<string, Record<string, string>> = {
     IRR: { en: 'IRR', fa: 'ریال' },
-    GOLD_GRAM24: { en: 'g Au24', fa: 'g Au24' },
-    GOLD_GRAM18: { en: 'g Au18', fa: 'g Au18' },
-    GOLD_GRAM22: { en: 'g Au22', fa: 'g Au22' },
-    XAU: { en: 'oz Au', fa: 'oz Au' },
+    GOLD_GRAM24: { en: 'g Au 24K', fa: 'گرم طلای ۲۴ عیار' },
+    GOLD_GRAM18: { en: 'g Au 18K', fa: 'گرم طلای ۱۸ عیار' },
+    GOLD_GRAM22: { en: 'g Au 22K', fa: 'گرم طلای ۲۲ عیار' },
+    XAU: { en: 'oz Au', fa: 'اونس طلا' },
   }
 
   const loc = locale === 'fa' ? 'fa-IR' : 'en-US'

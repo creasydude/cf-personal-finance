@@ -49,8 +49,7 @@ export function CurrencyPicker({ value, onChange, className, showType = false, f
       >
         <span className="flex items-center gap-2">
           <span className="text-gray-500 dark:text-gray-400">{selected?.symbol}</span>
-          <span className="font-medium dark:text-white">{selected?.code}</span>
-          <span className="text-gray-400 dark:text-gray-500 text-xs truncate">{selected?.name}</span>
+          <span className="font-medium dark:text-white">{selected?.name || selected?.code}</span>
         </span>
         <svg className={cn('h-4 w-4 text-gray-400 transition-transform', open && 'rotate-180')} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -88,8 +87,7 @@ export function CurrencyPicker({ value, onChange, className, showType = false, f
                   )}
                 >
                   <span className="w-6 text-center text-gray-500 dark:text-gray-400">{c.symbol}</span>
-                  <span className="font-medium min-w-[40px] dark:text-white">{c.code}</span>
-                  <span className="text-gray-500 dark:text-gray-400 truncate flex-1">{c.name}</span>
+                  <span className="font-medium flex-1 dark:text-white">{c.name}</span>
                   {showType && (
                     <span className={cn(
                       'text-[10px] font-medium px-1.5 py-0.5 rounded',
