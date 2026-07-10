@@ -626,6 +626,69 @@ function SecuritySection({
   t: (key: string) => string
 }) {
   const [twoFactor, setTwoFactor] = useState(settings.twoFactorEnabled || false)
+  const [showEnableModal, setShowEnableModal] = useState(false)
+  const [showDisableModal, setShowDisableModal] = useState(false)
+  const [qrUri, setQrUri] = useState('')
+  const [secret, setSecret] = useState('')
+  const [verifyCode, setVerifyCode] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const handleEnable = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const res = await api.auth.twoFactor.enable()
+      setQrUri(res.uri)
+      setSecret(res.secret)
+      setShowEnableModal(true)
+      setVerifyCode('')
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleConfirmEnable = async () => {
+    if (verifyCode.length !== 6) {
+      setError(t('auth.invalidCode'))
+      return
+    }
+    setLoading(true)
+    setError('')
+    try {
+      await api.auth.twoFactor.verify(verifyCode, 'enable')
+      setTwoFactor(true)
+      await onSave('twoFactorEnabled', true)
+      setShowEnableModal(false)
+      setVerifyCode('')
+    } catch (err: any) {
+      setError(err.message || t('auth.invalidCodeError'))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleDisable = async () => {
+    if (verifyCode.length !== 6) {
+      setError(t('auth.invalidCode'))
+      return
+    }
+    setLoading(true)
+    setError('')
+    try {
+      await api.auth.twoFactor.verify(verifyCode, 'disable')
+      setTwoFactor(false)
+      await onSave('twoFactorEnabled', false)
+      setShowDisableModal(false)
+      setVerifyCode('')
+    } catch (err: any) {
+      setError(err.message || t('auth.invalidCodeError'))
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -633,40 +696,112 @@ function SecuritySection({
         <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{t('settings.twoFactor')}</h3>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-gray-700 dark:text-gray-300">
               {twoFactor ? t('settings.twoFactorEnabled') : t('settings.twoFactorDisabled')}
             </p>
             <p className="text-xs text-gray-500 mt-0.5">
               {t('settings.twoFactorHint')}
             </p>
           </div>
-          <button
-            onClick={() => {
-              const newVal = !twoFactor
-              setTwoFactor(newVal)
-              onSave('twoFactorEnabled', newVal)
-            }}
-            className={cn(
-              'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2',
-              twoFactor ? 'bg-brand-600' : 'bg-gray-200'
-            )}
-          >
-            <span
-              className={cn(
-                'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                twoFactor ? 'translate-x-5' : 'translate-x-0'
-              )}
-            />
-          </button>
+          {twoFactor ? (
+            <button onClick={() => { setShowDisableModal(true); setVerifyCode(''); setError('') }} className="btn-secondary text-sm">
+              {t('settings.disable2FA')}
+            </button>
+          ) : (
+            <button onClick={handleEnable} disabled={loading} className="btn-primary text-sm">
+              {loading ? t('settings.saving') : t('settings.enable2FA')}
+            </button>
+          )}
         </div>
         {twoFactor && (
-          <div className="mt-4 rounded-xl bg-brand-50 border border-brand-200 p-4">
-            <p className="text-sm text-brand-800">
+          <div className="mt-4 rounded-xl bg-brand-50 dark:bg-brand-900/30 border border-brand-200 dark:border-brand-800 p-4">
+            <p className="text-sm text-brand-800 dark:text-brand-300">
               {t('settings.twoFactorActive')}
             </p>
           </div>
         )}
       </div>
+
+      {/* Enable 2FA Modal */}
+      <Modal open={showEnableModal} onClose={() => setShowEnableModal(false)} className="max-w-md">
+        <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2 text-center">{t('settings.enable2FA')}</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">{t('settings.scanQRCode')}</p>
+
+          {/* QR Code */}
+          <div className="flex justify-center mb-4">
+            <div className="bg-white p-4 rounded-xl">
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrUri)}`}
+                alt="2FA QR Code"
+                className="w-48 h-48"
+              />
+            </div>
+          </div>
+
+          {/* Manual code */}
+          <div className="mb-6">
+            <p className="text-xs text-gray-500 dark:text-gray-400 text-center mb-2">{t('settings.manualCode')}</p>
+            <div className="flex items-center justify-center gap-2">
+              <code className="bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg font-mono text-sm text-gray-800 dark:text-gray-200 tracking-wider select-all">
+                {secret}
+              </code>
+            </div>
+          </div>
+
+          {/* Verification input */}
+          <div className="mb-4">
+            <label className="label mb-1.5 block dark:text-gray-400">{t('settings.enterCode')}</label>
+            <input
+              type="text"
+              value={verifyCode}
+              onChange={(e) => { setVerifyCode(e.target.value.replace(/\D/g, '').slice(0, 6)); setError('') }}
+              placeholder="000000"
+              maxLength={6}
+              className="input text-center font-mono text-lg tracking-[0.3em]"
+            />
+            {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+          </div>
+
+          <div className="flex gap-3">
+            <button onClick={() => { setShowEnableModal(false); setVerifyCode(''); setError('') }} className="btn-secondary flex-1">
+              {t('account.cancel')}
+            </button>
+            <button onClick={handleConfirmEnable} disabled={loading || verifyCode.length !== 6} className="btn-primary flex-1">
+              {loading ? t('settings.saving') : t('settings.confirmEnable')}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Disable 2FA Modal */}
+      <Modal open={showDisableModal} onClose={() => setShowDisableModal(false)} className="max-w-sm">
+        <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2 text-center">{t('settings.disable2FA')}</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">{t('settings.disable2FAHint')}</p>
+
+          <div className="mb-4">
+            <input
+              type="text"
+              value={verifyCode}
+              onChange={(e) => { setVerifyCode(e.target.value.replace(/\D/g, '').slice(0, 6)); setError('') }}
+              placeholder="000000"
+              maxLength={6}
+              className="input text-center font-mono text-lg tracking-[0.3em]"
+            />
+            {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+          </div>
+
+          <div className="flex gap-3">
+            <button onClick={() => { setShowDisableModal(false); setVerifyCode(''); setError('') }} className="btn-secondary flex-1">
+              {t('account.cancel')}
+            </button>
+            <button onClick={handleDisable} disabled={loading || verifyCode.length !== 6} className="flex-1 rounded-xl px-4 py-2.5 bg-red-600 text-white font-medium text-sm hover:bg-red-700 transition-colors disabled:opacity-50">
+              {loading ? t('settings.saving') : t('settings.confirmDisable')}
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }

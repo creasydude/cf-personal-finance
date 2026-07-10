@@ -24,9 +24,14 @@ export const api = {
   // Auth
   auth: {
     register: () => request<{ code: string; userId: string }>('/auth/register', { method: 'POST' }),
-    login: (code: string) => request<{ userId: string }>('/auth/login', { method: 'POST', body: JSON.stringify({ code }) }),
+    login: (code: string, totp?: string) => request<{ userId: string; requires2FA?: boolean }>('/auth/login', { method: 'POST', body: JSON.stringify({ code, totp }) }),
     logout: () => request<{ ok: boolean }>('/auth/logout', { method: 'POST' }),
     me: () => request<{ userId: string; code: string; settings: Record<string, unknown> }>('/auth/me'),
+    // 2FA
+    twoFactor: {
+      enable: () => request<{ secret: string; uri: string }>('/auth/2fa', { method: 'POST' }),
+      verify: (code: string, action: 'enable' | 'disable') => request<{ ok: boolean; enabled: boolean }>('/auth/2fa', { method: 'PUT', body: JSON.stringify({ code, action }) }),
+    },
   },
 
   // Accounts

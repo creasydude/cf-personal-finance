@@ -32,6 +32,9 @@ export default function App() {
           open={true}
           onLogin={auth.login}
           onRegister={auth.register}
+          pending2FA={auth.pending2FA}
+          onLoginWith2FA={auth.loginWith2FA}
+          onCancel2FA={auth.cancel2FA}
         />
       </ThemeProvider>
     )

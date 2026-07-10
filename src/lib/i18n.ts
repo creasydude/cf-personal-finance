@@ -134,6 +134,14 @@ const translations: Record<Locale, Record<string, string>> = {
     'settings.twoFactorDisabled': 'Two-factor authentication is disabled',
     'settings.twoFactorHint': 'Add an extra layer of security to your account',
     'settings.twoFactorActive': 'Two-factor authentication is active. You\'ll need to verify your identity on each login.',
+    'settings.enable2FA': 'Enable 2FA',
+    'settings.disable2FA': 'Disable 2FA',
+    'settings.scanQRCode': 'Scan this QR code with Google Authenticator',
+    'settings.manualCode': 'Or enter this code manually:',
+    'settings.enterCode': 'Enter the 6-digit code from your app',
+    'settings.confirmEnable': 'Verify & Enable',
+    'settings.disable2FAHint': 'Enter your authenticator code to disable 2FA',
+    'settings.confirmDisable': 'Verify & Disable',
 
     // Account Types
     'account.cash': 'Cash Account',
@@ -217,6 +225,10 @@ const translations: Record<Locale, Record<string, string>> = {
     'auth.invalidCode': 'Please enter a valid code (XXXX-XXXX)',
     'auth.failedToCreate': 'Failed to create account',
     'auth.invalidCodeError': 'Invalid code',
+    'auth.twoFactorVerify': 'Two-Factor Authentication',
+    'auth.twoFactorVerifyHint': 'Enter the 6-digit code from your authenticator app',
+    'auth.verifying': 'Verifying...',
+    'auth.verify': 'Verify',
 
     // Table Headers
     'table.date': 'Date',
@@ -400,6 +412,14 @@ const translations: Record<Locale, Record<string, string>> = {
     'settings.twoFactorDisabled': 'احراز هویت دو مرحله‌ای غیرفعال است',
     'settings.twoFactorHint': 'لایه امنیتی اضافی به حساب خود اضافه کنید',
     'settings.twoFactorActive': 'احراز هویت دو مرحله‌ای فعال است. در هر ورود باید هویت خود را تأیید کنید.',
+    'settings.enable2FA': 'فعال‌سازی ۲ مرحله‌ای',
+    'settings.disable2FA': 'غیرفعال‌سازی ۲ مرحله‌ای',
+    'settings.scanQRCode': 'این کد QR را با Google Authenticator اسکن کنید',
+    'settings.manualCode': 'یا این کد را دستی وارد کنید:',
+    'settings.enterCode': 'کد ۶ رقمی از اپلیکیشن خود را وارد کنید',
+    'settings.confirmEnable': 'تأیید و فعال‌سازی',
+    'settings.disable2FAHint': 'کد احراز هویت خود را برای غیرفعال‌سازی وارد کنید',
+    'settings.confirmDisable': 'تأیید و غیرفعال‌سازی',
 
     // Account Types
     'account.cash': 'حساب نقدی',
@@ -483,6 +503,10 @@ const translations: Record<Locale, Record<string, string>> = {
     'auth.invalidCode': 'لطفاً یک کد معتبر وارد کنید (XXXX-XXXX)',
     'auth.failedToCreate': 'ایجاد حساب ناموفق بود',
     'auth.invalidCodeError': 'کد نامعتبر',
+    'auth.twoFactorVerify': 'احراز هویت دو مرحله‌ای',
+    'auth.twoFactorVerifyHint': 'کد ۶ رقمی از اپلیکیشن احراز هویت خود را وارد کنید',
+    'auth.verifying': 'در حال بررسی...',
+    'auth.verify': 'تأیید',
 
     // Table Headers
     'table.date': 'تاریخ',

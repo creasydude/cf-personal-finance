@@ -18,6 +18,7 @@ export function useAuth() {
     settings: {},
   })
   const [justRegistered, setJustRegistered] = useState(false)
+  const [pending2FA, setPending2FA] = useState<{ code: string } | null>(null)
 
   const checkAuth = useCallback(async () => {
     try {
@@ -45,9 +46,23 @@ export function useAuth() {
   }, [checkAuth])
 
   const login = async (code: string) => {
-    await api.auth.login(code)
+    const res = await api.auth.login(code)
+    if (res.requires2FA) {
+      setPending2FA({ code })
+      return { requires2FA: true }
+    }
+    await checkAuth()
+    return {}
+  }
+
+  const loginWith2FA = async (totp: string) => {
+    if (!pending2FA) return
+    await api.auth.login(pending2FA.code, totp)
+    setPending2FA(null)
     await checkAuth()
   }
+
+  const cancel2FA = () => setPending2FA(null)
 
   const register = async () => {
     const res = await api.auth.register()
@@ -70,9 +85,7 @@ export function useAuth() {
   }
 
   const updateSettings = async (patch: Record<string, any>) => {
-    // Optimistic update for instant UI feedback
     setState((s) => ({ ...s, settings: { ...s.settings, ...patch } }))
-    // Persist to server, then re-sync to guarantee consistency
     await api.settings.update(patch)
     const res = await api.auth.me()
     setState((s) => ({ ...s, settings: res.settings }))
@@ -81,7 +94,10 @@ export function useAuth() {
   return {
     ...state,
     justRegistered,
+    pending2FA,
     login,
+    loginWith2FA,
+    cancel2FA,
     register,
     logout,
     checkAuth,

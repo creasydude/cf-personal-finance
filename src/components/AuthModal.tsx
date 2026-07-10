@@ -5,13 +5,16 @@ import { useTranslation } from '../hooks/useTranslation'
 
 interface AuthModalProps {
   open: boolean
-  onLogin: (code: string) => Promise<void>
+  onLogin: (code: string) => Promise<{ requires2FA?: boolean } | void>
   onRegister: () => Promise<string>
+  pending2FA?: { code: string } | null
+  onLoginWith2FA?: (totp: string) => Promise<void>
+  onCancel2FA?: () => void
 }
 
-type ModalView = 'login' | 'register' | 'code-reveal'
+type ModalView = 'login' | 'register' | 'code-reveal' | 'totp'
 
-export function AuthModal({ open, onLogin, onRegister }: AuthModalProps) {
+export function AuthModal({ open, onLogin, onRegister, pending2FA, onLoginWith2FA, onCancel2FA }: AuthModalProps) {
   const { t } = useTranslation()
   const [view, setView] = useState<ModalView>('login')
   const [code, setCode] = useState('')
@@ -19,7 +22,18 @@ export function AuthModal({ open, onLogin, onRegister }: AuthModalProps) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [totpCode, setTotpCode] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+  const totpRef = useRef<HTMLInputElement>(null)
+
+  // Switch to TOTP view when pending2FA is set
+  useEffect(() => {
+    if (pending2FA) {
+      setView('totp')
+      setError('')
+      setTimeout(() => totpRef.current?.focus(), 100)
+    }
+  }, [pending2FA])
 
   useEffect(() => {
     if (view === 'login' && inputRef.current) {
@@ -46,11 +60,37 @@ export function AuthModal({ open, onLogin, onRegister }: AuthModalProps) {
     setLoading(true)
     setError('')
     try {
-      await onLogin(code)
+      const result = await onLogin(code)
+      if (result && 'requires2FA' in result && result.requires2FA) {
+        // 2FA view will be shown via pending2FA prop
+        return
+      }
     } catch (err: any) {
       setError(err.message || t('auth.invalidCodeError'))
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleVerify2FA = async () => {
+    if (totpCode.length !== 6) {
+      setError(t('auth.invalidCode'))
+      return
+    }
+    setLoading(true)
+    setError('')
+    try {
+      await onLoginWith2FA?.(totpCode)
+    } catch (err: any) {
+      setError(err.message || t('auth.invalidCodeError'))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleTotpKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleVerify2FA()
     }
   }
 
@@ -242,6 +282,68 @@ export function AuthModal({ open, onLogin, onRegister }: AuthModalProps) {
             >
               {t('auth.copiedSaved')}
             </button>
+          </div>
+        )}
+
+        {/* 2FA Verification View */}
+        {view === 'totp' && (
+          <div className="space-y-6">
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-100">
+                <svg className="h-7 w-7 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('auth.twoFactorVerify')}</h2>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t('auth.twoFactorVerifyHint')}</p>
+            </div>
+
+            <div className="space-y-3">
+              <input
+                ref={totpRef}
+                type="text"
+                value={totpCode}
+                onChange={(e) => { setTotpCode(e.target.value.replace(/\D/g, '').slice(0, 6)); setError('') }}
+                onKeyDown={handleTotpKeyDown}
+                placeholder="000000"
+                maxLength={6}
+                autoComplete="one-time-code"
+                className={cn(
+                  'w-full rounded-xl border bg-gray-50 dark:bg-gray-700 px-4 py-3.5 text-center font-mono text-2xl tracking-[0.3em] text-gray-900 dark:text-white placeholder:text-gray-300 dark:placeholder:text-gray-500 focus:border-brand-500 focus:bg-white dark:focus:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all',
+                  error ? 'border-red-300' : 'border-gray-200 dark:border-gray-600'
+                )}
+              />
+              {error && (
+                <p className="text-center text-sm text-red-600">{error}</p>
+              )}
+            </div>
+
+            <button
+              onClick={handleVerify2FA}
+              disabled={loading || totpCode.length !== 6}
+              className="btn-primary w-full py-3"
+            >
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  {t('auth.verifying')}
+                </span>
+              ) : (
+                t('auth.verify')
+              )}
+            </button>
+
+            <div className="text-center">
+              <button
+                onClick={() => { onCancel2FA?.(); setView('login'); setTotpCode(''); setError('') }}
+                className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+              >
+                {t('account.cancel')}
+              </button>
+            </div>
           </div>
         )}
       </div>
