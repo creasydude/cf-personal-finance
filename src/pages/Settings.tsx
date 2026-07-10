@@ -146,7 +146,7 @@ export function Settings() {
                   'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
                   activeTab === tab.key
                     ? 'bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400'
-                    : 'text-muted-foreground hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200'
+                    : 'text-muted-foreground hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-foreground dark:hover:text-gray-200'
                 )}
               >
                 {tab.icon}
@@ -344,7 +344,7 @@ function AccountSection({
             )}
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full bg-white border border-gray-200 text-gray-500 hover:text-gray-700 shadow-sm transition-colors"
+              className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full bg-background border border-border text-muted-foreground hover:text-foreground shadow-sm transition-colors"
             >
               <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
@@ -367,7 +367,7 @@ function AccountSection({
 
         {/* Nickname */}
         <div className="mb-4">
-          <label className="label mb-1.5 block dark:text-gray-400">{t('settings.nickname')}</label>
+          <label className="label mb-1.5 block dark:text-muted-foreground">{t('settings.nickname')}</label>
           <input
             type="text"
             value={nickname}
@@ -419,7 +419,7 @@ function ImportExportSection({
       {/* Export */}
       <div className="card p-6">
         <h3 className="text-sm font-semibold text-foreground mb-2">{t('settings.exportData')}</h3>
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-sm text-muted-foreground mb-4">
           {t('settings.exportHint')}
         </p>
         <button onClick={onExport} className="btn-primary">
@@ -436,8 +436,8 @@ function ImportExportSection({
           <h3 className="text-sm font-semibold text-foreground mb-3">{t('settings.recentExports')}</h3>
           <div className="space-y-2">
             {exportHistory.map((exp, i) => (
-              <div key={i} className="flex items-center gap-3 text-sm text-gray-600">
-                <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <div key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
+                <svg className="h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 {new Date(exp.date).toLocaleString(locale === 'fa' ? 'fa-IR' : 'en-US')}
@@ -450,7 +450,7 @@ function ImportExportSection({
       {/* Import */}
       <div className="card p-6">
         <h3 className="text-sm font-semibold text-foreground mb-2">{t('settings.importData')}</h3>
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-sm text-muted-foreground mb-4">
           {t('settings.importHint')}
         </p>
         <input
@@ -516,7 +516,7 @@ function PreferencesSection({
         <div className="space-y-4 max-w-lg">
           {/* Language */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('settings.language')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('settings.language')}</label>
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
@@ -529,7 +529,7 @@ function PreferencesSection({
 
           {/* Timezone */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('settings.timezone')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('settings.timezone')}</label>
             <select
               value={timezone}
               onChange={(e) => setTimezone(e.target.value)}
@@ -543,7 +543,7 @@ function PreferencesSection({
 
           {/* Date Format */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('settings.dateFormat')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('settings.dateFormat')}</label>
             <select
               value={dateFormat}
               onChange={(e) => setDateFormat(e.target.value)}
@@ -557,7 +557,7 @@ function PreferencesSection({
 
           {/* Default Currency */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('settings.defaultCurrency')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('settings.defaultCurrency')}</label>
             <CurrencyPicker value={defaultCurrency} onChange={setDefaultCurrency} showType />
             <p className="text-xs text-muted-foreground mt-1">{t('settings.defaultCurrencyHint')}</p>
           </div>
@@ -593,7 +593,7 @@ function PreferencesSection({
                 'flex flex-col items-center gap-2 rounded-xl border-2 px-6 py-4 transition-all',
                 theme === t.key
                   ? 'border-brand-500 bg-brand-50 text-brand-700'
-                  : 'border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  : 'border-border text-muted-foreground hover:border-border hover:text-foreground'
               )}
             >
               {t.icon}
@@ -699,7 +699,7 @@ function SecuritySection({
             <p className="text-sm text-gray-700 dark:text-gray-300">
               {twoFactor ? t('settings.twoFactorEnabled') : t('settings.twoFactorDisabled')}
             </p>
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {t('settings.twoFactorHint')}
             </p>
           </div>
@@ -751,7 +751,7 @@ function SecuritySection({
 
           {/* Verification input */}
           <div className="mb-4">
-            <label className="label mb-1.5 block dark:text-gray-400">{t('settings.enterCode')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('settings.enterCode')}</label>
             <input
               type="text"
               value={verifyCode}

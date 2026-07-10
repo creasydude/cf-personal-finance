@@ -238,7 +238,7 @@ function AddBudgetModal({
       <div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-foreground">{t('budgets.add')}</h2>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100">
+          <button onClick={onClose} className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -247,7 +247,7 @@ function AddBudgetModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('budgets.category')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('budgets.category')}</label>
             <select value={category} onChange={e => setCategory(e.target.value)} className="input" required>
               <option value="">{t('categories.selectCategory')}</option>
               {availableCategories.map(c => (
@@ -257,7 +257,7 @@ function AddBudgetModal({
           </div>
 
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('budgets.monthlyLimit')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('budgets.monthlyLimit')}</label>
             <input
               type="number"
               value={amount}
@@ -314,7 +314,7 @@ function EditBudgetModal({
       <div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-foreground">{t('account.edit')} {t('budgets.title')}</h2>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+          <button onClick={onClose} className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent dark:hover:bg-gray-700">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -323,12 +323,12 @@ function EditBudgetModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('budgets.category')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('budgets.category')}</label>
             <input type="text" value={budget.category} disabled className="input opacity-60 cursor-not-allowed" />
           </div>
 
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('budgets.monthlyLimit')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('budgets.monthlyLimit')}</label>
             <input
               type="number"
               value={amount}

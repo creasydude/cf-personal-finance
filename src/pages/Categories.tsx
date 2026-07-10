@@ -139,7 +139,7 @@ function CategoryCard({ category, onClick, onDelete }: { category: any; onClick:
       </div>
       <button
         onClick={(e) => { e.stopPropagation(); onDelete() }}
-        className="rounded-lg p-1.5 text-gray-400 opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-600 transition-all"
+        className="rounded-lg p-1.5 text-muted-foreground opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive transition-all"
       >
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -183,7 +183,7 @@ function AddCategoryModal({
       <div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-foreground">{t('categories.add')}</h2>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+          <button onClick={onClose} className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent dark:hover:bg-gray-700">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -209,7 +209,7 @@ function AddCategoryModal({
 
           {/* Icon picker */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('categories.icon')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('categories.icon')}</label>
             <div className="flex flex-wrap gap-1.5">
               {EMOJI_OPTIONS.map(e => (
                 <button
@@ -218,7 +218,7 @@ function AddCategoryModal({
                   onClick={() => setIcon(e)}
                   className={cn(
                     'flex h-9 w-9 items-center justify-center rounded-lg text-lg transition-all',
-                    icon === e ? 'bg-brand-100 ring-2 ring-brand-500' : 'hover:bg-gray-100'
+                    icon === e ? 'bg-brand-100 ring-2 ring-brand-500' : 'hover:bg-accent'
                   )}
                 >
                   {e}
@@ -229,7 +229,7 @@ function AddCategoryModal({
 
           {/* Name */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('account.name')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('account.name')}</label>
             <input
               type="text"
               value={name}
@@ -286,7 +286,7 @@ function EditCategoryModal({
       <div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-foreground">{t('account.edit')} {t('categories.title')}</h2>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+          <button onClick={onClose} className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent dark:hover:bg-gray-700">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -312,7 +312,7 @@ function EditCategoryModal({
 
           {/* Icon picker */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('categories.icon')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('categories.icon')}</label>
             <div className="flex flex-wrap gap-1.5">
               {EMOJI_OPTIONS.map(e => (
                 <button
@@ -321,7 +321,7 @@ function EditCategoryModal({
                   onClick={() => setIcon(e)}
                   className={cn(
                     'flex h-9 w-9 items-center justify-center rounded-lg text-lg transition-all',
-                    icon === e ? 'bg-brand-100 ring-2 ring-brand-500' : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                    icon === e ? 'bg-brand-100 ring-2 ring-brand-500' : 'hover:bg-accent dark:hover:bg-gray-700'
                   )}
                 >
                   {e}
@@ -332,7 +332,7 @@ function EditCategoryModal({
 
           {/* Name */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('account.name')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('account.name')}</label>
             <input
               type="text"
               value={name}
