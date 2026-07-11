@@ -12,17 +12,18 @@ export function toPersianNumber(str: string | number): string {
 }
 
 export function formatCurrency(amount: number, currency: string = 'USD', locale: string = 'en', useToman?: boolean): string {
+  const loc = locale === 'fa' ? 'fa-IR' : 'en-US'
+  const tomanEnabled = useToman ?? (typeof window !== 'undefined' && localStorage.getItem('useToman') === 'true')
+  const displayAmount = (tomanEnabled && currency === 'IRR') ? amount / 10 : amount
+  const isToman = tomanEnabled && currency === 'IRR'
+
   const customCurrencies: Record<string, Record<string, string>> = {
-    IRR: { en: 'IRR', fa: 'تومان' },
+    IRR: { en: isToman ? 'Toman' : 'IRR', fa: isToman ? 'تومان' : 'ریال' },
     GOLD_GRAM24: { en: 'g Au 24K', fa: 'گرم طلای ۲۴ عیار' },
     GOLD_GRAM18: { en: 'g Au 18K', fa: 'گرم طلای ۱۸ عیار' },
     GOLD_GRAM22: { en: 'g Au 22K', fa: 'گرم طلای ۲۲ عیار' },
     XAU: { en: 'oz Au', fa: 'اونس طلا' },
   }
-
-  const loc = locale === 'fa' ? 'fa-IR' : 'en-US'
-  const tomanEnabled = useToman ?? (typeof window !== 'undefined' && localStorage.getItem('useToman') === 'true')
-  const displayAmount = (tomanEnabled && currency === 'IRR') ? amount / 10 : amount
 
   if (customCurrencies[currency]) {
     const label = customCurrencies[currency][locale] || customCurrencies[currency].en

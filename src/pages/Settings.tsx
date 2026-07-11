@@ -566,8 +566,8 @@ function PreferencesSection({
             <p className="text-xs text-muted-foreground mt-1">{t('settings.defaultCurrencyHint')}</p>
           </div>
 
-          {/* Toman toggle — only show when language is Persian and currency is IRR */}
-          {language === 'fa' && defaultCurrency === 'IRR' && (
+          {/* Toman toggle — show when currency is IRR */}
+          {defaultCurrency === 'IRR' && (
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-foreground">{t('settings.useToman')}</p>
@@ -577,7 +577,7 @@ function PreferencesSection({
                 onClick={() => setUseToman(!useToman)}
                 className={cn(
                   'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background',
-                  useToman ? 'bg-primary' : 'bg-input'
+                  useToman ? 'bg-primary' : 'bg-gray-300 dark:bg-input'
                 )}
                 role="switch"
                 aria-checked={useToman}
