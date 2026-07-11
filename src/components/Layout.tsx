@@ -52,7 +52,7 @@ export function Layout({ children, userCode, settings, onLogout }: LayoutProps) 
         )}
       >
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/80 backdrop-blur-sm px-6">
+        <header dir={isRTL ? 'rtl' : 'ltr'} className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/80 backdrop-blur-sm px-6">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span className="text-foreground font-medium">{t('nav.home')}</span>
             <ChevronRight className="h-4 w-4" />

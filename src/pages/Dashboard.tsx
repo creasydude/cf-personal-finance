@@ -39,7 +39,7 @@ const TYPE_COLORS: Record<string, string> = {
 type Tab = 'all' | 'assets' | 'debts'
 
 export function Dashboard({ userCode, settings }: { userCode: string | null; settings: Record<string, any> }) {
-  const { t, locale } = useTranslation(settings)
+  const { t, locale, isRTL } = useTranslation(settings)
   const { accounts, assetsTotal, liabilitiesTotal, loading: accountsLoading, createAccount, updateAccount, deleteAccount } = useAccounts()
   const { data: netWorth, range, setRange, loading: nwLoading, refetch: refetchNetWorth } = useNetWorth()
   const [activeTab, setActiveTab] = useState<Tab>('all')

@@ -97,11 +97,20 @@
   }
 
   select.input {
-    @apply appearance-none pe-8;
+    @apply appearance-none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 8px center;
     background-size: 16px;
+  }
+
+  [dir="ltr"] select.input {
+    padding-right: 2rem;
+    background-position: right 8px center;
+  }
+
+  [dir="rtl"] select.input {
+    padding-left: 2rem;
+    background-position: left 8px center;
   }
 
   .dark select.input {
@@ -171,4 +180,10 @@ html[lang="en"] body,
 html[lang="en"] body * {
   font-variant-numeric: lining-nums tabular-nums;
   font-feature-settings: "lnum" 1, "tnum" 1, "ss01" 0, "ss02" 0, "ss03" 0, "ss04" 0;
+}
+
+/* RTL support */
+html[dir="rtl"] body {
+  direction: rtl;
+  text-align: right;
 }
