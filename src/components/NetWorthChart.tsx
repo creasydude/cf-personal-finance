@@ -10,9 +10,9 @@ interface NetWorthChartProps {
 function CustomTooltip({ active, payload, label, baseCurrency, locale }: any) {
   if (!active || !payload?.length) return null
   return (
-    <div className="rounded-xl border border-gray-100 bg-white px-4 py-3 shadow-lg">
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-sm font-bold text-gray-900">{formatCurrency(payload[0].value, baseCurrency || 'USD', locale)}</p>
+    <div className="rounded-xl border border-border bg-popover px-4 py-3 shadow-lg">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="text-sm font-bold text-foreground">{formatCurrency(payload[0].value, baseCurrency || 'USD', locale)}</p>
     </div>
   )
 }
@@ -20,7 +20,7 @@ function CustomTooltip({ active, payload, label, baseCurrency, locale }: any) {
 export function NetWorthChart({ data, baseCurrency = 'USD', locale = 'en' }: NetWorthChartProps) {
   if (!data?.length) {
     return (
-      <div className="flex h-[300px] items-center justify-center text-gray-400">
+      <div className="flex h-[300px] items-center justify-center text-muted-foreground">
         No data available
       </div>
     )

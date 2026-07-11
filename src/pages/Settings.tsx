@@ -132,7 +132,7 @@ export function Settings() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('settings.title')}</h1>
+      <h1 className="text-2xl font-bold text-foreground">{t('settings.title')}</h1>
 
       <div className="flex gap-6 flex-col md:flex-row">
         {/* Sidebar tabs */}
@@ -146,7 +146,7 @@ export function Settings() {
                   'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
                   activeTab === tab.key
                     ? 'bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400'
-                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200'
+                    : 'text-muted-foreground hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-foreground dark:hover:text-gray-200'
                 )}
               >
                 {tab.icon}
@@ -198,9 +198,9 @@ export function Settings() {
 
       {/* Delete Account Confirm */}
       <Modal open={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} className="max-w-sm">
-        <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{t('settings.deleteAccount')}</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+        <div>
+          <h3 className="text-lg font-bold text-foreground mb-2">{t('settings.deleteAccount')}</h3>
+          <p className="text-sm text-muted-foreground mb-6">
             {t('delete.permanentlyDelete')}
           </p>
           <div className="flex gap-3">
@@ -214,9 +214,9 @@ export function Settings() {
 
       {/* Reset Account Confirm */}
       <Modal open={showResetConfirm} onClose={() => setShowResetConfirm(false)} className="max-w-sm">
-        <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{t('settings.resetAccount')}</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+        <div>
+          <h3 className="text-lg font-bold text-foreground mb-2">{t('settings.resetAccount')}</h3>
+          <p className="text-sm text-muted-foreground mb-6">
             {t('settings.resetAccount')} — {t('settings.deleteAccount')}
           </p>
           <div className="flex gap-3">
@@ -289,8 +289,8 @@ function AccountSection({
   return (
     <div className="space-y-6">
       {/* Access Code */}
-      <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{t('settings.accessCode')}</h3>
+      <div className="card p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-4">{t('settings.accessCode')}</h3>
         <div className="rounded-xl border-2 border-dashed border-amber-300 bg-amber-50 p-4">
           <div className="flex items-center justify-between mb-2">
             <p className="font-mono text-2xl font-bold tracking-[0.15em] text-amber-800">
@@ -329,8 +329,8 @@ function AccountSection({
       </div>
 
       {/* Profile */}
-      <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{t('settings.profile')}</h3>
+      <div className="card p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-4">{t('settings.profile')}</h3>
 
         {/* Photo */}
         <div className="flex items-center gap-4 mb-6">
@@ -344,7 +344,7 @@ function AccountSection({
             )}
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full bg-white border border-gray-200 text-gray-500 hover:text-gray-700 shadow-sm transition-colors"
+              className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full bg-background border border-border text-muted-foreground hover:text-foreground shadow-sm transition-colors"
             >
               <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
@@ -360,14 +360,14 @@ function AccountSection({
             />
           </div>
           <div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{t('settings.uploadPhoto')}</p>
-            <p className="text-xs text-gray-400 dark:text-gray-500">{t('settings.photoHint')}</p>
+            <p className="text-sm text-muted-foreground">{t('settings.uploadPhoto')}</p>
+            <p className="text-xs text-muted-foreground">{t('settings.photoHint')}</p>
           </div>
         </div>
 
         {/* Nickname */}
         <div className="mb-4">
-          <label className="label mb-1.5 block dark:text-gray-400">{t('settings.nickname')}</label>
+          <label className="label mb-1.5 block dark:text-muted-foreground">{t('settings.nickname')}</label>
           <input
             type="text"
             value={nickname}
@@ -386,7 +386,7 @@ function AccountSection({
       </div>
 
       {/* Danger zone */}
-      <div className="card border-red-200 dark:border-red-800 p-6 dark:bg-gray-800">
+      <div className="card p-6 border-destructive/20">
         <h3 className="text-sm font-semibold text-red-900 dark:text-red-400 mb-4">{t('settings.dangerZone')}</h3>
         <div className="flex flex-col gap-3 sm:flex-row">
           <button onClick={onReset} className="btn-secondary border-amber-300 text-amber-700 hover:bg-amber-50">
@@ -417,9 +417,9 @@ function ImportExportSection({
   return (
     <div className="space-y-6">
       {/* Export */}
-      <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">{t('settings.exportData')}</h3>
-        <p className="text-sm text-gray-500 mb-4">
+      <div className="card p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-2">{t('settings.exportData')}</h3>
+        <p className="text-sm text-muted-foreground mb-4">
           {t('settings.exportHint')}
         </p>
         <button onClick={onExport} className="btn-primary">
@@ -432,12 +432,12 @@ function ImportExportSection({
 
       {/* Export History */}
       {exportHistory.length > 0 && (
-        <div className="card p-6 dark:bg-gray-800">
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">{t('settings.recentExports')}</h3>
+        <div className="card p-6">
+          <h3 className="text-sm font-semibold text-foreground mb-3">{t('settings.recentExports')}</h3>
           <div className="space-y-2">
             {exportHistory.map((exp, i) => (
-              <div key={i} className="flex items-center gap-3 text-sm text-gray-600">
-                <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <div key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
+                <svg className="h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 {new Date(exp.date).toLocaleString(locale === 'fa' ? 'fa-IR' : 'en-US')}
@@ -448,9 +448,9 @@ function ImportExportSection({
       )}
 
       {/* Import */}
-      <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">{t('settings.importData')}</h3>
-        <p className="text-sm text-gray-500 mb-4">
+      <div className="card p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-2">{t('settings.importData')}</h3>
+        <p className="text-sm text-muted-foreground mb-4">
           {t('settings.importHint')}
         </p>
         <input
@@ -484,7 +484,7 @@ function PreferencesSection({
   t: (key: string) => string
 }) {
   const { setTheme: applyTheme } = useTheme()
-  const [language, setLanguage] = useState(settings.language || 'en')
+  const [language, setLanguage] = useState(settings.language || localStorage.getItem('language') || 'fa')
   const [timezone, setTimezone] = useState(settings.timezone || 'UTC')
   const [dateFormat, setDateFormat] = useState(settings.dateFormat || 'YYYY-MM-DD')
   const [defaultCurrency, setDefaultCurrency] = useState(settings.baseCurrency || 'IRR')
@@ -492,7 +492,7 @@ function PreferencesSection({
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
-    setLanguage(settings.language || 'en')
+    setLanguage(settings.language || localStorage.getItem('language') || 'fa')
     setTimezone(settings.timezone || 'UTC')
     setDateFormat(settings.dateFormat || 'YYYY-MM-DD')
     setDefaultCurrency(settings.baseCurrency || 'IRR')
@@ -511,12 +511,12 @@ function PreferencesSection({
 
   return (
     <div className="space-y-6">
-      <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{t('settings.general')}</h3>
+      <div className="card p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-4">{t('settings.general')}</h3>
         <div className="space-y-4 max-w-lg">
           {/* Language */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('settings.language')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('settings.language')}</label>
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
@@ -529,7 +529,7 @@ function PreferencesSection({
 
           {/* Timezone */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('settings.timezone')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('settings.timezone')}</label>
             <select
               value={timezone}
               onChange={(e) => setTimezone(e.target.value)}
@@ -543,7 +543,7 @@ function PreferencesSection({
 
           {/* Date Format */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('settings.dateFormat')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('settings.dateFormat')}</label>
             <select
               value={dateFormat}
               onChange={(e) => setDateFormat(e.target.value)}
@@ -557,16 +557,16 @@ function PreferencesSection({
 
           {/* Default Currency */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('settings.defaultCurrency')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('settings.defaultCurrency')}</label>
             <CurrencyPicker value={defaultCurrency} onChange={setDefaultCurrency} showType />
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{t('settings.defaultCurrencyHint')}</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('settings.defaultCurrencyHint')}</p>
           </div>
         </div>
       </div>
 
       {/* Theme */}
-      <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{t('settings.appearance')}</h3>
+      <div className="card p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-4">{t('settings.appearance')}</h3>
         <div className="flex gap-3">
           {([
             { key: 'light', label: t('settings.light'), icon: (
@@ -593,7 +593,7 @@ function PreferencesSection({
                 'flex flex-col items-center gap-2 rounded-xl border-2 px-6 py-4 transition-all',
                 theme === t.key
                   ? 'border-brand-500 bg-brand-50 text-brand-700'
-                  : 'border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  : 'border-border text-muted-foreground hover:border-border hover:text-foreground'
               )}
             >
               {t.icon}
@@ -692,14 +692,14 @@ function SecuritySection({
 
   return (
     <div className="space-y-6">
-      <div className="card p-6 dark:bg-gray-800">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{t('settings.twoFactor')}</h3>
+      <div className="card p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-4">{t('settings.twoFactor')}</h3>
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-700 dark:text-gray-300">
               {twoFactor ? t('settings.twoFactorEnabled') : t('settings.twoFactorDisabled')}
             </p>
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {t('settings.twoFactorHint')}
             </p>
           </div>
@@ -724,9 +724,9 @@ function SecuritySection({
 
       {/* Enable 2FA Modal */}
       <Modal open={showEnableModal} onClose={() => setShowEnableModal(false)} className="max-w-md">
-        <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2 text-center">{t('settings.enable2FA')}</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">{t('settings.scanQRCode')}</p>
+        <div>
+          <h2 className="text-lg font-bold text-foreground mb-2 text-center">{t('settings.enable2FA')}</h2>
+          <p className="text-sm text-muted-foreground text-center mb-6">{t('settings.scanQRCode')}</p>
 
           {/* QR Code */}
           <div className="flex justify-center mb-4">
@@ -741,9 +741,9 @@ function SecuritySection({
 
           {/* Manual code */}
           <div className="mb-6">
-            <p className="text-xs text-gray-500 dark:text-gray-400 text-center mb-2">{t('settings.manualCode')}</p>
+            <p className="text-xs text-muted-foreground text-center mb-2">{t('settings.manualCode')}</p>
             <div className="flex items-center justify-center gap-2">
-              <code className="bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg font-mono text-sm text-gray-800 dark:text-gray-200 tracking-wider select-all">
+              <code className="bg-muted px-3 py-2 rounded-lg font-mono text-sm text-gray-800 dark:text-gray-200 tracking-wider select-all">
                 {secret}
               </code>
             </div>
@@ -751,7 +751,7 @@ function SecuritySection({
 
           {/* Verification input */}
           <div className="mb-4">
-            <label className="label mb-1.5 block dark:text-gray-400">{t('settings.enterCode')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('settings.enterCode')}</label>
             <input
               type="text"
               value={verifyCode}
@@ -776,9 +776,9 @@ function SecuritySection({
 
       {/* Disable 2FA Modal */}
       <Modal open={showDisableModal} onClose={() => setShowDisableModal(false)} className="max-w-sm">
-        <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2 text-center">{t('settings.disable2FA')}</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">{t('settings.disable2FAHint')}</p>
+        <div>
+          <h2 className="text-lg font-bold text-foreground mb-2 text-center">{t('settings.disable2FA')}</h2>
+          <p className="text-sm text-muted-foreground text-center mb-6">{t('settings.disable2FAHint')}</p>
 
           <div className="mb-4">
             <input

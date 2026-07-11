@@ -28,7 +28,7 @@ export function Dropdown({ trigger, children, align = 'left', className }: Dropd
       {open && (
         <div
           className={cn(
-            'absolute z-50 mt-2 min-w-[160px] rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 py-1 shadow-lg animate-slide-down',
+            'absolute z-50 mt-2 min-w-[160px] rounded-xl border border-border bg-popover py-1 shadow-lg animate-slide-down',
             align === 'right' ? 'end-0' : 'start-0',
             className
           )}
@@ -54,7 +54,7 @@ export function DropdownItem({
     <button
       onClick={onClick}
       className={cn(
-        'w-full px-3 py-2 text-start text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors',
+        'w-full px-3 py-2 text-start text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground transition-colors',
         className
       )}
     >

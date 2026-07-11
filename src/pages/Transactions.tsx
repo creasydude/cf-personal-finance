@@ -5,15 +5,18 @@ import { useCategories } from '../hooks/useCategories'
 import { useTranslation } from '../hooks/useTranslation'
 import { formatCurrency, formatDate } from '../lib/utils'
 import { api } from '../api/client'
-import { Badge } from '../components/ui/Badge'
+import { Badge } from '../components/ui/badge'
+import { Card, CardContent } from '../components/ui/card'
+import { Button } from '../components/ui/button'
 import { Modal } from '../components/ui/Modal'
 import { ConfirmModal } from '../components/ui/ConfirmModal'
 import { CurrencyPicker } from '../components/ui/CurrencyPicker'
+import { Plus, Search, Trash2, Info } from 'lucide-react'
 
 const TYPE_CONFIG = {
-  income: { key: 'transactions.income', variant: 'success' as const, color: 'text-emerald-600', icon: '↓' },
-  expense: { key: 'transactions.expense', variant: 'danger' as const, color: 'text-red-600', icon: '↑' },
-  transfer: { key: 'transactions.transfer', variant: 'info' as const, color: 'text-blue-600', icon: '↔' },
+  income: { key: 'transactions.income', variant: 'success' as const, color: 'text-emerald-600 dark:text-emerald-400', icon: '↓' },
+  expense: { key: 'transactions.expense', variant: 'destructive' as const, color: 'text-red-600 dark:text-red-400', icon: '↑' },
+  transfer: { key: 'transactions.transfer', variant: 'info' as const, color: 'text-blue-600 dark:text-blue-400', icon: '↔' },
 }
 
 export function Transactions() {
@@ -57,24 +60,20 @@ export function Transactions() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('transactions.title')}</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{total} {t('transactions.count')}</p>
+          <h1 className="text-2xl font-bold text-foreground">{t('transactions.title')}</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">{total} {t('transactions.count')}</p>
         </div>
-        <button onClick={() => setShowAdd(true)} className="btn-primary">
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
+        <Button onClick={() => setShowAdd(true)}>
+          <Plus className="h-4 w-4" />
           {t('transactions.add')}
-        </button>
+        </Button>
       </div>
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
         {/* Search */}
         <div className="relative flex-1 min-w-[200px] max-w-sm">
-          <svg className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+          <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
             value={search}
@@ -130,41 +129,42 @@ export function Transactions() {
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-500 border-t-transparent" />
         </div>
       ) : transactions.length === 0 ? (
-        <div className="card flex flex-col items-center justify-center py-16 text-center dark:bg-gray-800">
+        <div className="card flex flex-col items-center justify-center py-16 text-center">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100 dark:bg-gray-700">
-            <svg className="h-8 w-8 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="h-8 w-8 text-muted-foreground dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5-6L16.5 18m0 0L12 13.5m4.5 4.5V6" />
             </svg>
           </div>
           <p className="text-sm font-medium text-gray-900 dark:text-white">{t('transactions.noTransactions')}</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('transactions.addFirst')}</p>
+          <p className="text-sm text-gray-500 dark:text-muted-foreground mt-1">{t('transactions.addFirst')}</p>
         </div>
       ) : (
-        <div className="card overflow-hidden">
-          {/* Desktop table */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
-                  <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.date')}</th>
-                  <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.description')}</th>
-                  <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.category')}</th>
-                  <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.type')}</th>
-                  <th className="px-4 py-3 text-end text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t('table.amount')}</th>
-                  <th className="px-4 py-3 text-end text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"></th>
-                </tr>
-              </thead>
-              <tbody>
+        <Card>
+          <CardContent className="p-0">
+            {/* Desktop table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('table.date')}</th>
+                    <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('table.description')}</th>
+                    <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('table.category')}</th>
+                    <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('table.type')}</th>
+                    <th className="px-4 py-3 text-end text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('table.amount')}</th>
+                    <th className="px-4 py-3 text-end text-xs font-semibold uppercase tracking-wider text-muted-foreground"></th>
+                  </tr>
+                </thead>
+                <tbody>
                 {transactions.map(txn => {
                   const config = TYPE_CONFIG[txn.type as keyof typeof TYPE_CONFIG]
                   return (
-                    <tr key={txn.id} onClick={() => setEditingTxn(txn)} className="border-b border-gray-50 dark:border-gray-700 last:border-0 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer">
-                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{formatDate(txn.date, locale)}</td>
+                    <tr key={txn.id} onClick={() => setEditingTxn(txn)} className="border-b border-border/50 last:border-0 hover:bg-accent/50 transition-colors cursor-pointer">
+                      <td className="px-4 py-3 text-sm text-muted-foreground">{formatDate(txn.date, locale)}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1.5">
-                          <p className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-[200px]">{txn.description}</p>
+                          <p className="text-sm font-medium text-foreground truncate max-w-[200px]">{txn.description}</p>
                           {txn.attachment_count > 0 && (
-                            <span className="inline-flex items-center gap-0.5 rounded-full bg-brand-50 dark:bg-brand-900/30 px-1.5 py-0.5 text-[10px] font-medium text-brand-600 dark:text-brand-400">
+                            <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
                               <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.686 7.687a1.5 1.5 0 002.112 2.13" />
                               </svg>
@@ -172,20 +172,18 @@ export function Transactions() {
                             </span>
                           )}
                           <button
-                            onClick={() => setDetailTxn(txn)}
-                            className="rounded p-0.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                            onClick={(e) => { e.stopPropagation(); setDetailTxn(txn) }}
+                            className="rounded p-0.5 text-muted-foreground hover:text-foreground transition-colors"
                             title={t('transactions.details')}
                           >
-                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                            </svg>
+                            <Info className="h-4 w-4" />
                           </button>
                         </div>
-                        {txn.notes && <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate max-w-[200px]">{txn.notes}</p>}
+                        {txn.notes && <p className="text-xs text-gray-500 dark:text-muted-foreground mt-0.5 truncate max-w-[200px]">{txn.notes}</p>}
                       </td>
                       <td className="px-4 py-3">
                         {txn.category && (
-                          <span className="inline-flex items-center rounded-full bg-gray-100 dark:bg-gray-700 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:text-gray-300">
+                          <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
                             {txn.category}
                           </span>
                         )}
@@ -204,11 +202,9 @@ export function Transactions() {
                       <td className="px-4 py-3 text-end">
                         <button
                           onClick={(e) => { e.stopPropagation(); setDeletingId(txn.id) }}
-                          className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 transition-colors"
+                          className="rounded-lg p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
                         >
-                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
+                          <Trash2 className="h-4 w-4" />
                         </button>
                       </td>
                     </tr>
@@ -219,15 +215,15 @@ export function Transactions() {
           </div>
 
           {/* Mobile cards */}
-          <div className="md:hidden divide-y divide-gray-50">
+          <div className="md:hidden divide-y divide-border">
             {transactions.map(txn => {
               const config = TYPE_CONFIG[txn.type as keyof typeof TYPE_CONFIG]
               return (
                 <div key={txn.id} className="p-4">
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">{txn.description}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">{formatDate(txn.date, locale)}</p>
+                      <p className="text-sm font-medium text-foreground truncate">{txn.description}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{formatDate(txn.date, locale)}</p>
                     </div>
                     <div className="text-end ms-3">
                       <p className={`text-sm font-semibold ${config?.color}`}>
@@ -240,7 +236,8 @@ export function Transactions() {
               )
             })}
           </div>
-        </div>
+        </CardContent>
+        </Card>
       )}
 
       {/* Add Transaction Modal */}
@@ -438,10 +435,10 @@ function AddTransactionModal({
 
   return (
     <Modal open={open} onClose={onClose} className="max-w-md">
-      <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
+      <div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-gray-900 dark:text-white">{editData ? t('account.edit') : t('transactions.add')}</h2>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100">
+          <button onClick={onClose} className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -477,7 +474,7 @@ function AddTransactionModal({
                 className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all ${
                   type === t.key
                     ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                    : 'text-gray-400 dark:text-gray-500 hover:text-gray-200'
+                    : 'text-muted-foreground dark:text-gray-500 hover:text-gray-200'
                 }`}
               >
                 {t.icon}
@@ -514,14 +511,14 @@ function AddTransactionModal({
           {type === 'transfer' ? (
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="label mb-1 block dark:text-gray-400">{t('transactions.from')}</label>
+                <label className="label mb-1 block dark:text-muted-foreground">{t('transactions.from')}</label>
                 <select value={fromAccountId} onChange={e => setFromAccountId(e.target.value)} className="input" required>
                   <option value="">{t('account.selectAccount')}</option>
                   {accounts.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="label mb-1 block dark:text-gray-400">{t('transactions.to')}</label>
+                <label className="label mb-1 block dark:text-muted-foreground">{t('transactions.to')}</label>
                 <select value={toAccountId} onChange={e => setToAccountId(e.target.value)} className="input" required>
                   <option value="">{t('account.selectAccount')}</option>
                   {accounts.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
@@ -554,7 +551,7 @@ function AddTransactionModal({
 
           {/* Attachments */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('transactions.attachments')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('transactions.attachments')}</label>
             <input
               ref={fileInputRef}
               type="file"
@@ -578,7 +575,7 @@ function AddTransactionModal({
                 {files.map((file, i) => (
                   <div key={i} className="flex items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-700 px-3 py-2 text-sm">
                     <span className="truncate text-gray-700 dark:text-gray-300">{file.name}</span>
-                    <button type="button" onClick={() => removeFile(i)} className="ml-2 text-gray-400 hover:text-red-500">
+                    <button type="button" onClick={() => removeFile(i)} className="ml-2 text-muted-foreground hover:text-destructive">
                       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                       </svg>
@@ -588,7 +585,7 @@ function AddTransactionModal({
               </div>
             )}
             {fileError && (
-              <p className="mt-2 text-xs text-red-500 dark:text-red-400">{fileError}</p>
+              <p className="mt-2 text-xs text-destructive dark:text-red-400">{fileError}</p>
             )}
           </div>
 
@@ -623,10 +620,10 @@ function TransactionDetailModal({ txn, onClose, locale }: { txn: any; onClose: (
 
   return (
     <Modal open={true} onClose={onClose} className="max-w-lg">
-      <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
+      <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('transactions.details')}</h2>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+          <button onClick={onClose} className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent dark:hover:bg-gray-700">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -677,7 +674,7 @@ function TransactionDetailModal({ txn, onClose, locale }: { txn: any; onClose: (
                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-brand-500 border-t-transparent" />
               </div>
             ) : attachments.length === 0 ? (
-              <p className="text-sm text-gray-400 dark:text-gray-500">—</p>
+              <p className="text-sm text-muted-foreground dark:text-gray-500">—</p>
             ) : (
               <div className="space-y-2">
                 {attachments.map(att => (
@@ -703,20 +700,20 @@ function TransactionDetailModal({ txn, onClose, locale }: { txn: any; onClose: (
                             <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" />
                           </svg>
                         ) : isPDF(att.content_type) ? (
-                          <svg className="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <svg className="h-4 w-4 text-destructive" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                           </svg>
                         ) : (
-                          <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <svg className="h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                           </svg>
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{att.filename}</p>
-                        <p className="text-xs text-gray-400">{(att.size / 1024).toFixed(1)} KB</p>
+                        <p className="text-xs text-muted-foreground">{(att.size / 1024).toFixed(1)} KB</p>
                       </div>
-                      <svg className="h-4 w-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <svg className="h-4 w-4 text-muted-foreground flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                       </svg>
                     </a>

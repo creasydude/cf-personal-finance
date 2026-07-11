@@ -25,7 +25,6 @@ export function AnimatedNumber({
     const animate = (now: number) => {
       const elapsed = now - startTimeRef.current
       const progress = Math.min(elapsed / duration, 1)
-      // Ease out cubic
       const eased = 1 - Math.pow(1 - progress, 3)
       const current = startRef.current + (value - startRef.current) * eased
       setDisplay(current)

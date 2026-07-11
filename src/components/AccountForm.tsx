@@ -95,14 +95,14 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
   return (
     <>
     <Modal open={open} onClose={onClose} className="max-w-md">
-      <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
+      <div>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">{isEditing ? t('accountForm.edit') : t('accountForm.addAccount')} {t(ACCOUNT_TYPE_KEYS[type])}</h2>
+          <h2 className="text-lg font-bold text-foreground">{isEditing ? t('accountForm.edit') : t('accountForm.addAccount')} {t(ACCOUNT_TYPE_KEYS[type])}</h2>
           <div className="flex items-center gap-1">
             {isEditing && onDelete && (
               <button
                 onClick={() => setShowDeleteConfirm(true)}
-                className="rounded-lg p-1.5 text-gray-400 dark:text-gray-500 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500 transition-colors"
+                className="rounded-lg p-1.5 text-muted-foreground hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500 transition-colors"
                 title="Delete account"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -110,7 +110,7 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
                 </svg>
               </button>
             )}
-            <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors">
+            <button onClick={onClose} className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -121,7 +121,7 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.name')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('accountForm.name')}</label>
             <input
               type="text"
               value={name}
@@ -135,7 +135,7 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
           {/* Subtype for cash */}
           {type === 'cash' && (
             <div>
-              <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.accountType')}</label>
+              <label className="label mb-1.5 block dark:text-muted-foreground">{t('accountForm.accountType')}</label>
               <select value={subtype} onChange={(e) => setSubtype(e.target.value)} className="input">
                 <option value="">{t('accountForm.selectType')}</option>
                 {CASH_SUBTYPES.map(s => <option key={s.value} value={s.value}>{t(s.key)}</option>)}
@@ -146,7 +146,7 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
           {/* Balance — hidden for gold (auto-calculated) */}
           {!isGold && (
             <div>
-              <label className="label mb-1.5 block dark:text-gray-400">{isLiability ? t('accountForm.currentBalanceOwed') : t('accountForm.currentBalance')}</label>
+              <label className="label mb-1.5 block dark:text-muted-foreground">{isLiability ? t('accountForm.currentBalanceOwed') : t('accountForm.currentBalance')}</label>
               <input
                 type="number"
                 value={balance}
@@ -170,7 +170,7 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
 
           {/* Currency */}
           <div>
-            <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.currency')}</label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('accountForm.currency')}</label>
             <CurrencyPicker value={currency} onChange={setCurrency} showType filter={currencyFilter} />
           </div>
 
@@ -178,11 +178,11 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
           {type === 'property' && (
             <>
               <div>
-                <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.address')}</label>
+                <label className="label mb-1.5 block dark:text-muted-foreground">{t('accountForm.address')}</label>
                 <input type="text" value={details.address || ''} onChange={e => setDetails(d => ({ ...d, address: e.target.value }))} className="input" placeholder={t('accountForm.addressPlaceholder')} />
               </div>
               <div>
-                <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.purchasePrice')}</label>
+                <label className="label mb-1.5 block dark:text-muted-foreground">{t('accountForm.purchasePrice')}</label>
                 <input type="number" value={details.purchase_price || ''} onChange={e => setDetails(d => ({ ...d, purchase_price: e.target.value }))} className="input" placeholder="0.00" step="0.01" />
               </div>
             </>
@@ -191,11 +191,11 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
           {type === 'gold' && (
             <>
               <div>
-                <label className="label mb-1.5 block dark:text-gray-400">{t('gold.weight')}</label>
+                <label className="label mb-1.5 block dark:text-muted-foreground">{t('gold.weight')}</label>
                 <input type="number" value={details.grams || ''} onChange={e => setDetails(d => ({ ...d, grams: e.target.value }))} className="input" placeholder="0.00" step="0.01" required />
               </div>
               <div>
-                <label className="label mb-1.5 block dark:text-gray-400">{t('gold.karat')}</label>
+                <label className="label mb-1.5 block dark:text-muted-foreground">{t('gold.karat')}</label>
                 <select
                   value={details.karat || '18'}
                   onChange={e => {
@@ -214,9 +214,9 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
                 </select>
               </div>
               <div>
-                <label className="label mb-1.5 block dark:text-gray-400">{t('gold.purchasePrice')}</label>
+                <label className="label mb-1.5 block dark:text-muted-foreground">{t('gold.purchasePrice')}</label>
                 <input type="number" value={details.purchase_price_per_gram || ''} onChange={e => setDetails(d => ({ ...d, purchase_price_per_gram: e.target.value }))} className="input" placeholder="0.00" step="0.01" />
-                <p className="text-xs text-gray-400 mt-1">{t('gold.purchaseHint')}</p>
+                <p className="text-xs text-muted-foreground mt-1">{t('gold.purchaseHint')}</p>
               </div>
             </>
           )}
@@ -225,16 +225,16 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
             <>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.make')}</label>
+                  <label className="label mb-1.5 block dark:text-muted-foreground">{t('accountForm.make')}</label>
                   <input type="text" value={details.make || ''} onChange={e => setDetails(d => ({ ...d, make: e.target.value }))} className="input" placeholder="Toyota" />
                 </div>
                 <div>
-                  <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.model')}</label>
+                  <label className="label mb-1.5 block dark:text-muted-foreground">{t('accountForm.model')}</label>
                   <input type="text" value={details.model || ''} onChange={e => setDetails(d => ({ ...d, model: e.target.value }))} className="input" placeholder="Camry" />
                 </div>
               </div>
               <div>
-                <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.year')}</label>
+                <label className="label mb-1.5 block dark:text-muted-foreground">{t('accountForm.year')}</label>
                 <input type="number" value={details.year || ''} onChange={e => setDetails(d => ({ ...d, year: e.target.value }))} className="input" placeholder="2024" />
               </div>
             </>
@@ -243,11 +243,11 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
           {type === 'loan' && (
             <>
               <div>
-                <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.interestRate')}</label>
+                <label className="label mb-1.5 block dark:text-muted-foreground">{t('accountForm.interestRate')}</label>
                 <input type="number" value={details.interest_rate || ''} onChange={e => setDetails(d => ({ ...d, interest_rate: e.target.value }))} className="input" placeholder="5.5" step="0.1" />
               </div>
               <div>
-                <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.term')}</label>
+                <label className="label mb-1.5 block dark:text-muted-foreground">{t('accountForm.term')}</label>
                 <input type="number" value={details.term || ''} onChange={e => setDetails(d => ({ ...d, term: e.target.value }))} className="input" placeholder="60" />
               </div>
             </>
@@ -255,7 +255,7 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
 
           {type === 'credit_card' && (
             <div>
-              <label className="label mb-1.5 block dark:text-gray-400">{t('accountForm.creditLimit')}</label>
+              <label className="label mb-1.5 block dark:text-muted-foreground">{t('accountForm.creditLimit')}</label>
               <input type="number" value={details.credit_limit || ''} onChange={e => setDetails(d => ({ ...d, credit_limit: e.target.value }))} className="input" placeholder="10000" step="0.01" />
             </div>
           )}
@@ -273,7 +273,7 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
 
       {/* Delete Confirmation Modal */}
       <Modal open={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} className="max-w-sm">
-        <div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
+        <div>
           <div className="flex items-center gap-3 mb-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
               <svg className="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -282,11 +282,11 @@ export function AccountForm({ open, type, onClose, onSubmit, onDelete, account }
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t('accountForm.deleteTitle')}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{t('accountForm.deleteDesc')}</p>
+              <h3 className="text-lg font-bold text-foreground">{t('accountForm.deleteTitle')}</h3>
+              <p className="text-sm text-muted-foreground">{t('accountForm.deleteDesc')}</p>
             </div>
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+          <p className="text-sm text-gray-600 dark:text-muted-foreground mb-6">
             {t('accountForm.deleteConfirm')} <strong className="dark:text-white">{account?.name}</strong>? {t('accountForm.deleteNote')}
           </p>
           <div className="flex gap-3">
