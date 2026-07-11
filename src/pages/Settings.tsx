@@ -484,7 +484,7 @@ function PreferencesSection({
   t: (key: string) => string
 }) {
   const { setTheme: applyTheme } = useTheme()
-  const [language, setLanguage] = useState(settings.language || 'en')
+  const [language, setLanguage] = useState(settings.language || localStorage.getItem('language') || 'fa')
   const [timezone, setTimezone] = useState(settings.timezone || 'UTC')
   const [dateFormat, setDateFormat] = useState(settings.dateFormat || 'YYYY-MM-DD')
   const [defaultCurrency, setDefaultCurrency] = useState(settings.baseCurrency || 'IRR')
@@ -492,7 +492,7 @@ function PreferencesSection({
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
-    setLanguage(settings.language || 'en')
+    setLanguage(settings.language || localStorage.getItem('language') || 'fa')
     setTimezone(settings.timezone || 'UTC')
     setDateFormat(settings.dateFormat || 'YYYY-MM-DD')
     setDefaultCurrency(settings.baseCurrency || 'IRR')
