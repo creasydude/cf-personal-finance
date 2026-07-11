@@ -11,7 +11,8 @@
     "db:init": "wrangler d1 execute personal-finance-db --local --file=migrations/0001_init.sql",
     "db:seed": "wrangler d1 execute personal-finance-db --local --file=migrations/0002_seed.sql",
     "db:attachments": "wrangler d1 execute personal-finance-db --local --file=migrations/0003_attachments.sql",
-    "db:reset": "rm -rf .wrangler/state && npm run db:init && npm run db:seed && npm run db:attachments",
+    "db:budget-currency": "wrangler d1 execute personal-finance-db --local --file=migrations/0004_budget_currency.sql",
+    "db:reset": "rm -rf .wrangler/state && npm run db:init && npm run db:seed && npm run db:attachments && npm run db:budget-currency",
     "db:init:remote": "wrangler d1 execute personal-finance-db --remote --file=migrations/0001_init.sql",
     "db:seed:remote": "wrangler d1 execute personal-finance-db --remote --file=migrations/0002_seed.sql",
     "db:attachments:remote": "wrangler d1 execute personal-finance-db --remote --file=migrations/0003_attachments.sql"

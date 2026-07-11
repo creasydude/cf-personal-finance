@@ -7,6 +7,7 @@ import { Card, CardContent } from '../components/ui/card'
 import { Button } from '../components/ui/button'
 import { Modal } from '../components/ui/Modal'
 import { ConfirmModal } from '../components/ui/ConfirmModal'
+import { CurrencyPicker } from '../components/ui/CurrencyPicker'
 import { cn } from '../lib/utils'
 import { Plus, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react'
 
@@ -78,25 +79,29 @@ export function Budgets() {
       </div>
 
       {/* Overall progress */}
-      {totalBudgeted > 0 && (
-        <div className="card p-6">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('budgets.overall')}</span>
-            <span className="text-sm text-muted-foreground">
-              {formatCurrency(totalSpent, undefined, locale)} / {formatCurrency(totalBudgeted, undefined, locale)}
-            </span>
+      {totalBudgeted > 0 && (() => {
+        const primaryCurrency = budgets[0]?.currency || 'USD'
+        return (
+          <div className="card p-6">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-medium text-foreground">{t('budgets.overall')}</span>
+              <span className="text-sm text-muted-foreground">
+                {formatCurrency(totalSpent, primaryCurrency, locale)} / {formatCurrency(totalBudgeted, primaryCurrency, locale)}
+              </span>
+            </div>
+            <div className="h-3 rounded-full bg-muted overflow-hidden">
+              <div
+                className={cn(
+                  'h-full rounded-full transition-all duration-700 ease-out',
+                  totalPct > 100 ? 'bg-destructive' : totalPct > 80 ? 'bg-amber-500' : 'bg-primary'
+                )}
+                style={{ width: `${Math.min(totalPct, 100)}%` }}
+              />
+            </div>
           </div>
-          <div className="h-3 rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
-            <div
-              className={cn(
-                'h-full rounded-full transition-all duration-500',
-                totalPct > 100 ? 'bg-red-500' : totalPct > 80 ? 'bg-amber-500' : 'bg-brand-500'
-              )}
-              style={{ width: `${Math.min(totalPct, 100)}%` }}
-            />
-          </div>
-        </div>
-      )}
+        )
+      })()}
+      
 
       {/* Budget cards */}
       {loading ? (
@@ -121,45 +126,45 @@ export function Budgets() {
             const pct = budget.pct || 0
             const remaining = budget.remaining || 0
             return (
-              <div key={budget.id} onClick={() => setEditingBudget(budget)} className="p-5 rounded-xl border border-border hover:bg-accent cursor-pointer transition-colors">
-                <div className="flex items-start justify-between mb-3">
+              <div key={budget.id} onClick={() => setEditingBudget(budget)} className="group p-5 rounded-2xl border border-border/60 bg-card hover:border-border hover:shadow-md cursor-pointer transition-all duration-200">
+                <div className="flex items-start justify-between mb-4">
                   <div>
-                    <p className="text-sm font-semibold text-foreground">{budget.category}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {formatCurrency(budget.spent || 0, undefined, locale)} of {formatCurrency(budget.amount, undefined, locale)}
+                    <p className="text-base font-semibold text-foreground">{budget.category}</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {formatCurrency(budget.spent || 0, budget.currency, locale)} {t('budgets.of')} {formatCurrency(budget.amount, budget.currency, locale)}
                     </p>
                   </div>
                   <button
                     onClick={(e) => { e.stopPropagation(); setDeletingId(budget.id) }}
-                    className="rounded-lg p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                    className="rounded-lg p-1.5 text-muted-foreground opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive transition-all"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
 
                 {/* Progress bar */}
-                <div className="h-2 rounded-full bg-muted overflow-hidden">
+                <div className="h-2.5 rounded-full bg-muted overflow-hidden mb-3">
                   <div
                     className={cn(
-                      'h-full rounded-full transition-all duration-500',
+                      'h-full rounded-full transition-all duration-700 ease-out',
                       pct > 100 ? 'bg-destructive' : pct > 80 ? 'bg-amber-500' : 'bg-primary'
                     )}
                     style={{ width: `${Math.min(pct, 100)}%` }}
                   />
                 </div>
 
-                <div className="mt-2 flex items-center justify-between">
+                <div className="flex items-center justify-between">
                   <span className={cn(
                     'text-xs font-medium',
-                    pct > 100 ? 'text-red-600 dark:text-red-400' : pct > 80 ? 'text-amber-600 dark:text-amber-400' : 'text-muted-foreground'
+                    pct > 100 ? 'text-destructive' : pct > 80 ? 'text-amber-500' : 'text-muted-foreground'
                   )}>
                     {pct.toFixed(0)}% {t('budgets.used')}
                   </span>
                   <span className={cn(
-                    'text-xs',
-                    remaining >= 0 ? 'text-muted-foreground' : 'text-red-600 dark:text-red-400'
+                    'text-xs font-medium',
+                    remaining >= 0 ? 'text-muted-foreground' : 'text-destructive'
                   )}>
-                    {remaining >= 0 ? `${formatCurrency(remaining, undefined, locale)} ${t('budgets.left')}` : `${formatCurrency(Math.abs(remaining), undefined, locale)} ${t('budgets.over')}`}
+                    {remaining >= 0 ? `${formatCurrency(remaining, budget.currency, locale)} ${t('budgets.left')}` : `${formatCurrency(Math.abs(remaining), budget.currency, locale)} ${t('budgets.over')}`}
                   </span>
                 </div>
               </div>
@@ -218,6 +223,7 @@ function AddBudgetModal({
   const [loading, setLoading] = useState(false)
   const [category, setCategory] = useState('')
   const [amount, setAmount] = useState('')
+  const [currency, setCurrency] = useState('USD')
 
   const availableCategories = categories.filter(c => !existingCategories.includes(c.name))
 
@@ -225,7 +231,7 @@ function AddBudgetModal({
     e.preventDefault()
     setLoading(true)
     try {
-      await onSubmit({ category, amount: parseFloat(amount) || 0 })
+      await onSubmit({ category, amount: parseFloat(amount) || 0, currency })
       setCategory('')
       setAmount('')
     } finally {
@@ -258,15 +264,18 @@ function AddBudgetModal({
 
           <div>
             <label className="label mb-1.5 block dark:text-muted-foreground">{t('budgets.monthlyLimit')}</label>
-            <input
-              type="number"
-              value={amount}
-              onChange={e => setAmount(e.target.value)}
-              placeholder="0.00"
-              step="0.01"
-              className="input"
-              required
-            />
+            <div className="flex gap-3">
+              <input
+                type="number"
+                value={amount}
+                onChange={e => setAmount(e.target.value)}
+                placeholder="0.00"
+                step="0.01"
+                className="input flex-1"
+                required
+              />
+              <CurrencyPicker value={currency} onChange={setCurrency} className="w-40" />
+            </div>
           </div>
 
           <div className="flex gap-3 pt-2">
@@ -297,12 +306,13 @@ function EditBudgetModal({
   const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [amount, setAmount] = useState(budget.amount?.toString() || '')
+  const [currency, setCurrency] = useState(budget.currency || 'USD')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     try {
-      await onSubmit({ amount: parseFloat(amount) || 0 })
+      await onSubmit({ amount: parseFloat(amount) || 0, currency })
       onClose()
     } finally {
       setLoading(false)
@@ -329,15 +339,18 @@ function EditBudgetModal({
 
           <div>
             <label className="label mb-1.5 block dark:text-muted-foreground">{t('budgets.monthlyLimit')}</label>
-            <input
-              type="number"
-              value={amount}
-              onChange={e => setAmount(e.target.value)}
-              placeholder="0.00"
-              step="0.01"
-              className="input"
-              required
-            />
+            <div className="flex gap-3">
+              <input
+                type="number"
+                value={amount}
+                onChange={e => setAmount(e.target.value)}
+                placeholder="0.00"
+                step="0.01"
+                className="input flex-1"
+                required
+              />
+              <CurrencyPicker value={currency} onChange={setCurrency} className="w-40" />
+            </div>
           </div>
 
           <div className="flex gap-3 pt-2">

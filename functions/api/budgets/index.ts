@@ -60,7 +60,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (!user) return jsonError('Unauthorized', 401)
 
   const body = await context.request.json() as any
-  const { category, amount, period, month, year } = body
+  const { category, amount, period, month, year, currency } = body
 
   if (!category || !amount || !period || !year) {
     return jsonError('category, amount, period, and year are required', 400)
@@ -69,10 +69,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const id = generateId()
   await context.env.DB
     .prepare(
-      `INSERT INTO budgets (id, user_id, category, amount, period, month, year)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO budgets (id, user_id, category, amount, period, month, year, currency)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
     )
-    .bind(id, user.user_id, category, amount, period, month || null, year)
+    .bind(id, user.user_id, category, amount, period, month || null, year, currency || 'USD')
     .run()
 
   const budget = await context.env.DB
