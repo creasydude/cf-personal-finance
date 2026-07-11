@@ -489,6 +489,7 @@ function PreferencesSection({
   const [dateFormat, setDateFormat] = useState(settings.dateFormat || 'YYYY-MM-DD')
   const [defaultCurrency, setDefaultCurrency] = useState(settings.baseCurrency || 'IRR')
   const [theme, setTheme] = useState(settings.theme || 'system')
+  const [useToman, setUseToman] = useState(settings.useToman || false)
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
@@ -497,7 +498,8 @@ function PreferencesSection({
     setDateFormat(settings.dateFormat || 'YYYY-MM-DD')
     setDefaultCurrency(settings.baseCurrency || 'IRR')
     setTheme(settings.theme || 'system')
-  }, [settings.language, settings.timezone, settings.dateFormat, settings.baseCurrency, settings.theme])
+    setUseToman(settings.useToman || false)
+  }, [settings.language, settings.timezone, settings.dateFormat, settings.baseCurrency, settings.theme, settings.useToman])
 
   const handleSave = async () => {
     await onSave('language', language)
@@ -505,6 +507,8 @@ function PreferencesSection({
     await onSave('dateFormat', dateFormat)
     await onSave('baseCurrency', defaultCurrency)
     await onSave('theme', theme)
+    await onSave('useToman', useToman)
+    localStorage.setItem('useToman', String(useToman))
     applyTheme(theme)
     window.location.reload()
   }
@@ -561,6 +565,32 @@ function PreferencesSection({
             <CurrencyPicker value={defaultCurrency} onChange={setDefaultCurrency} showType />
             <p className="text-xs text-muted-foreground mt-1">{t('settings.defaultCurrencyHint')}</p>
           </div>
+
+          {/* Toman toggle — only show when language is Persian and currency is IRR */}
+          {language === 'fa' && defaultCurrency === 'IRR' && (
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-foreground">{t('settings.useToman')}</p>
+                <p className="text-xs text-muted-foreground">{t('settings.useTomanHint')}</p>
+              </div>
+              <button
+                onClick={() => setUseToman(!useToman)}
+                className={cn(
+                  'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background',
+                  useToman ? 'bg-primary' : 'bg-input'
+                )}
+                role="switch"
+                aria-checked={useToman}
+              >
+                <span
+                  className={cn(
+                    'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition duration-200 ease-in-out',
+                    useToman ? 'ltr:translate-x-[22px] rtl:-translate-x-[22px]' : 'ltr:translate-x-0.5 rtl:-translate-x-0.5'
+                  )}
+                />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

@@ -11,9 +11,9 @@ export function toPersianNumber(str: string | number): string {
   return String(str).replace(/\d/g, d => persianDigits[parseInt(d)])
 }
 
-export function formatCurrency(amount: number, currency: string = 'USD', locale: string = 'en'): string {
+export function formatCurrency(amount: number, currency: string = 'USD', locale: string = 'en', useToman?: boolean): string {
   const customCurrencies: Record<string, Record<string, string>> = {
-    IRR: { en: 'IRR', fa: 'ریال' },
+    IRR: { en: 'IRR', fa: 'تومان' },
     GOLD_GRAM24: { en: 'g Au 24K', fa: 'گرم طلای ۲۴ عیار' },
     GOLD_GRAM18: { en: 'g Au 18K', fa: 'گرم طلای ۱۸ عیار' },
     GOLD_GRAM22: { en: 'g Au 22K', fa: 'گرم طلای ۲۲ عیار' },
@@ -21,13 +21,15 @@ export function formatCurrency(amount: number, currency: string = 'USD', locale:
   }
 
   const loc = locale === 'fa' ? 'fa-IR' : 'en-US'
+  const tomanEnabled = useToman ?? (typeof window !== 'undefined' && localStorage.getItem('useToman') === 'true')
+  const displayAmount = (tomanEnabled && currency === 'IRR') ? amount / 10 : amount
 
   if (customCurrencies[currency]) {
     const label = customCurrencies[currency][locale] || customCurrencies[currency].en
     const formatted = new Intl.NumberFormat(loc, {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
-    }).format(amount)
+    }).format(displayAmount)
     return `${formatted} ${label}`
   }
 
@@ -37,9 +39,9 @@ export function formatCurrency(amount: number, currency: string = 'USD', locale:
       currency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
-    }).format(amount)
+    }).format(displayAmount)
   } catch {
-    return `${new Intl.NumberFormat(loc).format(amount)} ${currency}`
+    return `${new Intl.NumberFormat(loc).format(displayAmount)} ${currency}`
   }
 }
 
