@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { cn } from '../lib/utils'
 import { useTranslation } from '../hooks/useTranslation'
 import { Home, ArrowLeftRight, BarChart3, Tag, PanelLeftClose, PanelLeft } from 'lucide-react'
+import { Logo } from './ui/logo'
 
 function useNavItems(t: (k: string) => string) {
   return [
@@ -13,9 +14,8 @@ function useNavItems(t: (k: string) => string) {
 }
 
 export function Sidebar({ collapsed, onToggle, settings }: { collapsed: boolean; onToggle: () => void; settings?: Record<string, any> }) {
-  const { t } = useTranslation(settings || {})
+  const { t, isRTL } = useTranslation(settings || {})
   const navItems = useNavItems(t)
-  const isRTL = settings?.language === 'fa'
   return (
     <aside
       className={cn(
@@ -26,9 +26,7 @@ export function Sidebar({ collapsed, onToggle, settings }: { collapsed: boolean;
     >
       {/* Logo */}
       <div className="flex h-16 items-center gap-3 px-4">
-        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-md shadow-primary/25">
-          <span className="text-sm font-bold text-primary-foreground">F</span>
-        </div>
+        <Logo size="md" />
         {!collapsed && (
           <span className="text-base font-bold text-foreground">{t('sidebar.finance')}</span>
         )}

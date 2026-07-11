@@ -13,7 +13,7 @@ interface LayoutProps {
 }
 
 export function Layout({ children, userCode, settings, onLogout }: LayoutProps) {
-  const { t } = useTranslation(settings)
+  const { t, isRTL } = useTranslation(settings)
   const [collapsed, setCollapsed] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [codeCopied, setCodeCopied] = useState(false)
@@ -21,7 +21,6 @@ export function Layout({ children, userCode, settings, onLogout }: LayoutProps) 
   const navigate = useNavigate()
   const nickname = settings?.nickname || ''
   const initials = nickname ? nickname.charAt(0).toUpperCase() : userCode ? userCode.substring(0, 2) : '??'
-  const isRTL = settings?.language === 'fa'
 
   const handleCopyCode = async () => {
     if (!userCode) return

@@ -229,6 +229,11 @@ const translations: Record<Locale, Record<string, string>> = {
     'auth.twoFactorVerifyHint': 'Enter the 6-digit code from your authenticator app',
     'auth.verifying': 'Verifying...',
     'auth.verify': 'Verify',
+    'auth.brandTitle': 'Track your finances with clarity',
+    'auth.brandSubtitle': 'Manage accounts, track expenses, monitor investments, and reach your financial goals — all in one place.',
+    'auth.feature1': 'Multi-currency support with real-time exchange rates',
+    'auth.feature2': 'Detailed charts and analytics for your financial health',
+    'auth.feature3': 'Bank-grade security with optional two-factor authentication',
 
     // Table Headers
     'table.date': 'Date',
@@ -490,7 +495,7 @@ const translations: Record<Locale, Record<string, string>> = {
     'auth.savedCode': 'کد دسترسی شما',
     'auth.saveWarning': 'این کد قابل بازیابی نیست. آن را در جای امنی ذخیره کنید.',
     'auth.copiedSaved': 'کد را ذخیره کردم — ادامه',
-    'auth.signedInAs': 'ورود با',
+    'auth.signedInAs': 'وارد شده با',
     'auth.important': 'مهم',
     'auth.codeRevealWarning': 'این کد دیگر نمایش داده نخواهد شد. در صورت گم کردن، به حساب خود دسترسی نخواهید داشت.',
     'auth.codeRevealSaveWarning': 'این کد را ذخیره کنید — تنها راه دسترسی به حساب شماست',
@@ -507,6 +512,11 @@ const translations: Record<Locale, Record<string, string>> = {
     'auth.twoFactorVerifyHint': 'کد ۶ رقمی از اپلیکیشن احراز هویت خود را وارد کنید',
     'auth.verifying': 'در حال بررسی...',
     'auth.verify': 'تأیید',
+    'auth.brandTitle': 'امور مالی خود را با شفافیت پیگیری کنید',
+    'auth.brandSubtitle': 'حساب‌ها را مدیریت کنید، هزینه‌ها را ردیابی کنید، سرمایه‌گذاری‌ها را رصد کنید و به اهداف مالی خود برسید — همه در یک مکان.',
+    'auth.feature1': 'پشتیبانی از ارزهای مختلف با نرخ ارز لحظه‌ای',
+    'auth.feature2': 'نمودارها و تحلیل‌های دقیق برای سلامت مالی شما',
+    'auth.feature3': 'امنیت درجه بانکی با احراز هویت دو مرحله‌ای اختیاری',
 
     // Table Headers
     'table.date': 'تاریخ',
@@ -564,5 +574,10 @@ export function t(key: string, locale: Locale = 'en'): string {
 }
 
 export function getLocale(settings: any): Locale {
-  return settings?.language === 'fa' ? 'fa' : 'en'
+  if (settings?.language) return settings.language === 'fa' ? 'fa' : 'en'
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('language')
+    if (stored) return stored === 'fa' ? 'fa' : 'en'
+  }
+  return 'fa'
 }

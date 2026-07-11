@@ -16,10 +16,10 @@ export default function App() {
 
   if (auth.loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="flex h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-500 border-t-transparent" />
-          <p className="text-sm text-gray-500 dark:text-gray-400">...</p>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="text-sm text-muted-foreground">...</p>
         </div>
       </div>
     )
@@ -27,7 +27,7 @@ export default function App() {
 
   if (!auth.authenticated) {
     return (
-      <ThemeProvider initialTheme={auth.settings?.theme || 'system'} locale={auth.settings?.language || 'en'}>
+      <ThemeProvider initialTheme={auth.settings?.theme || 'dark'} locale={auth.settings?.language || 'fa'}>
         <AuthModal
           open={true}
           onLogin={auth.login}
@@ -41,7 +41,7 @@ export default function App() {
   }
 
   return (
-    <ThemeProvider initialTheme={auth.settings?.theme || 'system'} locale={auth.settings?.language || 'en'}>
+    <ThemeProvider initialTheme={auth.settings?.theme || 'dark'} locale={auth.settings?.language || 'fa'}>
       <SettingsProvider settings={auth.settings}>
         <Layout userCode={auth.code} settings={auth.settings} onLogout={auth.logout}>
           <Routes>
