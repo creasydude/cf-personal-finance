@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { formatDateJalali as _formatDateJalali, toJalaliInput as _toJalaliInput, fromJalaliInput as _fromJalaliInput } from './jalali'
+import { toJalaali } from 'jalaali-js'
 
 export { _formatDateJalali as formatDateJalali, _toJalaliInput as toJalaliInput, _fromJalaliInput as fromJalaliInput }
 
@@ -74,8 +75,20 @@ export function formatDateShort(date: string, locale: string = 'en'): string {
   })
 }
 
-export function generateId(): string {
-  return crypto.randomUUID()
+export function jalaliMonthName(month: number): string {
+  return ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'][month - 1] || ''
+}
+
+export function getGregorianMonthName(month: number): string {
+  return ['ژانویه', 'فوریه', 'مارس', 'آوریل', 'مه', 'ژوئن', 'ژوئیه', 'اوت', 'سپتامبر', 'اکتبر', 'نوامبر', 'دسامبر'][month - 1] || ''
+}
+
+export function getJalaliMonthName(gregMonth: number, gregYear?: number): string {
+  const jalaliMonthNames = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند']
+  // Use middle of the Gregorian month to find the corresponding Jalali month
+  const year = gregYear || new Date().getFullYear()
+  const { jm } = toJalaali(year, gregMonth, 15)
+  return jalaliMonthNames[jm - 1] || ''
 }
 
 export function cnx(...classes: (string | boolean | undefined | null)[]) {

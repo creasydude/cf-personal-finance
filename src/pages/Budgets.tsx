@@ -3,7 +3,7 @@ import { useBudgets } from '../hooks/useBudgets'
 import { useCategories } from '../hooks/useCategories'
 import { useTranslation } from '../hooks/useTranslation'
 import { useSettings } from '../lib/settings-context'
-import { formatCurrency, formatPercent } from '../lib/utils'
+import { formatCurrency, formatPercent, getJalaliMonthName } from '../lib/utils'
 import { Card, CardContent } from '../components/ui/card'
 import { Button } from '../components/ui/button'
 import { Modal } from '../components/ui/Modal'
@@ -12,9 +12,7 @@ import { CurrencyPicker } from '../components/ui/CurrencyPicker'
 import { cn } from '../lib/utils'
 import { Plus, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react'
 
-const MONTH_KEYS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
 const MONTH_NAMES_FA = ['ژانویه', 'فوریه', 'مارس', 'آوریل', 'مه', 'ژوئن', 'ژوئیه', 'اوت', 'سپتامبر', 'اکتبر', 'نوامبر', 'دسامبر']
-const JALALI_MONTHS = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند']
 
 export function Budgets() {
   const now = new Date()
@@ -76,8 +74,8 @@ export function Budgets() {
         </button>
         <span className="text-lg font-semibold text-foreground min-w-[140px] text-center">
           {settings.dateFormat === 'jalali'
-            ? JALALI_MONTHS[month - 1] + ' ' + year
-            : MONTH_NAMES_FA[month - 1] + ' ' + year
+            ? `${getJalaliMonthName(month)} ${year}`
+            : `${MONTH_NAMES_FA[month - 1]} ${year}`
           }
         </span>
         <button onClick={handleNextMonth} className="rounded-lg p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
