@@ -356,6 +356,7 @@ function AddTransactionModal({
     'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   ]
   const ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp', '.tiff', '.tif', '.pdf', '.csv', '.doc', '.docx', '.xls', '.xlsx']
+  const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 
   const categories = type === 'income' ? incomeCategories : expenseCategories
 
@@ -364,13 +365,12 @@ function AddTransactionModal({
     const selected = Array.from(e.target.files || [])
     const rejected: string[] = []
     const accepted: File[] = []
-    const maxSize = 500 * 1024
 
     for (const file of selected) {
       const ext = '.' + file.name.split('.').pop()?.toLowerCase()
       if (!ALLOWED_TYPES.includes(file.type) && !ALLOWED_EXTENSIONS.includes(ext)) {
         rejected.push(file.name)
-      } else if (file.size > maxSize) {
+      } else if (file.size > MAX_FILE_SIZE) {
         rejected.push(file.name + ' (' + t('transactions.fileTooLarge') + ')')
       } else {
         accepted.push(file)
