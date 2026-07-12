@@ -690,8 +690,8 @@ function TransactionDetailModal({ txn, onClose, locale, settings }: { txn: any; 
   const isPDF = (ct: string) => ct === 'application/pdf'
 
   return (
-    <Modal open={true} onClose={onClose} className="max-w-lg">
-      <div>
+    <Modal open={true} onClose={onClose} className="max-w-lg max-h-[90vh]">
+      <div className="max-h-[80vh] overflow-y-auto pr-2">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('transactions.details')}</h2>
           <button onClick={onClose} className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent dark:hover:bg-gray-700">
