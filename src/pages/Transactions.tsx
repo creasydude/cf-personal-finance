@@ -43,15 +43,14 @@ export function Transactions() {
 
   const handleAdd = async (data: any) => {
     const txn = await createTransaction(data)
-    setShowAdd(false)
     return txn
   }
 
   const handleEdit = async (data: any) => {
     if (!editingTxn) return
-    await api.transactions.update(editingTxn.id, data)
+    const txn = await api.transactions.update(editingTxn.id, data)
     refetch()
-    setEditingTxn(null)
+    return txn
   }
 
   const expenseCategories = categories.filter(c => c.type === 'expense')
@@ -277,6 +276,7 @@ export function Transactions() {
           open={!!editingTxn}
           onClose={() => setEditingTxn(null)}
           onSubmit={handleEdit}
+          onUploaded={refetch}
           accounts={accounts}
           expenseCategories={expenseCategories}
           incomeCategories={incomeCategories}
@@ -324,6 +324,8 @@ function AddTransactionModal({
   const [notes, setNotes] = useState('')
   const [files, setFiles] = useState<File[]>([])
   const [fileError, setFileError] = useState('')
+  const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const jalaliDateRef = useRef('')
 
@@ -424,18 +426,23 @@ function AddTransactionModal({
 
       await onSubmit(data).then(async (txn: any) => {
         if (txn?.id && files.length > 0) {
-          for (const file of files) {
+          setUploading(true)
+          for (let i = 0; i < files.length; i++) {
+            setUploadProgress(Math.round(((i + 1) / files.length) * 100))
             try {
-              await api.attachments.upload(txn.id, file)
+              await api.attachments.upload(txn.id, files[i])
             } catch (err) {
-              console.error('Attachment upload failed:', file.name, err)
+              console.error('Attachment upload failed:', files[i].name, err)
             }
           }
           onUploaded?.()
         }
+        resetForm()
+        setFiles([])
+        setUploading(false)
+        setUploadProgress(0)
+        onClose()
       })
-      resetForm()
-      setFiles([])
     } finally {
       setLoading(false)
     }
@@ -607,15 +614,31 @@ function AddTransactionModal({
               {t('transactions.attachFile')}
             </button>
             {files.length > 0 && (
-              <div className="mt-2 space-y-1">
+              <div className="mt-2 space-y-1.5">
                 {files.map((file, i) => (
-                  <div key={i} className="flex items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-700 px-3 py-2 text-sm">
-                    <span className="truncate text-gray-700 dark:text-gray-300">{file.name}</span>
-                    <button type="button" onClick={() => removeFile(i)} className="ml-2 text-muted-foreground hover:text-destructive">
-                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
+                  <div key={i} className="relative rounded-lg bg-muted px-3 py-2 text-sm overflow-hidden">
+                    {uploading && (
+                      <div className="absolute inset-y-0 start-0 bg-primary/20 rounded-lg transition-all duration-500" style={{ width: `${uploadProgress}%` }} />
+                    )}
+                    <div className="relative flex items-center justify-between">
+                      <span className="truncate text-foreground flex items-center gap-2">
+                        {uploading && i < Math.ceil(uploadProgress / (100 / files.length)) ? (
+                          <svg className="h-4 w-4 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : uploading ? (
+                          <div className="h-4 w-4 rounded-full border-2 border-primary/30 border-t-primary animate-spin flex-shrink-0" />
+                        ) : null}
+                        {file.name}
+                      </span>
+                      {!uploading && (
+                        <button type="button" onClick={() => removeFile(i)} className="ms-2 text-muted-foreground hover:text-destructive">
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -627,11 +650,23 @@ function AddTransactionModal({
 
           {/* Actions */}
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="btn-secondary flex-1">{t('account.cancel')}</button>
-            <button type="submit" disabled={loading || !description || !amount} className="btn-primary flex-1">
-              {loading ? t('loading.saving') : editData ? t('account.saveChanges') : t('transactions.add')}
+            <button type="button" onClick={onClose} className="btn-secondary flex-1" disabled={uploading}>{t('account.cancel')}</button>
+            <button type="submit" disabled={loading || uploading || !description || !amount} className="btn-primary flex-1">
+              {uploading ? (
+                <span className="flex items-center gap-2">
+                  <div className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                  {t('transactions.uploading')} {uploadProgress}%
+                </span>
+              ) : loading ? t('loading.saving') : editData ? t('account.saveChanges') : t('transactions.add')}
             </button>
           </div>
+          {uploading && (
+            <div className="mt-2">
+              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                <div className="h-full rounded-full bg-primary transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+              </div>
+            </div>
+          )}
         </form>
       </div>
     </Modal>
