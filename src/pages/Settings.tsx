@@ -798,19 +798,14 @@ function PreferencesSection({
 
           {/* Date Format */}
           <div>
-            <label className="label mb-1.5 block dark:text-muted-foreground">
-              {t("settings.dateFormat")}
-            </label>
+            <label className="label mb-1.5 block dark:text-muted-foreground">{t('settings.dateFormat')}</label>
             <select
               value={dateFormat}
               onChange={(e) => setDateFormat(e.target.value)}
               className="input"
             >
-              {DATE_FORMATS.map((f) => (
-                <option key={f.value} value={f.value}>
-                  {f.label}
-                </option>
-              ))}
+              <option value="gregorian">{t('settings.dateFormatGregorian')}</option>
+              <option value="jalali">{t('settings.dateFormatJalali')}</option>
             </select>
           </div>
 

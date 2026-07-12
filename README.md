@@ -204,30 +204,43 @@ The app supports **English** and **Persian (فارسی)** with full RTL layout:
 
 ## 📦 Deployment
 
-### Create Cloudflare Resources
+### Step 1: Create the Pages Project
 
 ```bash
-# D1 database
-wrangler d1 create personal-finance-db
-# → Update database_id in wrangler.toml
-
-# KV namespace
-wrangler kv:namespace create RATE_CACHE
-# → Update id in wrangler.toml
-
-# Session signing key
-wrangler secret put SESSION_SIGNING_KEY
+wrangler pages project create personal-finance
 ```
 
-### Initialize & Deploy
+### Step 2: Deploy with Functions
 
 ```bash
-# Initialize remote database
-npm run db:init:remote
-npm run db:seed:remote  # optional
+npm run build
+wrangler pages deploy dist --project-name=personal-finance
+```
 
-# Deploy
-npm run deploy
+### Step 3: Configure Bindings in Cloudflare Dashboard
+
+Go to **Cloudflare Dashboard → Pages → personal-finance → Settings → Functions**:
+
+1. **D1 Database Binding**: name=`DB`, database=`personal-finance-db`
+2. **KV Namespace Binding**: name=`RATE_CACHE`, namespace=`RATE_CACHE`
+3. **Environment Variables**:
+   - `SESSION_SIGNING_KEY` = `your-secret-key`
+   - `CURRENCY_API_BASE` = `https://currencies.plusking.ir`
+   - `CURRENCY_API_KEY` = `your-api-key`
+
+### Step 4: Initialize Remote Database
+
+```bash
+npm run db:init:remote
+npm run db:seed:remote    # optional demo data
+npm run db:attachments:remote
+```
+
+### Redeploy After Changes
+
+```bash
+npm run build
+wrangler pages deploy dist --project-name=personal-finance
 ```
 
 ---

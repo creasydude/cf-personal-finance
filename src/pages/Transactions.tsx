@@ -3,7 +3,8 @@ import { useTransactions } from '../hooks/useTransactions'
 import { useAccounts } from '../hooks/useAccounts'
 import { useCategories } from '../hooks/useCategories'
 import { useTranslation } from '../hooks/useTranslation'
-import { formatCurrency, formatDate } from '../lib/utils'
+import { useSettings } from '../lib/settings-context'
+import { formatCurrency, formatDate, formatDateJalali, toJalaliInput, fromJalaliInput } from '../lib/utils'
 import { api } from '../api/client'
 import { Badge } from '../components/ui/badge'
 import { Card, CardContent } from '../components/ui/card'
@@ -24,6 +25,7 @@ export function Transactions() {
   const { accounts } = useAccounts()
   const { categories } = useCategories()
   const { t, locale } = useTranslation()
+  const settings = useSettings()
   const [showAdd, setShowAdd] = useState(false)
   const [search, setSearch] = useState('')
   const [detailTxn, setDetailTxn] = useState<any>(null)
@@ -249,6 +251,7 @@ export function Transactions() {
         accounts={accounts}
         expenseCategories={expenseCategories}
         incomeCategories={incomeCategories}
+        settings={settings}
       />
 
       {/* Detail Modal */}
@@ -277,6 +280,7 @@ export function Transactions() {
           expenseCategories={expenseCategories}
           incomeCategories={incomeCategories}
           editData={editingTxn}
+          settings={settings}
         />
       )}
     </div>
@@ -292,6 +296,7 @@ function AddTransactionModal({
   expenseCategories,
   incomeCategories,
   editData,
+  settings,
 }: {
   open: boolean
   onClose: () => void
@@ -301,8 +306,10 @@ function AddTransactionModal({
   expenseCategories: any[]
   incomeCategories: any[]
   editData?: any
+  settings?: any
 }) {
   const { t } = useTranslation()
+  const useJalali = settings?.dateFormat === 'jalali'
   const [loading, setLoading] = useState(false)
   const [type, setType] = useState<'income' | 'expense' | 'transfer'>('expense')
   const [description, setDescription] = useState('')
@@ -317,6 +324,7 @@ function AddTransactionModal({
   const [files, setFiles] = useState<File[]>([])
   const [fileError, setFileError] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const jalaliDateRef = useRef('')
 
   // Pre-fill form when editing
   useEffect(() => {
@@ -329,7 +337,9 @@ function AddTransactionModal({
       setFromAccountId(editData.from_account_id || '')
       setToAccountId(editData.to_account_id || '')
       setCategory(editData.category || '')
-      setDate(editData.date || new Date().toISOString().split('T')[0])
+      // Extract only YYYY-MM-DD from the date string
+      const rawDate = editData.date || new Date().toISOString().split('T')[0]
+      setDate(rawDate.includes('T') ? rawDate.split('T')[0] : rawDate)
       setNotes(editData.notes || '')
       setFiles([])
     } else if (open) {
@@ -384,13 +394,23 @@ function AddTransactionModal({
     e.preventDefault()
     setLoading(true)
     try {
+      // Convert Jalali date to Gregorian if setting is jalali
+      let submitDate = date
+      if (settings.dateFormat === 'jalali' && jalaliDateRef.current) {
+        const parts = jalaliDateRef.current.split('-').map(Number)
+        if (parts.length === 3 && parts[0] > 1000) {
+          const { gy, gm, gd } = fromJalaliInput(jalaliDateRef.current)
+          submitDate = `${gy}-${String(gm).padStart(2, '0')}-${String(gd).padStart(2, '0')}`
+        }
+      }
+
       const data: any = {
         type,
         description,
         amount: parseFloat(amount) || 0,
         currency,
         category: category || undefined,
-        date,
+        date: submitDate,
         notes: notes || undefined,
       }
 
@@ -539,7 +559,22 @@ function AddTransactionModal({
           </select>
 
           {/* Date */}
-          <input type="date" value={date} onChange={e => setDate(e.target.value)} className="input" />
+          <div>
+            <label className="label mb-1.5">{t('table.date')}</label>
+            {settings.dateFormat === 'jalali' ? (
+              <input
+                type="text"
+                defaultValue={toJalaliInput(...date.split('-').map(Number) as [number, number, number])}
+                key={`${date}-jal`}
+                onBlur={e => { jalaliDateRef.current = e.target.value.replace(/\//g, '-') }}
+                onKeyDown={e => { if (e.key === 'Enter') jalaliDateRef.current = (e.target as HTMLInputElement).value.replace(/\//g, '-') }}
+                placeholder="1404/04/19"
+                className="input"
+              />
+            ) : (
+              <input type="date" value={date} onChange={e => setDate(e.target.value)} className="input" />
+            )}
+          </div>
 
           {/* Notes */}
           <textarea
@@ -649,7 +684,7 @@ function TransactionDetailModal({ txn, onClose, locale }: { txn: any; onClose: (
           <div className="grid grid-cols-3 gap-3">
             <div>
               <p className="label mb-1">{t('table.date')}</p>
-              <p className="text-sm text-gray-900 dark:text-white">{formatDate(txn.date, locale)}</p>
+              <p className="text-sm text-foreground">{formatDate(txn.date, locale)}</p>
             </div>
             <div>
               <p className="label mb-1">{t('table.type')}</p>

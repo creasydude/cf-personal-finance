@@ -1,5 +1,8 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { formatDateJalali as _formatDateJalali, toJalaliInput as _toJalaliInput, fromJalaliInput as _fromJalaliInput } from './jalali'
+
+export { _formatDateJalali as formatDateJalali, _toJalaliInput as toJalaliInput, _fromJalaliInput as fromJalaliInput }
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
