@@ -58,12 +58,13 @@ export function formatPercent(n: number): string {
   return `${sign}${n.toFixed(1)}%`
 }
 
-export function formatDate(date: string, locale: string = 'en'): string {
-  return new Date(date).toLocaleDateString(locale === 'fa' ? 'fa-IR' : 'en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
+export function formatDate(date: string, locale: string = 'en', dateFormat?: string): string {
+  if (dateFormat === 'jalali') {
+    return _formatDateJalali(date)
+  }
+  const monthNamesFa = ['ژانویه', 'فوریه', 'مارس', 'آوریل', 'مه', 'ژوئن', 'ژوئیه', 'اوت', 'سپتامبر', 'اکتبر', 'نوامبر', 'دسامبر']
+  const d = new Date(date)
+  return locale === 'fa' ? `${d.getDate()} ${monthNamesFa[d.getMonth()]} ${d.getFullYear()}` : `${d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`
 }
 
 export function formatDateShort(date: string, locale: string = 'en'): string {

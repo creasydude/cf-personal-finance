@@ -161,7 +161,7 @@ export function Transactions() {
                   const config = TYPE_CONFIG[txn.type as keyof typeof TYPE_CONFIG]
                   return (
                     <tr key={txn.id} onClick={() => setEditingTxn(txn)} className="border-b border-border/50 last:border-0 hover:bg-accent/50 transition-colors cursor-pointer">
-                      <td className="px-4 py-3 text-sm text-muted-foreground">{formatDate(txn.date, locale)}</td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground">{formatDate(txn.date, locale, settings.dateFormat)}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1.5">
                           <p className="text-sm font-medium text-foreground truncate max-w-[200px]">{txn.description}</p>
@@ -225,7 +225,7 @@ export function Transactions() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-foreground truncate">{txn.description}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{formatDate(txn.date, locale)}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{formatDate(txn.date, locale, settings.dateFormat)}</p>
                     </div>
                     <div className="text-end ms-3">
                       <p className={`text-sm font-semibold ${config?.color}`}>
@@ -260,6 +260,7 @@ export function Transactions() {
           txn={detailTxn}
           onClose={() => setDetailTxn(null)}
           locale={locale}
+          settings={settings}
         />
       )}
 
@@ -637,7 +638,7 @@ function AddTransactionModal({
   )
 }
 
-function TransactionDetailModal({ txn, onClose, locale }: { txn: any; onClose: () => void; locale: string }) {
+function TransactionDetailModal({ txn, onClose, locale, settings }: { txn: any; onClose: () => void; locale: string; settings: any }) {
   const { t } = useTranslation()
   const [attachments, setAttachments] = useState<any[]>([])
   const [loadingAttachments, setLoadingAttachments] = useState(true)
@@ -684,7 +685,7 @@ function TransactionDetailModal({ txn, onClose, locale }: { txn: any; onClose: (
           <div className="grid grid-cols-3 gap-3">
             <div>
               <p className="label mb-1">{t('table.date')}</p>
-              <p className="text-sm text-foreground">{formatDate(txn.date, locale)}</p>
+              <p className="text-sm text-foreground">{formatDate(txn.date, locale, settings?.dateFormat)}</p>
             </div>
             <div>
               <p className="label mb-1">{t('table.type')}</p>
