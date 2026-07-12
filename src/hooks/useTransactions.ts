@@ -10,8 +10,6 @@ interface TransactionFilters {
   to?: string
   sort?: string
   order?: string
-  page?: string
-  limit?: string
 }
 
 export function useTransactions() {
@@ -19,6 +17,8 @@ export function useTransactions() {
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState<TransactionFilters>({})
+  const [page, setPage] = useState(1)
+  const limit = 50
 
   const fetch = useCallback(async () => {
     setLoading(true)
@@ -27,18 +27,21 @@ export function useTransactions() {
       for (const [k, v] of Object.entries(filters)) {
         if (v) cleanFilters[k] = v
       }
+      cleanFilters.page = String(page)
+      cleanFilters.limit = String(limit)
       const res = await api.transactions.list(cleanFilters)
       setTransactions(res.transactions)
       setTotal(res.total)
     } finally {
       setLoading(false)
     }
-  }, [filters])
+  }, [filters, page])
 
   useEffect(() => { fetch() }, [fetch])
 
   const createTransaction = async (data: any) => {
     const txn = await api.transactions.create(data)
+    setPage(1)
     await fetch()
     return txn
   }
@@ -58,8 +61,11 @@ export function useTransactions() {
     transactions,
     total,
     loading,
+    page,
+    setPage,
+    limit,
     filters,
-    setFilters: (f: TransactionFilters) => setFilters(prev => ({ ...prev, ...f })),
+    setFilters: (f: TransactionFilters) => { setFilters(prev => ({ ...prev, ...f })); setPage(1) },
     createTransaction,
     updateTransaction,
     deleteTransaction,

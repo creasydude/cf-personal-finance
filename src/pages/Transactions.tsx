@@ -21,7 +21,7 @@ const TYPE_CONFIG = {
 }
 
 export function Transactions() {
-  const { transactions, total, loading, filters, setFilters, createTransaction, deleteTransaction, refetch } = useTransactions()
+  const { transactions, total, loading, page, setPage, limit, filters, setFilters, createTransaction, deleteTransaction, refetch } = useTransactions()
   const { accounts } = useAccounts()
   const { categories } = useCategories()
   const { t, locale } = useTranslation()
@@ -34,11 +34,11 @@ export function Transactions() {
 
   const handleSearch = (value: string) => {
     setSearch(value)
-    setFilters({ search: value || undefined, page: '1' })
+    setFilters({ search: value || undefined })
   }
 
   const handleTypeFilter = (type: string) => {
-    setFilters({ type: type || undefined, page: '1' })
+    setFilters({ type: type || undefined })
   }
 
   const handleAdd = async (data: any) => {
@@ -99,7 +99,7 @@ export function Transactions() {
         {/* Category filter */}
         <select
           value={filters.category || ''}
-          onChange={(e) => setFilters({ category: e.target.value || undefined, page: '1' })}
+          onChange={(e) => setFilters({ category: e.target.value || undefined })}
           className="input w-auto"
         >
           <option value="">{t('transactions.allCategories')}</option>
@@ -113,7 +113,7 @@ export function Transactions() {
           value={`${filters.sort || 'date'}-${filters.order || 'desc'}`}
           onChange={(e) => {
             const [sort, order] = e.target.value.split('-')
-            setFilters({ sort, order, page: '1' })
+            setFilters({ sort, order })
           }}
           className="input w-auto"
         >
@@ -239,6 +239,34 @@ export function Transactions() {
           </div>
         </CardContent>
         </Card>
+      )}
+
+      {/* Pagination */}
+      {total > limit && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            {(page - 1) * limit + 1}–{Math.min(page * limit, total)} {t('transactions.of')} {total}
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page <= 1}
+              className="btn-secondary text-sm h-8 px-3"
+            >
+              {t('transactions.prev')}
+            </button>
+            <span className="text-sm text-muted-foreground px-2">
+              {page} / {Math.ceil(total / limit)}
+            </span>
+            <button
+              onClick={() => setPage(p => p + 1)}
+              disabled={page * limit >= total}
+              className="btn-secondary text-sm h-8 px-3"
+            >
+              {t('transactions.next')}
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Add Transaction Modal */}
